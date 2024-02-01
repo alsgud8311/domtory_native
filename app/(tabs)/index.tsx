@@ -3,11 +3,14 @@ import { StyleSheet } from "react-native";
 import EditScreenInfo from "@/components/EditScreenInfo";
 import { Text, View } from "@/components/Themed";
 import React from "react";
+import { Link } from "expo-router";
 
 export default function TabOneScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>WTF</Text>
+      <Link href={"/"}>
+        <Text style={styles.title}>WTF</Text>
+      </Link>
       <View
         style={styles.separator}
         lightColor="#eee"
