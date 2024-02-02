@@ -1,6 +1,5 @@
-import { apiBe } from "../server";
-
-async function getMenuData() {
+//날짜와 Api 호출에 필요한 parameter 받아오는 function
+function getDate() {
   const today = new Date();
   const week = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
   const dayOfWeek = week[today.getDay()];
@@ -34,28 +33,13 @@ async function getMenuData() {
     today.getDate()
   ).padStart(2, "0")}`;
 
-  let menuData;
-  let menuList;
-  try {
-    menuData = await getDateMenuData(formatedDateForApi, dayDivForApi);
-    if (menuData) {
-      if (hour >= 0 && hour <= 8) {
-        menuList = menuData[0].breakfast_list || [];
-      } else if (hour >= 9 && hour <= 13) {
-        menuList = menuData[0].lunch_list || [];
-      } else if (hour >= 14 && hour <= 20) {
-        menuList = menuData[0].dinner_list || [];
-      } else if (hour >= 21 && hour <= 24) {
-        menuList = menuData[0].breakfast_list || [];
-      }
-    }
-  } catch (error) {
-    console.error(error);
-    return {
-      menuList: ["현재 정보를 가져올 수 없습니다."],
-      formatedDate: formatedDate,
-      dayDiv: dayDiv,
-    };
-  }
-  return { menuList, formatedDate, dayDiv };
+  return {
+    date: formatedDate,
+    dayDiv: dayDiv,
+    dateForApi: formatedDateForApi,
+    dayDivForApi: dayDivForApi,
+    hour: hour,
+  };
 }
+
+export default getDate;
