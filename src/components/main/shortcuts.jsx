@@ -69,7 +69,7 @@ export default function Shortcuts() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    width: "100%",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     textAlign: "center",
     width: "20%",
-    height: 100,
+    height: 90,
   },
   buttons: {
     width: 60,

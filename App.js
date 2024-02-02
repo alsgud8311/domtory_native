@@ -2,12 +2,14 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import DailyMenuCard from "./src/components/main/menucard";
 import Shortcuts from "./src/components/main/shortcuts";
+import CommunityCard from "./src/components/main/communitycard";
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <DailyMenuCard style={styles.menucard} />
+      <DailyMenuCard />
       <Shortcuts />
+      <CommunityCard />
     </View>
   );
 }

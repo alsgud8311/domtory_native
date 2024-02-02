@@ -22,7 +22,7 @@ export default function DailyMenuCard() {
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.card}>
         <Text style={styles.dateText}>{menuData.formatedDate}</Text>
         <Text style={styles.mealTypeText}>{menuData.dayDiv}</Text>
@@ -34,14 +34,13 @@ export default function DailyMenuCard() {
           ))}
         </View>
       </View>
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    height: "30%",
     backgroundColor: "#fff",
   },
   card: {
