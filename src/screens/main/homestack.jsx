@@ -12,24 +12,40 @@ import LostAndFound from "../community/lostandfound/lostandfound";
 import LostAndFoundDetail from "../community/lostandfound/lostandfoundDetail";
 import General from "../community/general/general";
 import GeneralDetail from "../community/general/generalDetail";
+import { Image } from "react-native";
+import logo from "../../assets/domtory_icon.png";
 
 const HomeStack = () => {
   const Stack = createNativeStackNavigator();
   const screenOptions = {
-    tabBarShowLabel: false,
-    headerShown: false,
-    tabBarstyle: {
-      position: "absolute",
-      bottom: 0,
-      right: 0,
-      left: 0,
+    headerShowLabel: false,
+    headerShown: true,
+    headerStyle: {
       height: 100,
-      background: "#fff",
     },
   };
   return (
     <Stack.Navigator initialRouteName="Home" screenOptions={screenOptions}>
-      <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen
+        name="Domtory Main"
+        component={Home}
+        options={{
+          headerLeft: () => {
+            return (
+              <Image
+                source={logo}
+                style={{
+                  width: 50,
+                  height: 50,
+                  position: "absolute",
+                  left: 0,
+                }}
+              />
+            );
+          },
+          title: "",
+        }}
+      />
       <Stack.Screen name="fleemarket" component={FleeMarket} />
       <Stack.Screen name="fleemarketDetail" component={FleeMarketDetail} />
       <Stack.Screen name="general" component={General} />

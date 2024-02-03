@@ -6,12 +6,16 @@ import icon from "./src/assets/domtory_icon.png";
 import MainTab from "./src/screens/maintab";
 
 const Stack = createNativeStackNavigator();
+const screenOptions = {
+  tabBarShowLabel: false,
+  headerShown: false,
+};
 
 export default function App() {
   return (
     <>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home">
+        <Stack.Navigator initialRouteName="Home" screenOptions={screenOptions}>
           {/* <Stack.Screen
             name="Home"
             component={Home}
@@ -42,7 +46,7 @@ export default function App() {
               ),
             }}
           /> */}
-          <Stack.Screen name="Tab" component={MainTab} />
+          <Stack.Screen name="MainScreen" component={MainTab} />
         </Stack.Navigator>
       </NavigationContainer>
     </>
