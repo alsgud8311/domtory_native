@@ -6,17 +6,20 @@ import CommunityCard from "../components/main/communitycard";
 import NoticeCard from "../components/main/noticecard";
 import RecentPostCard from "../components/main/recentcard";
 import CouncilNoticeCard from "../components/main/councilnoticecard";
+import BottomTabBar from "../components/common/bottomtab";
 
 export default function Home() {
   return (
-    <ScrollView style={styles.container}>
-      <DailyMenuCard />
-      <Shortcuts />
-      <CouncilNoticeCard />
-      <NoticeCard />
-      <CommunityCard />
-      <RecentPostCard />
-    </ScrollView>
+    <View>
+      <ScrollView style={styles.container}>
+        <DailyMenuCard />
+        <Shortcuts />
+        <CouncilNoticeCard />
+        <NoticeCard />
+        <CommunityCard />
+        <RecentPostCard />
+      </ScrollView>
+    </View>
   );
 }
 
@@ -25,8 +28,5 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#fff",
     padding: 20,
-  },
-  menucard: {
-    width: "100%",
   },
 });
