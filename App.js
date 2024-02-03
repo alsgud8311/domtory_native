@@ -1,9 +1,9 @@
 import { Text, View, Image } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
-import Home from "./src/screens/Home";
+import Home from "./src/screens/main/home";
 import icon from "./src/assets/domtory_icon.png";
-import BottomTabBar from "./src/components/common/bottomtab";
+import MainTab from "./src/screens/maintab";
 
 const Stack = createNativeStackNavigator();
 
@@ -42,7 +42,7 @@ export default function App() {
               ),
             }}
           /> */}
-          <Stack.Screen name="Tab" component={BottomTabBar} />
+          <Stack.Screen name="Tab" component={MainTab} />
         </Stack.Navigator>
       </NavigationContainer>
     </>

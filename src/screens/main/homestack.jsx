@@ -1,10 +1,10 @@
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Home from "../../screens/Home";
-import CommunityShortCuts from "../../screens/CommunityShortcuts";
-import Setting from "../../screens/Setting";
+import Home from "./home";
+import CommunityShortCuts from "../community/shortcuts/communityShortcuts";
+import Setting from "../setting/Setting";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-const BottomTabBar = () => {
-  const Tab = createBottomTabNavigator();
+const HomeStack = () => {
+  const Tab = createNativeStackNavigator();
   const screenOptions = {
     tabBarShowLabel: false,
     headerShown: false,
@@ -26,4 +26,4 @@ const BottomTabBar = () => {
   );
 };
 
-export default BottomTabBar;
+export default MainTab;
