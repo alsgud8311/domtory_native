@@ -75,10 +75,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   buttonWrapper: {
+    justifyContent: "center",
     alignItems: "center",
     textAlign: "center",
     width: "20%",
-    height: 90,
+    height: 100,
   },
   buttons: {
     width: 60,

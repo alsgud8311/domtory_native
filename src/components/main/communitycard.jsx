@@ -1,21 +1,33 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
+import { AntDesign } from "@expo/vector-icons";
 
 export default function CommunityCard() {
   const [communityData, setCommunityData] = useState(null);
 
-  //   if (!menuData) {
-  //     return (
-  //       <View style={styles.container}>
-  //         <Text>Loading...</Text>
-  //       </View>
-  //     );
-  //   }
-
   return (
     <ScrollView style={styles.container}>
+      <View style={styles.description}>
+        <Text style={styles.descriptionText}>커뮤니티 페이지</Text>
+        <TouchableOpacity style={styles.moreButton}>
+          <Text>더 보기</Text>
+          <AntDesign name="right" size={15} />
+        </TouchableOpacity>
+      </View>
       <View style={styles.card}>
-        <View style={styles.menuList}></View>
+        <View>
+          <Text style={styles.postText}>자유게시판 글 1</Text>
+          <Text style={styles.postText}>자유게시판 글 2</Text>
+          <Text style={styles.postText}>자유게시판 글 3</Text>
+          <Text style={styles.postText}>자유게시판 글 4</Text>
+          <Text style={styles.postText}>자유게시판 글 5</Text>
+        </View>
       </View>
     </ScrollView>
   );
@@ -27,31 +39,36 @@ const styles = StyleSheet.create({
     height: "30%",
     backgroundColor: "#fff",
   },
+  description: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    paddingTop: 15,
+    paddingBottom: 5,
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+  descriptionText: {
+    fontSize: 18,
+  },
+  moreButton: {
+    flexDirection: "row",
+  },
   card: {
-    backgroundColor: "#ffcc99",
+    backgroundColor: "#ffffff",
     borderRadius: 10,
-    padding: 20,
+    borderColor: "#e0e0e0",
+    borderStyle: "solid",
+    borderWidth: 1,
+    padding: 15,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
   },
-  dateText: {
-    fontSize: 24,
-    marginBottom: 5,
-  },
-  mealTypeText: {
-    fontSize: 24,
-    borderBottomWidth: 2,
-    borderColor: "#ff9933",
-    paddingBottom: 5,
-  },
-  menuList: {
-    paddingTop: 10,
-  },
-  menuItem: {
-    fontSize: 18,
-    paddingVertical: 2,
+  postText: {
+    fontSize: 16,
+    paddingVertical: 5,
   },
 });
