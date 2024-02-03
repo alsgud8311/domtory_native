@@ -12,7 +12,7 @@ export default function CommunityCard() {
   const [communityData, setCommunityData] = useState(null);
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.description}>
         <Text style={styles.descriptionText}>커뮤니티 페이지</Text>
         <TouchableOpacity style={styles.moreButton}>
@@ -29,7 +29,7 @@ export default function CommunityCard() {
           <Text style={styles.postText}>자유게시판 글 5</Text>
         </View>
       </View>
-    </ScrollView>
+    </View>
   );
 }
 
