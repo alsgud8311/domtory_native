@@ -5,12 +5,14 @@ import Shortcuts from "./src/components/main/shortcuts";
 import CommunityCard from "./src/components/main/communitycard";
 import NoticeCard from "./src/components/main/noticecard";
 import RecentPostCard from "./src/components/main/recentcard";
+import CouncilNoticeCard from "./src/components/main/councilnoticecard";
 
 export default function App() {
   return (
     <ScrollView style={styles.container}>
       <DailyMenuCard />
       <Shortcuts />
+      <CouncilNoticeCard />
       <NoticeCard />
       <CommunityCard />
       <RecentPostCard />
