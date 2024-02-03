@@ -8,13 +8,13 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 
-export default function CommunityCard() {
-  const [communityData, setCommunityData] = useState(null);
+export default function NoticeCard() {
+  const [noticeData, setNoticeData] = useState(null);
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.description}>
-        <Text style={styles.descriptionText}>커뮤니티 페이지</Text>
+        <Text style={styles.descriptionText}>학사 공지사항</Text>
         <TouchableOpacity style={styles.moreButton}>
           <Text>더 보기</Text>
           <AntDesign name="right" size={15} />
@@ -22,11 +22,9 @@ export default function CommunityCard() {
       </View>
       <View style={styles.card}>
         <View>
-          <Text style={styles.postText}>자유게시판 글 1</Text>
-          <Text style={styles.postText}>자유게시판 글 2</Text>
-          <Text style={styles.postText}>자유게시판 글 3</Text>
-          <Text style={styles.postText}>자유게시판 글 4</Text>
-          <Text style={styles.postText}>자유게시판 글 5</Text>
+          <Text style={styles.postText}>공지사항 글 1</Text>
+          <Text style={styles.postText}>공지사항 글 2</Text>
+          <Text style={styles.postText}>공지사항 글 3</Text>
         </View>
       </View>
     </ScrollView>
