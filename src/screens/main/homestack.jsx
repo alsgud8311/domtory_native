@@ -18,7 +18,6 @@ import Menu from "../menu/menu";
 import CbhsNotice from "../notice/cbhsNotice/cbhsNotice";
 import CouncilNotice from "../notice/councilNotice/CouncilNotice";
 import CouncilNoticeDetail from "../notice/councilNotice/CouncilNoticeDetail";
-import Search from '../../screens/search/search'
 
 function Logo() {
   return (
@@ -73,7 +72,6 @@ const HomeStack = () => {
       <Stack.Screen name="분실물 게시판" component={LostAndFound} />
       <Stack.Screen name="분실물 글 보기" component={LostAndFoundDetail} />
       <Stack.Screen name="설정" component={Setting} />
-      <Stack.Screen name="검색" component={Search} />
     </Stack.Navigator>
   );
 };
