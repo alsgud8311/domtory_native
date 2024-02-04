@@ -8,16 +8,16 @@ import RecentPostCard from "../../components/main/recentcard";
 import CouncilNoticeCard from "../../components/main/councilnoticecard";
 import BottomTabBar from "../maintab";
 
-export default function Home() {
+export default function Home({ navigation }) {
   return (
     <View>
       <ScrollView style={styles.container}>
-        <DailyMenuCard />
-        <Shortcuts />
-        <CouncilNoticeCard />
-        <NoticeCard />
-        <CommunityCard />
-        <RecentPostCard />
+        <DailyMenuCard navigation={navigation} />
+        <Shortcuts navigation={navigation} />
+        <CouncilNoticeCard navigation={navigation} />
+        <NoticeCard navigation={navigation} />
+        <CommunityCard navigation={navigation} />
+        <RecentPostCard navigation={navigation} />
       </ScrollView>
     </View>
   );

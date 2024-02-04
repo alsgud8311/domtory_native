@@ -16,7 +16,7 @@ import books from "../../assets/books.png";
 import TestScreen from "./webmodal";
 import { useCallback, useState } from "react";
 
-export default function Shortcuts() {
+export default function Shortcuts({ navigation }) {
   return (
     <>
       <View style={styles.container}>
@@ -40,7 +40,11 @@ export default function Shortcuts() {
           <Image style={styles.buttons} source={night} />
           <Text>외박신청</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonWrapper}>
+        <TouchableOpacity
+          style={styles.buttonWrapper}
+          // 학사내 공지사항으로 navigate
+          onPress={() => navigation.navigate("학사내 공지사항")}
+        >
           <Image style={styles.buttons} source={announcement} />
           <Text>공지사항</Text>
         </TouchableOpacity>

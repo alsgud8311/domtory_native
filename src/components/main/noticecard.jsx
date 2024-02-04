@@ -8,14 +8,17 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 
-export default function NoticeCard() {
+export default function NoticeCard({ navigation }) {
   const [noticeData, setNoticeData] = useState(null);
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.description}>
         <Text style={styles.descriptionText}>학사 공지사항</Text>
-        <TouchableOpacity style={styles.moreButton}>
+        <TouchableOpacity
+          style={styles.moreButton}
+          onPress={() => navigation.navigate("학사내 공지사항")}
+        >
           <Text>더 보기</Text>
           <AntDesign name="right" size={15} />
         </TouchableOpacity>

@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 import getMenuData from "../../utils/getDate";
 import { getDateMenuData } from "../../server/menu";
 
-export default function DailyMenuCard() {
+export default function DailyMenuCard({ navigation }) {
   const [menuData, setMenuData] = useState(null);
   useEffect(() => {
     (async () => {
@@ -23,7 +29,10 @@ export default function DailyMenuCard() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.card}>
+      <TouchableOpacity
+        style={styles.card}
+        onPress={() => navigation.navigate("학사 식단")}
+      >
         <Text style={styles.dateText}>{menuData.formatedDate}</Text>
         <Text style={styles.mealTypeText}>{menuData.dayDiv}</Text>
         <View style={styles.menuList}>
@@ -33,7 +42,7 @@ export default function DailyMenuCard() {
             </Text>
           ))}
         </View>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 }

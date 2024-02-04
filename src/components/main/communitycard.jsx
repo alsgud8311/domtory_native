@@ -8,14 +8,17 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 
-export default function CommunityCard() {
+export default function CommunityCard({ navigation }) {
   const [communityData, setCommunityData] = useState(null);
 
   return (
     <View style={styles.container}>
       <View style={styles.description}>
-        <Text style={styles.descriptionText}>커뮤니티 페이지</Text>
-        <TouchableOpacity style={styles.moreButton}>
+        <Text style={styles.descriptionText}>자유게시판</Text>
+        <TouchableOpacity
+          style={styles.moreButton}
+          onPress={() => navigation.navigate("자유게시판")}
+        >
           <Text>더 보기</Text>
           <AntDesign name="right" size={15} />
         </TouchableOpacity>
