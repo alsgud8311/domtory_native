@@ -6,11 +6,6 @@ export default function MypageCard() {
     <View style={styles.container}>
       <View style={styles.wrapper}>
         <TouchableOpacity style={styles.card}>
-          <MaterialIcons name="alternate-email" size={24} color="black" />
-          <Text style={styles.cardText}>이메일</Text>
-          <Text style={{ color: "gray" }}>alsgud8311@naver.com</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.card}>
           <AntDesign name="lock" size={24} color="black" />
           <Text style={styles.cardText}>비밀번호 변경</Text>
         </TouchableOpacity>
@@ -19,7 +14,6 @@ export default function MypageCard() {
         <TouchableOpacity style={styles.card}>
           <AntDesign name="unlock" size={24} color="black" />
           <Text style={styles.cardText}>로그아웃</Text>
-          <Text style={{ color: "gray" }}>alsgud8311@naver.com</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.card}>
           <FontAwesome5 name="sad-tear" size={24} color="black" />
