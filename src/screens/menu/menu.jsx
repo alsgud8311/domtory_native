@@ -6,7 +6,7 @@ export default function Menu() {
   return (
     <ScrollView style={styles.container}>
       <Datecard/>
-      <Dailymenu/>
+      {/* <Dailymenu /> */}
     </ScrollView>
 
   )

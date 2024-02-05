@@ -7,9 +7,52 @@ import {
     TouchableOpacity,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
+import { getLunchMenuData, getDinnerMenuData, getBreakMenuData } from "../../server/menu";
 
-export default function RecentPostCard() {
+
+export default function RecentPostCard({ selectedDate }) {
     const [recentPostData, setRecentPostData] = useState(null);
+    const currentDate = new Date();
+
+    function convertDateToCustomFormat(dateString) {
+        const originalDate = new Date(dateString);
+      
+        const day = originalDate.getUTCDate().toString().padStart(2, '0');
+        const month = (originalDate.getUTCMonth() + 1).toString().padStart(2, '0');
+        const year = originalDate.getUTCFullYear().toString().slice(2, 4);
+      
+        return year + month + day;
+      }
+
+
+    const [breakData, setBreakData] = useState(null);
+    useEffect(() => {
+        (async () => {
+            const data = await getBreakMenuData(convertDateToCustomFormat(selectedDate)); 
+            setBreakData(data && data[0] && data[0].breakfast_list); 
+            console.log(data);
+            console.log(convertDateToCustomFormat(selectedDate))
+
+        })();
+    }, [selectedDate]);
+
+    const [lunchData, setLunchData] = useState(null);
+    useEffect(() => {
+        (async () => {
+            const data = await getLunchMenuData(convertDateToCustomFormat(selectedDate)); 
+            setLunchData(data && data[0] && data[0].lunch_list); 
+            console.log(data);
+        })();
+    }, [selectedDate]);
+
+    const [dinnerData, setDinnerData] = useState(null);
+    useEffect(() => {
+        (async () => {
+            const data = await getDinnerMenuData(convertDateToCustomFormat(selectedDate)); 
+            setDinnerData(data && data[0] && data[0].dinner_list); 
+            console.log(data);
+        })();
+    }, [selectedDate]);
 
     return (
         <View style={styles.container}>
@@ -17,35 +60,38 @@ export default function RecentPostCard() {
                 <Text style={styles.dayText}>02.05. (월) 식단</Text>
             </View>
             <View style={styles.meal}>
-                <Text style={styles.mealText}>아침</Text>
                 <View style={styles.card}>
                     <View>
                         <View style={styles.mealWrapper}>
-                            <Text style={styles.mealText}>부대찌개</Text>
-                            <Text style={styles.mealText}>현미밥</Text>
-                            <Text style={styles.mealText}>배추김치</Text>
-                            <Text style={styles.mealText}>콩나물불고기</Text>
-                            <Text style={styles.mealText}>시금치무침</Text>
+                            <Text style={styles.timeText}>아침</Text>
+                            {breakData && breakData.map((item, index) => (
+                                <Text key={index} style={styles.mealText}>{item}</Text>
+                            ))}
+
                         </View>
                     </View>
                 </View>
             </View>
             <View style={styles.meal}>
-                <Text style={styles.mealText}>점심</Text>
                 <View style={styles.card}>
                     <View>
                         <View style={styles.mealWrapper}>
-                            <Text style={styles.mealText}>점심 식단</Text>
+                            <Text style={styles.timeText}>점심</Text>
+                            {lunchData && lunchData.map((item, index) => (
+                                <Text key={index} style={styles.mealText}>{item}</Text>
+                            ))}
                         </View>
                     </View>
                 </View>
             </View>
             <View style={styles.meal}>
-                <Text style={styles.mealText}>저녁</Text>
                 <View style={styles.card}>
                     <View>
                         <View style={styles.mealWrapper}>
-                            <Text style={styles.mealText}>저녁 식단</Text>
+                            <Text style={styles.timeText}>저녁</Text>
+                            {dinnerData && dinnerData.map((item, index) => (
+                                <Text key={index} style={styles.mealText}>{item}</Text>
+                            ))}
                         </View>
                     </View>
                 </View>
@@ -75,8 +121,10 @@ const styles = StyleSheet.create({
         paddingRight: 10,
         paddingBottom: 20,
     },
-    mealText: {
+    timeText: {
         fontSize: 15,
+        borderBottomColor: 'orange',
+        borderBottomWidth: 1,
         paddingBottom: 10,
     },
     card: {
@@ -95,8 +143,8 @@ const styles = StyleSheet.create({
         marginTop: 5,
     },
     mealText: {
-        fontSize: 16,
-        paddingVertical: 3,
+        fontSize: 15,
+        paddingTop: 7,
     },
     mealWrapper: {
         flexDirection: "colomn",

@@ -7,6 +7,7 @@ import {
     TouchableOpacity,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
+import RecentPostCard from "./dailymenu";
 
 
 export default function Menu() {
@@ -14,40 +15,47 @@ export default function Menu() {
     const currentDate = new Date();
     const options = { month: '2-digit', day: '2-digit', weekday: 'short' };
 
+    const [selectedDate, setSelectedDate] = useState(new Date());
+
+    const handleDateSelection = (date) => {
+        setSelectedDate(date);
+    };
+
     return (
-        <View style={styles.container}>
+            <View style={styles.container}>
             <ScrollView showsHorizontalScrollIndicator={false} style={styles.scrollContainer} horizontal={true}>
-                <View style={styles.card}>
-                    <Text style={styles.dateText}>{currentDate.toLocaleDateString('ko-KR', options)}</Text>
-                </View>
-                <View style={styles.card}>
-                    <Text style={styles.dateText}>{new Date(currentDate.setDate(currentDate.getDate() + 1)).toLocaleDateString('ko-KR', options)}</Text>
-                </View>
-                <View style={styles.card}>
-                    <Text style={styles.dateText}>{new Date(currentDate.setDate(currentDate.getDate() + 1)).toLocaleDateString('ko-KR', options)}</Text>
-                </View>
-                <View style={styles.card}>
-                    <Text style={styles.dateText}>{new Date(currentDate.setDate(currentDate.getDate() + 1)).toLocaleDateString('ko-KR', options)}</Text>
-                </View>
-                <View style={styles.card}>
-                    <Text style={styles.dateText}>{new Date(currentDate.setDate(currentDate.getDate() + 1)).toLocaleDateString('ko-KR', options)}</Text>
-                </View>
-                <View style={styles.card}>
-                    <Text style={styles.dateText}>{new Date(currentDate.setDate(currentDate.getDate() + 1)).toLocaleDateString('ko-KR', options)}</Text>
-                </View>
-                <View style={styles.card}>
-                    <Text style={styles.dateText}>{new Date(currentDate.setDate(currentDate.getDate() + 1)).toLocaleDateString('ko-KR', options)}</Text>
-                </View>
+                    <TouchableOpacity onPress={() => handleDateSelection(currentDate)}>
+                        <View style={styles.card}>
+                            <Text style={styles.dateText}>{currentDate.toLocaleDateString('ko-KR', options)}</Text>
+                        </View>
+                    </TouchableOpacity>
+
+                    {[...Array(6).keys()].map((index) => {
+                        const nextDate = new Date();
+                        nextDate.setDate(currentDate.getDate() + index + 1);
+
+                        return (
+                            <TouchableOpacity key={index} onPress={() => handleDateSelection(nextDate)}>
+                                <View style={styles.card}>
+                                    <Text style={styles.dateText}>{nextDate.toLocaleDateString('ko-KR', options)}</Text>
+                                </View>
+                            </TouchableOpacity>
+                        );
+                    })}
             </ScrollView>
-        </View>
-    )
-}
+
+            <RecentPostCard selectedDate={selectedDate} />
+            </View>
+
+    );
+};
 
 
 const styles = StyleSheet.create({
     container: {
         backgroundColor: "#fff",
         marginBottom: 10,
+        flexDirection: "colomn",
     },
     scrollContainer: {
         paddingLeft: 10,
