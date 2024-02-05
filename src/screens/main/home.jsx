@@ -7,6 +7,7 @@ import NoticeCard from "../../components/main/noticecard";
 import RecentPostCard from "../../components/main/recentcard";
 import CouncilNoticeCard from "../../components/main/councilnoticecard";
 import BottomTabBar from "../maintab";
+import Notification from "../../utils/firebase/firebaseSetting";
 
 export default function Home({ navigation }) {
   return (
@@ -19,6 +20,7 @@ export default function Home({ navigation }) {
         <CommunityCard navigation={navigation} />
         <RecentPostCard navigation={navigation} />
       </ScrollView>
+      <Notification />
     </View>
   );
 }
