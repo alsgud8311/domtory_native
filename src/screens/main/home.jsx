@@ -20,7 +20,6 @@ export default function Home({ navigation }) {
         <CommunityCard navigation={navigation} />
         <RecentPostCard navigation={navigation} />
       </ScrollView>
-      <Notification />
     </View>
   );
 }
