@@ -128,6 +128,33 @@ export default function CbhsNotice() {
     },
   ];
 
+  // const [data, setData] = useState([]);
+  // const [searchKeyword, setSearchKeyword] = useState("");
+  // const [filteredData, setFilteredData] = useState([]);
+  // const [sortedData, setSortedData] = useState([]);
+  // const [isLoading, setIsLoading] = useState(true);
+
+  // useEffect(() => {
+  //   axios
+  //     .get("https://api.domtory.site/notice/")
+  //     .then((response) => {
+  //       setData(response.data);
+  //       setIsLoading(false);
+  //       console.log(data)
+  //     })
+  //     .catch((error) => {
+  //       console.error(error);
+  //     });
+  // }, []);
+
+  // // 날짜 기준으로 내림차순 정렬
+  // useEffect(() => {
+  //   const sorted = [...filteredData].sort(
+  //     (a, b) => new Date(b.date) - new Date(a.date)
+  //   );
+  //   setSortedData(sorted);
+  // }, [filteredData]);
+
   const PAGE_SIZE = 10; // 페이지당 표시할 아이템의 수
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 상태
   const [loading, setLoading] = useState(false); // 데이터 로딩 상태
