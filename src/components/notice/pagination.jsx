@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 
@@ -10,19 +9,14 @@ const Pagination = ({ totalPages, currentPage, onPageChange }) => {
 
     return (
         <View style={styles.paginationContainer}>
-            <TouchableOpacity
-                disabled={currentPage === 1}
-                onPress={() => onPageChange(1)}
-            >
+            <TouchableOpacity disabled={currentPage === 1} onPress={() => onPageChange(1)}>
                 <AntDesign name="doubleleft" style={styles.pageArrow} />
             </TouchableOpacity>
-            <TouchableOpacity
-                disabled={currentPage === 1}
-                onPress={() => onPageChange(currentPage - 1)}
-            >
-                {/* <Text style={styles.pageArrow}>&lt;</Text> */}
+
+            <TouchableOpacity disabled={currentPage === 1} onPress={() => onPageChange(currentPage - 1)}>
                 <AntDesign name="left" style={styles.pageArrow} />
             </TouchableOpacity>
+
             {pageNumbers.map(number => (
                 <TouchableOpacity
                     key={number}
@@ -32,16 +26,12 @@ const Pagination = ({ totalPages, currentPage, onPageChange }) => {
                     <Text>{number}</Text>
                 </TouchableOpacity>
             ))}
-            <TouchableOpacity
-                disabled={currentPage === totalPages}
-                onPress={() => onPageChange(currentPage + 1)}
-            >
+
+            <TouchableOpacity disabled={currentPage === totalPages} onPress={() => onPageChange(currentPage + 1)}>
                 <AntDesign name="right" style={styles.pageArrow} />
             </TouchableOpacity>
-            <TouchableOpacity
-                disabled={currentPage === totalPages}
-                onPress={() => onPageChange(totalPages)}
-            >
+
+            <TouchableOpacity disabled={currentPage === totalPages} onPress={() => onPageChange(totalPages)}>
                 <AntDesign name="doubleright" style={styles.pageArrow} />
             </TouchableOpacity>
         </View>
