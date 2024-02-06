@@ -380,7 +380,9 @@ const select = StyleSheet.create({
     select: {
         flexDirection: 'row',
         padding: 10,
-        paddingBottom: 0
+        paddingBottom: 0,
+        borderBottomWidth: 1.5,
+        borderBottomColor: 'rgba(211, 211, 211, 0.7)',
     },
     active: {
         padding: 10,
@@ -389,7 +391,8 @@ const select = StyleSheet.create({
         fontWeight: '600',
         borderBottomWidth: 2,
         borderBottomColor: '#ffa451',
-        color: '#ffa451'
+        color: '#ffa451',
+
     },
     inactive: {
         padding: 10,

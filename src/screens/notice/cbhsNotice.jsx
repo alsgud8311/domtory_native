@@ -4,8 +4,6 @@ import Noticebox from '../../components/notice/noticebox';
 
 export default function CbhsNotice() {
   return (
-    <View >
       <Noticebox/>
-    </View>
   );
 }

@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 5
+        paddingBottom: 10
     },
     pageArrow: {
         margin: 8,
