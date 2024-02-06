@@ -43,7 +43,6 @@ export default function Menu() {
                         );
                     })}
             </ScrollView>
-
             <RecentPostCard selectedDate={selectedDate} />
             </View>
 

@@ -3,20 +3,15 @@ import {
     View,
     Text,
     StyleSheet,
-    ScrollView,
-    TouchableOpacity,
 } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
 import { getLunchMenuData, getDinnerMenuData, getBreakMenuData } from "../../server/menu";
 
 
 export default function RecentPostCard({ selectedDate }) {
     const [recentPostData, setRecentPostData] = useState(null);
-    const currentDate = new Date();
-
+    
     function convertDateToCustomFormat(dateString) {
         const originalDate = new Date(dateString);
-      
         const day = originalDate.getUTCDate().toString().padStart(2, '0');
         const month = (originalDate.getUTCMonth() + 1).toString().padStart(2, '0');
         const year = originalDate.getUTCFullYear().toString().slice(2, 4);
@@ -24,14 +19,15 @@ export default function RecentPostCard({ selectedDate }) {
         return year + month + day;
       }
 
+    const options = { month: '2-digit', day: '2-digit', weekday: 'short' };
+
+
 
     const [breakData, setBreakData] = useState(null);
     useEffect(() => {
         (async () => {
             const data = await getBreakMenuData(convertDateToCustomFormat(selectedDate)); 
             setBreakData(data && data[0] && data[0].breakfast_list); 
-            console.log(data);
-            console.log(convertDateToCustomFormat(selectedDate))
 
         })();
     }, [selectedDate]);
@@ -41,7 +37,6 @@ export default function RecentPostCard({ selectedDate }) {
         (async () => {
             const data = await getLunchMenuData(convertDateToCustomFormat(selectedDate)); 
             setLunchData(data && data[0] && data[0].lunch_list); 
-            console.log(data);
         })();
     }, [selectedDate]);
 
@@ -50,14 +45,13 @@ export default function RecentPostCard({ selectedDate }) {
         (async () => {
             const data = await getDinnerMenuData(convertDateToCustomFormat(selectedDate)); 
             setDinnerData(data && data[0] && data[0].dinner_list); 
-            console.log(data);
         })();
     }, [selectedDate]);
 
     return (
         <View style={styles.container}>
             <View style={styles.day}>
-                <Text style={styles.dayText}>02.05. (월) 식단</Text>
+                <Text style={styles.dayText}>{selectedDate.toLocaleDateString('ko-KR', options)} 식단</Text>
             </View>
             <View style={styles.meal}>
                 <View style={styles.card}>
