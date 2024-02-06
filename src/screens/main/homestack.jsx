@@ -12,9 +12,8 @@ import LostAndFoundDetail from "../community/lostandfound/lostandfoundDetail";
 import General from "../community/general/general";
 import GeneralDetail from "../community/general/generalDetail";
 import Menu from "../menu/menu";
-import CbhsNotice from "../notice/cbhsNotice/cbhsNotice";
-import CouncilNotice from "../notice/councilNotice/CouncilNotice";
-import CouncilNoticeDetail from "../notice/councilNotice/CouncilNoticeDetail";
+import CbhsNotice from "../notice/cbhsNotice";
+import CouncilNoticeDetail from "../notice/CouncilNoticeDetail";
 import Header from "../../components/common/header";
 import { stackscreenOptions } from "../../constants/screenoptions";
 
@@ -39,7 +38,7 @@ const HomeStack = () => {
       <Stack.Screen name="학사 식단" component={Menu} />
       <Stack.Screen name="학사내 공지사항" component={CbhsNotice} />
       <Stack.Screen name="학사내 공지사항 글 보기" component={CbhsNotice} />
-      <Stack.Screen name="자율회 공지사항" component={CouncilNotice} />
+      <Stack.Screen name="자율회 공지사항" component={CbhsNotice} />
       <Stack.Screen
         name="자율회 공지사항 글 보기"
         component={CouncilNoticeDetail}
