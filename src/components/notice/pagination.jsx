@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { AntDesign } from '@expo/vector-icons';
 
 const Pagination = ({ totalPages, currentPage, onPageChange }) => {
     const pageNumbers = [];
@@ -13,13 +14,14 @@ const Pagination = ({ totalPages, currentPage, onPageChange }) => {
                 disabled={currentPage === 1}
                 onPress={() => onPageChange(1)}
             >
-                <Text style={styles.pageArrow}>&laquo;</Text>
+                <AntDesign name="doubleleft" style={styles.pageArrow} />
             </TouchableOpacity>
             <TouchableOpacity
                 disabled={currentPage === 1}
                 onPress={() => onPageChange(currentPage - 1)}
             >
-                <Text style={styles.pageArrow}>&lt;</Text>
+                {/* <Text style={styles.pageArrow}>&lt;</Text> */}
+                <AntDesign name="left" style={styles.pageArrow} />
             </TouchableOpacity>
             {pageNumbers.map(number => (
                 <TouchableOpacity
@@ -34,13 +36,13 @@ const Pagination = ({ totalPages, currentPage, onPageChange }) => {
                 disabled={currentPage === totalPages}
                 onPress={() => onPageChange(currentPage + 1)}
             >
-                <Text style={styles.pageArrow}>&gt;</Text>
+                <AntDesign name="right" style={styles.pageArrow} />
             </TouchableOpacity>
             <TouchableOpacity
                 disabled={currentPage === totalPages}
                 onPress={() => onPageChange(totalPages)}
             >
-                <Text style={styles.pageArrow}>&raquo;</Text>
+                <AntDesign name="doubleright" style={styles.pageArrow} />
             </TouchableOpacity>
         </View>
     );
@@ -56,7 +58,7 @@ const styles = StyleSheet.create({
         margin: 8,
         paddingVertical: 10,
         paddingHorizontal: 5,
-        fontSize: 25,
+        fontSize: 17,
         fontWeight: '300'
     },
     pageNum: {
