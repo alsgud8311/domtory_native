@@ -12,9 +12,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#fff5d3"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.Domtory",

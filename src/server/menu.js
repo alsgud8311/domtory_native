@@ -13,7 +13,6 @@ export const getDateMenuData = async () => {
   let menuList;
   try {
     const response = await apiBe.get(`/menu/${dateForApi}/${dayDivForApi}/`);
-    console.log(response.data);
     const menuData = response.data;
     if (menuData) {
       if (hour >= 0 && hour <= 8) {

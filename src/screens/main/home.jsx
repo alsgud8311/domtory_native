@@ -42,9 +42,10 @@ export default function Home({ navigation }) {
         .getToken()
         .then((token) => {
           console.log("token: ", token);
+        })
+        .catch((error) => {
+          console.log("cannot get token: ", error);
         });
-    } else {
-      console.log("Failed token status", authStatus);
     }
 
     //개별 알림이 사용가능한지 확인
