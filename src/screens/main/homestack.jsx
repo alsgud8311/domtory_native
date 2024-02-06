@@ -1,6 +1,5 @@
 import Home from "./home";
-import CommunityShortCuts from "../community/shortcuts/communityShortcuts";
-import Setting from "../setting/Setting";
+import Setting from "../setting/settingstack";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import FleeMarket from "../community/fleemarket/fleemarket";
 import FleeMarketDetail from "../community/fleemarket/fleemarketDetail";
@@ -12,40 +11,24 @@ import LostAndFound from "../community/lostandfound/lostandfound";
 import LostAndFoundDetail from "../community/lostandfound/lostandfoundDetail";
 import General from "../community/general/general";
 import GeneralDetail from "../community/general/generalDetail";
-import { Image, View } from "react-native";
-import logo from "../../assets/domtory_icon.png";
 import Menu from "../menu/menu";
 import CbhsNotice from "../notice/cbhsNotice/cbhsNotice";
 import CouncilNotice from "../notice/councilNotice/CouncilNotice";
 import CouncilNoticeDetail from "../notice/councilNotice/CouncilNoticeDetail";
-
-function Logo() {
-  return (
-    <View style={{ flex: 1, justifyContent: "center" }}>
-      <Image source={logo} style={{ width: 50, height: 50 }} />
-    </View>
-  );
-}
+import Header from "../../components/common/header";
+import { stackscreenOptions } from "../../constants/screenoptions";
 
 const HomeStack = () => {
   const Stack = createNativeStackNavigator();
-  const screenOptions = {
-    headerShowLabel: false,
-    headerShown: true,
-    headerStyle: {
-      elevation: 0,
-      shadowColor: "transparent",
-    },
-    headerTintColor: "gray",
-  };
+
   return (
-    <Stack.Navigator initialRouteName="Home" screenOptions={screenOptions}>
+    <Stack.Navigator initialRouteName="Home" screenOptions={stackscreenOptions}>
       <Stack.Screen
         name="Domtory Main"
         component={Home}
         options={{
           headerLeft: () => {
-            return <Logo />;
+            return <Header />;
           },
           title: "",
           headerBackTitleStyle: {
