@@ -3,9 +3,15 @@
     "version": ">= 7.1.2"
   },
   "build": {
-    "development-simulator": {
+    "development": {
       "developmentClient": true,
       "distribution": "internal",
+      "ios": {
+        "resourceClass": "default"
+      }
+    },
+    "development-simulator": {
+      "extends": "development",
       "ios": {
         "simulator": true
       }

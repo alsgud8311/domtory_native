@@ -41,7 +41,7 @@ export default function Home({ navigation }) {
       messaging()
         .getToken()
         .then((token) => {
-          console.log(token);
+          console.log("token: ", token);
         });
     } else {
       console.log("Failed token status", authStatus);
