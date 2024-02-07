@@ -9,6 +9,8 @@ import CouncilNoticeCard from "../../components/main/councilnoticecard";
 import { useEffect, useRef, useState } from "react";
 import * as Notifications from "expo-notifications";
 import messaging from "@react-native-firebase/messaging";
+import React from "react";
+// import * as SplashScreen from "expo-splash-screen";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -72,7 +74,7 @@ export default function Home({ navigation }) {
     });
 
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
-      Alert.alert("A new FCM message arrived!", JSON.stringify(remoteMessage));
+      Alert.alert(JSON.stringify(remoteMessage.notification.body));
     });
 
     return unsubscribe;
