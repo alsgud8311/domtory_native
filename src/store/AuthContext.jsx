@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { apiBe } from "../server";
-import * as SecureStore from "expo-secure-store";
+// import * as SecureStore from "expo-secure-store";
 import axios from "axios";
 
 const AuthContext = createContext();
@@ -19,7 +19,6 @@ export const AuthProvider = ({ children }) => {
       nickname: null,
     },
   });
-  const value = {};
 
   useEffect(() => {
     const loadToken = async () => {
@@ -94,6 +93,27 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const signout = async () => {};
+  const signout = async () => {
+    await SecureStore.deleteItemAsync(ACCESS_TOKEN);
+    await SecureStore.deleteItemAsync(REFRESH_TOKEN);
+    await SecureStore.deleteItemAsync(MEMBER);
+
+    axios.defaults.headers.common["Authorization"] = "";
+
+    setAuthState({
+      accessToken: null,
+      refreshToken: null,
+      authenticated: fasle,
+      member: null,
+    });
+  };
+
+  const value = {
+    onRegister: signUp,
+    onLogin: signin,
+    onLogout: signout,
+    authState: authState,
+  };
+
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
