@@ -11,13 +11,8 @@ const Pagination = ({ totalPages, currentPage, onPageChange }) => {
         pageNumbers.push(i);
     }
 
-    const handleMoveLeft = () => {
-        onPageChange(Math.max(currentPage - maxPageNumWindow, 1));
-    }
-
-    const handleMoveRight = () => {
-        onPageChange(Math.min(currentPage + maxPageNumWindow, totalPages));
-    }
+    // 현재 페이지가 마지막 페이지 그룹에 속하는지 확인
+    const isLastPageGroup = endPage === totalPages;
 
     return (
         <View style={styles.paginationContainer}>
@@ -43,7 +38,7 @@ const Pagination = ({ totalPages, currentPage, onPageChange }) => {
                 <AntDesign name="right" style={styles.pageArrow} />
             </TouchableOpacity>
 
-            <TouchableOpacity disabled={currentPage === totalPages} onPress={() => onPageChange(startPage + maxPageNumWindow)}>
+            <TouchableOpacity disabled={isLastPageGroup} onPress={() => onPageChange(startPage + maxPageNumWindow)}>
                 <AntDesign name="doubleright" style={styles.pageArrow} />
             </TouchableOpacity>
         </View>
