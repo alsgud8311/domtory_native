@@ -1,11 +1,10 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Home from "./main/home";
-import CommunityShortCuts from "./community/shortcuts/communityShortcuts";
-import Setting from "./setting/Setting";
 import HomeStack from "./main/homestack";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Text, View } from "react-native";
+import CommunityStack from "./community/communitystack";
+import SettingStack from "./setting/settingstack";
 
 const MainTab = () => {
   const Tab = createBottomTabNavigator();
@@ -49,7 +48,7 @@ const MainTab = () => {
       />
       <Tab.Screen
         name="Community"
-        component={CommunityShortCuts}
+        component={CommunityStack}
         options={{
           title: "Community",
           // 속성에서 focused 뽑아내서 활성상태 여부 검사해서 색상 변경
@@ -73,9 +72,9 @@ const MainTab = () => {
       />
       <Tab.Screen
         name="Setting"
-        component={Setting}
+        component={SettingStack}
         options={{
-          title: "Home",
+          title: "Mypage",
           // 속성에서 focused 뽑아내서 활성상태 여부 검사해서 색상 변경
           tabBarIcon: ({ focused }) => (
             <View
