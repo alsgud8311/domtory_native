@@ -3,13 +3,25 @@ import { AntDesign } from '@expo/vector-icons';
 
 const Pagination = ({ totalPages, currentPage, onPageChange }) => {
     const pageNumbers = [];
-    for (let i = 1; i <= Math.min(5, totalPages); i++) {
+    const maxPageNumWindow = 5;
+    let startPage = Math.floor((currentPage - 1) / maxPageNumWindow) * maxPageNumWindow + 1;
+    let endPage = Math.min(startPage + maxPageNumWindow - 1, totalPages);
+
+    for (let i = startPage; i <= endPage; i++) {
         pageNumbers.push(i);
+    }
+
+    const handleMoveLeft = () => {
+        onPageChange(Math.max(currentPage - maxPageNumWindow, 1));
+    }
+
+    const handleMoveRight = () => {
+        onPageChange(Math.min(currentPage + maxPageNumWindow, totalPages));
     }
 
     return (
         <View style={styles.paginationContainer}>
-            <TouchableOpacity disabled={currentPage === 1} onPress={() => onPageChange(1)}>
+            <TouchableOpacity disabled={currentPage === 1} onPress={() => onPageChange(startPage - maxPageNumWindow)}>
                 <AntDesign name="doubleleft" style={styles.pageArrow} />
             </TouchableOpacity>
 
@@ -31,7 +43,7 @@ const Pagination = ({ totalPages, currentPage, onPageChange }) => {
                 <AntDesign name="right" style={styles.pageArrow} />
             </TouchableOpacity>
 
-            <TouchableOpacity disabled={currentPage === totalPages} onPress={() => onPageChange(totalPages)}>
+            <TouchableOpacity disabled={currentPage === totalPages} onPress={() => onPageChange(startPage + maxPageNumWindow)}>
                 <AntDesign name="doubleright" style={styles.pageArrow} />
             </TouchableOpacity>
         </View>
@@ -58,8 +70,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 13,
         height: 35,
         width: 35,
-        justifyContent: 'center', 
-        alignItems: 'center', 
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     pageNumActive: {
         margin: 3,
@@ -69,7 +81,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(255, 164, 81, 1)',
         height: 35,
         width: 35,
-        justifyContent: 'center', 
+        justifyContent: 'center',
         alignItems: 'center',
     },
 });
