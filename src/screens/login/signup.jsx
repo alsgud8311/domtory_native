@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   Alert,
   Button,
@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import { useAuth } from "../../store/AuthContext";
 import logo from "../../assets/domtory_icon.png";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function Signup({ navigation }) {
   const [email, setEmail] = useState("");
@@ -27,11 +28,36 @@ export default function Signup({ navigation }) {
   const [cbhsNum, setCbhsNum] = useState("");
   const { onLogin, onRegister } = useAuth();
 
-  const onLoginPress = () => {};
-
-  const onSingupPress = () => {
-    navigation.navigate("회원가입");
+  const signup = async () => {
+    const signupdata = {
+      email: email,
+      password: password,
+      name: name,
+      phoneNumber: phoneNum,
+      nickname: nickname,
+      birthday: birth,
+      dormitorycode: cbhsNum,
+    };
+    const result = await onRegister(signupdata);
+    if (result && result.error) {
+      console.log(result);
+    }
   };
+
+  //다른 스택 컴포넌트로 갔다가 돌아오는 상태를 관찰하는 훅
+  useFocusEffect(
+    useCallback(() => {
+      // 스크린이 포커스 될 때 실행될 로직
+      setEmail("");
+      setPassword("");
+      setPasswordCheck("");
+      setBirth("");
+      setCbhsNum("");
+      setName("");
+      setPhoneNum("");
+      setNickname("");
+    }, [])
+  );
 
   return (
     <ScrollView>
@@ -47,18 +73,24 @@ export default function Signup({ navigation }) {
                 placeholder="이메일"
                 placeholderColor="#c4c3cb"
                 style={styles.signupFormTextInput}
+                onChangeText={(text) => setEmail(text)}
+                value={email}
               />
               <TextInput
                 placeholder="비밀번호"
                 placeholderColor="#c4c3cb"
                 style={styles.signupFormTextInput}
                 secureTextEntry={true}
+                onChangeText={(text) => setPassword(text)}
+                value={password}
               />
               <TextInput
                 placeholder="비밀번호 확인"
                 placeholderColor="#c4c3cb"
                 style={styles.signupFormTextInput}
                 secureTextEntry={true}
+                onChangeText={(text) => setPasswordCheck(text)}
+                value={passwordCheck}
               />
               <View
                 style={{
@@ -72,11 +104,15 @@ export default function Signup({ navigation }) {
                   placeholderColor="#c4c3cb"
                   style={styles.signupFormTextInputHalf}
                   secureTextEntry={true}
+                  onChangeText={(text) => setName(text)}
+                  value={name}
                 />
                 <TextInput
                   placeholder="생일"
                   placeholderColor="#c4c3cb"
                   style={styles.signupFormTextInputHalf}
+                  onChangeText={(text) => setBirth(text)}
+                  value={birth}
                 />
               </View>
               <TextInput
@@ -84,22 +120,25 @@ export default function Signup({ navigation }) {
                 placeholderColor="#c4c3cb"
                 style={styles.signupFormTextInput}
                 secureTextEntry={true}
+                onChangeText={(text) => setPhoneNum(text)}
+                value={phoneNum}
               />
               <TextInput
                 placeholder="닉네임"
                 placeholderColor="#c4c3cb"
                 style={styles.signupFormTextInput}
+                onChangeText={(text) => setNickname(text)}
+                value={nickname}
               />
               <TextInput
                 placeholder="학사번호"
                 placeholderColor="#c4c3cb"
                 style={styles.signupFormTextInputHalf}
+                onChangeText={(text) => setCbhsNum(text)}
+                value={cbhsNum}
               />
             </View>
-            <TouchableOpacity
-              style={styles.loginButton}
-              onPress={() => onLoginPress()}
-            >
+            <TouchableOpacity style={styles.loginButton} onPress={signup}>
               <Text style={{ fontSize: 20, color: "white", fontWeight: 700 }}>
                 회원가입
               </Text>

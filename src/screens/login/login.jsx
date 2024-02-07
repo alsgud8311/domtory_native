@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   Alert,
   Button,
@@ -14,13 +14,27 @@ import {
 } from "react-native";
 import { useAuth } from "../../store/AuthContext";
 import logo from "../../assets/domtory_icon.png";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { onLogin, onRegister } = useAuth();
+  //다른 스택 컴포넌트로 갔다가 돌아오는 상태를 관찰하는 훅
+  useFocusEffect(
+    useCallback(() => {
+      // 스크린이 포커스 될 때 실행될 로직
+      setEmail("");
+      setPassword("");
+    }, [])
+  );
 
-  const onLoginPress = () => {};
+  const login = async () => {
+    const result = await onLogin(email, password);
+    if (result && result.error) {
+      console.log(result);
+    }
+  };
 
   const onSingupPress = () => {
     navigation.navigate("회원가입");
@@ -40,18 +54,19 @@ export default function LoginScreen({ navigation }) {
               placeholder="이메일"
               placeholderColor="#c4c3cb"
               style={styles.loginFormTextInput}
+              onChangeText={(text) => setEmail(text)}
+              value={email}
             />
             <TextInput
               placeholder="비밀번호"
               placeholderColor="#c4c3cb"
               style={styles.loginFormTextInput}
               secureTextEntry={true}
+              onChangeText={(text) => setPassword(text)}
+              value={password}
             />
           </View>
-          <TouchableOpacity
-            style={styles.loginButton}
-            onPress={() => onLoginPress()}
-          >
+          <TouchableOpacity style={styles.loginButton} onPress={login}>
             <Text style={{ fontSize: 20, color: "white", fontWeight: 700 }}>
               로그인
             </Text>
