@@ -1,0 +1,99 @@
+import { createContext, useContext, useEffect, useState } from "react";
+import { apiBe } from "../server";
+import * as SecureStore from "expo-secure-store";
+import axios from "axios";
+
+const AuthContext = createContext();
+export const useAuth = () => {
+  return useContext(AuthContext);
+};
+
+export const AuthProvider = ({ children }) => {
+  const [authState, setAuthState] = useState({
+    accessToken: null,
+    refreshToken: null,
+    authenticated: null,
+    member: {
+      id: null,
+      email: null,
+      nickname: null,
+    },
+  });
+  const value = {};
+
+  useEffect(() => {
+    const loadToken = async () => {
+      const accessToken = await SecureStore.getItemAsync(ACCESS_TOKEN);
+      const refreshToken = await SecureStore.getItemAsync(REFRESH_TOKEN);
+      const member = await SecureStore.getItemAsync(MEMBER);
+      console.log("sotred:", token);
+      if (token) {
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        setAuthState({
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+          authenticated: true,
+          member: member,
+        });
+      }
+    };
+    loadToken();
+  }, []);
+
+  const signUp = async (
+    email,
+    password,
+    name,
+    phoneNumber,
+    nickname,
+    birthday,
+    dormitoryCode
+  ) => {
+    const requestData = {
+      email: email,
+      password: password,
+      name: name,
+      phoneNumber: phoneNumber,
+      nickname: nickname,
+      birthday: birthday,
+      dormitoryCode: dormitoryCode,
+    };
+    try {
+      const { data } = await apiBe.post("/member/signup/", requestData);
+      return data;
+    } catch (error) {
+      console.log("signup error: ", error);
+    }
+  };
+
+  const signin = async (email, password) => {
+    const signinData = { email: email, password: password };
+    try {
+      const { data } = await apiBe.post("/member/signin/", signinData);
+      setAuthState({
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+        authenticated: true,
+        member: {
+          id: data.id,
+          email: data.email,
+          nickname: data.nickname,
+        },
+      });
+
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${data.accessToken}`;
+
+      await SecureStore.setItemAsync(ACCESS_TOKEN, data.accessToken);
+      await SecureStore.setItemAsync(REFRESH_TOKEN, data.refreshToken);
+      await SecureStore.setItemAsync(MEMBER, data.member);
+      return data;
+    } catch (error) {
+      console.log("signin error:", error);
+    }
+  };
+
+  const signout = async () => {};
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};

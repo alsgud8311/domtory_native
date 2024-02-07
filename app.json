@@ -16,7 +16,10 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.Domtory",
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -40,7 +43,8 @@
             "useFrameworks": "static"
           }
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "extra": {
       "eas": {
