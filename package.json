@@ -10,9 +10,12 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.0",
+    "@fortawesome/free-solid-svg-icons": "^6.5.1",
+    "@fortawesome/react-native-fontawesome": "^0.3.0",
     "@notifee/react-native": "^7.8.2",
     "@react-native-firebase/app": "^18.8.0",
     "@react-native-firebase/messaging": "^18.8.0",
+
     "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.17",

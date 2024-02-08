@@ -19,6 +19,7 @@ import Search from "../../screens/search/search"
 import Header from "../../components/common/header";
 import { stackscreenOptions } from "../../constants/screenoptions";
 
+
 function Logo() {
   return (
     <View style={{ flex: 1, justifyContent: "center" }}>
