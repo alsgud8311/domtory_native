@@ -39,29 +39,12 @@ export const AuthProvider = ({ children }) => {
     loadToken();
   }, []);
 
-  const signUp = async (
-    email,
-    password,
-    name,
-    phoneNumber,
-    nickname,
-    birthday,
-    dormitoryCode
-  ) => {
-    const requestData = {
-      email: email,
-      password: password,
-      name: name,
-      phoneNumber: phoneNumber,
-      nickname: nickname,
-      birthday: birthday,
-      dormitoryCode: dormitoryCode,
-    };
+  const signUp = async (formdata) => {
     try {
-      const { data } = await apiBe.post("/member/signup/", requestData);
+      const { data } = await apiBe.post("/member/signup/", formdata);
       return data;
     } catch (error) {
-      console.log("signup error: ", error);
+      console.error(error.response);
     }
   };
 

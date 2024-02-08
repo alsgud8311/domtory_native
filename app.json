@@ -37,6 +37,12 @@
       "@react-native-firebase/auth",
       "@react-native-firebase/crashlytics",
       [
+        "expo-image-picker",
+        {
+          "photoPermission": "The app accesses your photos to confirm your dormitory code"
+        }
+      ],
+      [
         "expo-build-properties",
         {
           "ios": {

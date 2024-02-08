@@ -16,6 +16,11 @@ import {
 import { useAuth } from "../../store/AuthContext";
 import logo from "../../assets/domtory_icon.png";
 import { useFocusEffect } from "@react-navigation/native";
+import {
+  getPhotoPermission,
+  pickImage,
+} from "../../components/common/imagepicker";
+import { FontAwesome } from "@expo/vector-icons";
 
 export default function Signup({ navigation }) {
   const [email, setEmail] = useState("");
@@ -26,21 +31,40 @@ export default function Signup({ navigation }) {
   const [phoneNum, setPhoneNum] = useState("");
   const [nickname, setNickname] = useState("");
   const [cbhsNum, setCbhsNum] = useState("");
+  const [cbhsImage, setCbhsImage] = useState(null);
   const { onLogin, onRegister } = useAuth();
 
+  const onPressPhoto = async () => {
+    const permission = await getPhotoPermission();
+    if (permission) {
+      const imageData = await pickImage();
+      setCbhsImage(imageData);
+      console.log(imageData);
+    } else {
+      Alert.alert(
+        "학사증을 업로드하기 위해서는 카메라 접근 권한을 허용해야 합니다"
+      );
+    }
+  };
+
   const signup = async () => {
-    const signupdata = {
-      email: email,
-      password: password,
-      name: name,
-      phoneNumber: phoneNum,
-      nickname: nickname,
-      birthday: birth,
-      dormitorycode: cbhsNum,
-    };
-    const result = await onRegister(signupdata);
-    if (result && result.error) {
-      console.log(result);
+    const signupFormData = new FormData();
+    signupFormData.append("email", email);
+    signupFormData.append("password", password);
+    signupFormData.append("name", name);
+    signupFormData.append("phoneNum", phoneNum);
+    signupFormData.append("nickname", nickname);
+    signupFormData.append("cbhsNum", cbhsNum);
+    signupFormData.append("cbhsImage", cbhsImage);
+    signupFormData.append("birthday", new Date().toISOString());
+    try {
+      const result = await onRegister(signupFormData);
+      if (result) {
+        Alert.alert("회원가입이 완료되었습니다! 로그인 해주세요 :)");
+        navigation.popToTop();
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -56,6 +80,7 @@ export default function Signup({ navigation }) {
       setName("");
       setPhoneNum("");
       setNickname("");
+      setCbhsImage(null);
     }, [])
   );
 
@@ -103,7 +128,6 @@ export default function Signup({ navigation }) {
                   placeholder="이름"
                   placeholderColor="#c4c3cb"
                   style={styles.signupFormTextInputHalf}
-                  secureTextEntry={true}
                   onChangeText={(text) => setName(text)}
                   value={name}
                 />
@@ -137,6 +161,29 @@ export default function Signup({ navigation }) {
                 onChangeText={(text) => setCbhsNum(text)}
                 value={cbhsNum}
               />
+              <View
+                style={{
+                  flexDirection: "row",
+                  gap: 10,
+                  alignItems: "center",
+                  paddingLeft: 10,
+                  marginTop: 10,
+                }}
+              >
+                <FontAwesome
+                  name="photo"
+                  size={24}
+                  color="black"
+                  onPress={onPressPhoto}
+                />
+                <Text>학사증 사진 업로드</Text>
+              </View>
+              {cbhsImage && (
+                <Image
+                  source={{ uri: cbhsImage.uri }}
+                  style={{ width: 150, height: 150 }}
+                />
+              )}
             </View>
             <TouchableOpacity style={styles.loginButton} onPress={signup}>
               <Text style={{ fontSize: 20, color: "white", fontWeight: 700 }}>
