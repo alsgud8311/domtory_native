@@ -12,22 +12,23 @@
       "resizeMode": "contain",
       "backgroundColor": "#fff5d3"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.Domtory"
+      "bundleIdentifier": "com.minhyung.Domtory",
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/adaptive-icon.png",
         "backgroundColor": "#fff5d3"
       },
-      "package": "com.anonymous.Domtory"
+      "package": "com.minhyung.Domtory",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./src/assets/favicon.png"
-    }
+    },
+    "plugins": ["@react-native-firebase/app"]
   }
 }

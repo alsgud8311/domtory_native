@@ -3,7 +3,22 @@ import { apiBe } from ".";
 import getDate from "../utils/getDate";
 
 export const getAllMenuData = async (date) => {
-  const { data } = await apiBe(`/menu/${date}`);
+  const { data } = await apiBe(`/menu/${date}/total`);
+  return data;
+};
+
+export const getBreakMenuData = async (date) => {
+  const { data } = await apiBe(`/menu/${date}/breakfast`);
+  return data;
+};
+
+export const getLunchMenuData = async (date) => {
+  const { data } = await apiBe(`/menu/${date}/lunch`);
+  return data;
+};
+
+export const getDinnerMenuData = async (date) => {
+  const { data } = await apiBe(`/menu/${date}/dinner`);
   return data;
 };
 
@@ -12,9 +27,10 @@ export const getDateMenuData = async () => {
 
   let menuList;
   try {
-    const response = apiBe.get(`/menu/${dateForApi}/${dayDivForApi}/`);
+    const response = await apiBe.get(`/menu/${dateForApi}/${dayDivForApi}/`);
+    console.log(response.data);
     const menuData = response.data;
-    if (data) {
+    if (menuData) {
       if (hour >= 0 && hour <= 8) {
         menuList = menuData[0].breakfast_list;
       } else if (hour >= 9 && hour <= 13) {
