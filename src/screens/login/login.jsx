@@ -19,6 +19,7 @@ import { useFocusEffect } from "@react-navigation/native";
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState({ email: null, detail: "" });
   const { onLogin, onRegister } = useAuth();
   //다른 스택 컴포넌트로 갔다가 돌아오는 상태를 관찰하는 훅
   useFocusEffect(
@@ -30,13 +31,19 @@ export default function LoginScreen({ navigation }) {
   );
 
   const login = async () => {
-    const result = await onLogin(email, password);
-    if (result && result.error) {
-      console.log(result);
+    const { success, data } = await onLogin(email, password);
+    if (success) {
+      navigation.navigate("홈 탭");
+    } else {
+      setLoginError(data);
+      if (loginError.detail) {
+        Alert.alert(loginError.detail);
+        return;
+      }
     }
   };
 
-  const onSingupPress = () => {
+  const onSignupPress = () => {
     navigation.navigate("회원가입");
   };
 
@@ -51,13 +58,20 @@ export default function LoginScreen({ navigation }) {
           </Text>
           <View styles={styles.inputWrapper}>
             <TextInput
+              autoCorrect={false}
+              spellCheck={false}
               placeholder="이메일"
               placeholderColor="#c4c3cb"
               style={styles.loginFormTextInput}
               onChangeText={(text) => setEmail(text)}
               value={email}
             />
+            {loginError.email ? (
+              <Text style={{ color: "red" }}>{loginError.email}</Text>
+            ) : null}
             <TextInput
+              autoCorrect={false}
+              spellCheck={false}
               placeholder="비밀번호"
               placeholderColor="#c4c3cb"
               style={styles.loginFormTextInput}
@@ -73,7 +87,7 @@ export default function LoginScreen({ navigation }) {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.signupButton}
-            onPress={() => onSingupPress()}
+            onPress={() => onSignupPress()}
           >
             <Text style={{ fontSize: 20, color: "orange", fontWeight: 700 }}>
               회원가입

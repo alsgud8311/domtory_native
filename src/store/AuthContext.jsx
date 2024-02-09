@@ -3,6 +3,7 @@ import { apiBe } from "../server";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
 
+//AuthContext + SecureStore을 이용한 로그인 관리
 const AuthContext = createContext();
 export const useAuth = () => {
   return useContext(AuthContext);
@@ -13,19 +14,12 @@ export const AuthProvider = ({ children }) => {
     accessToken: null,
     refreshToken: null,
     authenticated: false,
-    member: {
-      id: null,
-      email: null,
-      nickname: null,
-    },
   });
 
   useEffect(() => {
     const loadToken = async () => {
       const accessToken = await SecureStore.getItemAsync(ACCESS_TOKEN);
       const refreshToken = await SecureStore.getItemAsync(REFRESH_TOKEN);
-      const memberString = await SecureStore.getItemAsync(MEMBER);
-      const member = memberString ? JSON.parse(memberString) : null;
 
       if (accessToken) {
         axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -33,7 +27,6 @@ export const AuthProvider = ({ children }) => {
           accessToken: accessToken,
           refreshToken: refreshToken,
           authenticated: true,
-          member: member,
         });
       }
     };
@@ -70,25 +63,22 @@ export const AuthProvider = ({ children }) => {
 
       await SecureStore.setItemAsync(ACCESS_TOKEN, data.accessToken);
       await SecureStore.setItemAsync(REFRESH_TOKEN, data.refreshToken);
-      await SecureStore.setItemAsync(MEMBER, data.member);
-      return data;
+      return { success: true, data: data };
     } catch (error) {
-      console.log("signin error:", error);
+      return { success: false, data: error.response.data };
     }
   };
 
   const signout = async () => {
     await SecureStore.deleteItemAsync(ACCESS_TOKEN);
     await SecureStore.deleteItemAsync(REFRESH_TOKEN);
-    await SecureStore.deleteItemAsync(MEMBER);
 
     axios.defaults.headers.common["Authorization"] = "";
 
     setAuthState({
       accessToken: null,
       refreshToken: null,
-      authenticated: fasle,
-      member: null,
+      authenticated: false,
     });
   };
 
