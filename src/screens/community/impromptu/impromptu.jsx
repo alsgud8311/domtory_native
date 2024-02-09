@@ -1,5 +1,8 @@
-import { Text } from "react-native";
+import React from 'react';
+import Board from '../../../components/board/board'
 
 export default function Impromptu() {
-  return <Text>Impromptu</Text>;
+  return (
+    <Board/>
+  );
 }

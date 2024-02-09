@@ -1,5 +1,8 @@
-import { Text } from "react-native";
+import React from 'react';
+import Board from '../../../components/board/board'
 
 export default function LostAndFound() {
-  return <Text>Lost And Found Posts</Text>;
+  return (
+    <Board/>
+  );
 }

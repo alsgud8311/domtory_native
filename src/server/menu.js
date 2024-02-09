@@ -3,7 +3,22 @@ import { apiBe } from ".";
 import getDate from "../utils/getDate";
 
 export const getAllMenuData = async (date) => {
-  const { data } = await apiBe(`/menu/${date}`);
+  const { data } = await apiBe(`/menu/${date}/total`);
+  return data;
+};
+
+export const getBreakMenuData = async (date) => {
+  const { data } = await apiBe(`/menu/${date}/breakfast`);
+  return data;
+};
+
+export const getLunchMenuData = async (date) => {
+  const { data } = await apiBe(`/menu/${date}/lunch`);
+  return data;
+};
+
+export const getDinnerMenuData = async (date) => {
+  const { data } = await apiBe(`/menu/${date}/dinner`);
   return data;
 };
 
