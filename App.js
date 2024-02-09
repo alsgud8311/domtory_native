@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from "./src/store/AuthContext";
 import Login from "./src/screens/login/login";
 import Signup from "./src/screens/login/signup";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useEffect } from "react";
 
 const Stack = createNativeStackNavigator();
 const screenOptions = {
@@ -26,6 +27,11 @@ export default function App() {
 export const Layout = () => {
   const { authState, onLogout } = useAuth();
   console.log(authState);
+  useEffect(() => {
+    if (!authState.authenticated) {
+      console.log("로그아웃 되었습니다.");
+    }
+  }, [authState.authenticated]);
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="온보딩" screenOptions={screenOptions}>

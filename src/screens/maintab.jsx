@@ -5,6 +5,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Text, View } from "react-native";
 import CommunityStack from "./community/communitystack";
 import SettingStack from "./setting/settingstack";
+import { useEffect } from "react";
 
 const MainTab = () => {
   const Tab = createBottomTabNavigator();
@@ -20,6 +21,7 @@ const MainTab = () => {
       background: "#fff",
     },
   };
+
   return (
     <Tab.Navigator initialRouteName="Home" screenOptions={screenOptions}>
       <Tab.Screen

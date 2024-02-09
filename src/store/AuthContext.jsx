@@ -3,7 +3,7 @@ import { apiBe } from "../server";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
 
-//AuthContext + SecureStore을 이용한 로그인 관리
+//AuthContext + SecureStore을 이용한 로그인
 const AuthContext = createContext();
 export const useAuth = () => {
   return useContext(AuthContext);
@@ -14,24 +14,34 @@ export const AuthProvider = ({ children }) => {
     accessToken: null,
     refreshToken: null,
     authenticated: false,
+    member: {
+      id: null,
+      email: null,
+      nickname: null,
+    },
   });
 
   useEffect(() => {
     const loadToken = async () => {
-      const accessToken = await SecureStore.getItemAsync(ACCESS_TOKEN);
-      const refreshToken = await SecureStore.getItemAsync(REFRESH_TOKEN);
+      const accessToken = await SecureStore.getItemAsync("ACCESS_TOKEN");
+      const refreshToken = await SecureStore.getItemAsync("REFRESH_TOKEN");
+      const memberString = await SecureStore.getItemAsync("MEMBER");
+      const member = memberString ? JSON.parse(memberString) : null;
 
       if (accessToken) {
-        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${accessToken}`;
         setAuthState({
           accessToken: accessToken,
           refreshToken: refreshToken,
           authenticated: true,
+          member: member,
         });
       }
     };
     loadToken();
-  }, []);
+  }, [authState]);
 
   const signUp = async (formdata) => {
     try {
@@ -51,9 +61,9 @@ export const AuthProvider = ({ children }) => {
         refreshToken: data.refreshToken,
         authenticated: true,
         member: {
-          id: data.id,
-          email: data.email,
-          nickname: data.nickname,
+          id: data.member.id,
+          email: data.member.email,
+          nickname: data.member.nickname,
         },
       });
 
@@ -63,6 +73,7 @@ export const AuthProvider = ({ children }) => {
 
       await SecureStore.setItemAsync(ACCESS_TOKEN, data.accessToken);
       await SecureStore.setItemAsync(REFRESH_TOKEN, data.refreshToken);
+      await SecureStore.setItemAsync(MEMBER, data.member);
       return { success: true, data: data };
     } catch (error) {
       return { success: false, data: error.response.data };
@@ -70,8 +81,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signout = async () => {
-    await SecureStore.deleteItemAsync(ACCESS_TOKEN);
-    await SecureStore.deleteItemAsync(REFRESH_TOKEN);
+    await SecureStore.deleteItemAsync("ACCESS_TOKEN");
+    await SecureStore.deleteItemAsync("REFRESH_TOKEN");
+    await SecureStore.deleteItemAsync("MEMBER");
 
     axios.defaults.headers.common["Authorization"] = "";
 
@@ -79,7 +91,9 @@ export const AuthProvider = ({ children }) => {
       accessToken: null,
       refreshToken: null,
       authenticated: false,
+      member: null,
     });
+    console.log("logout");
   };
 
   const value = {
