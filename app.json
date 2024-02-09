@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./src/assets/icon.png",
     "userInterfaceStyle": "light",
-    "scheme": "Domtory",
+    "scheme": "domtory",
     "splash": {
       "image": "./src/assets/splash.png",
       "resizeMode": "contain",
@@ -15,7 +15,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.minhyung.Domtory",
+      "bundleIdentifier": "com.anonymous.Domtory",
       "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
@@ -23,12 +23,29 @@
         "foregroundImage": "./src/assets/adaptive-icon.png",
         "backgroundColor": "#fff5d3"
       },
-      "package": "com.minhyung.Domtory",
+      "package": "com.anonymous.Domtory",
       "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./src/assets/favicon.png"
     },
-    "plugins": ["@react-native-firebase/app"]
+    "plugins": [
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+      "@react-native-firebase/crashlytics",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "65a54dc1-ef06-41a3-9644-9c6765ea5e91"
+      }
+    }
   }
 }
