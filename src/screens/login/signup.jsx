@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Alert,
   Button,
@@ -26,66 +26,75 @@ export default function Signup({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordCheck, setPasswordCheck] = useState("");
+  const [validPasswordCheck, setValidPasswordCheck] = useState(true);
   const [name, setName] = useState("");
   const [birth, setBirth] = useState("");
   const [phoneNum, setPhoneNum] = useState("");
   const [nickname, setNickname] = useState("");
   const [cbhsNum, setCbhsNum] = useState("");
   const [cbhsImage, setCbhsImage] = useState(null);
+  const [errormsg, setErrorMsg] = useState({
+    email: null,
+    password: null,
+    name: null,
+    nickname: null,
+  });
   const { onLogin, onRegister } = useAuth();
 
   const onPressPhoto = async () => {
     const permission = await getPhotoPermission();
-    if (permission) {
-      const imageData = await pickImage();
-      setCbhsImage(imageData);
-      console.log(imageData);
-    } else {
+    if (!permission) {
       Alert.alert(
-        "학사증을 업로드하기 위해서는 카메라 접근 권한을 허용해야 합니다"
+        "학사증을 업로드하기 위해서는 사진 접근 권한을 허용해야 합니다"
       );
+      return; // Early return if no permission
     }
+    const imageData = await pickImage();
+    if (!imageData) {
+      console.log("Image picking was failed");
+      return; // Handle the case where the image picker was cancelled or failed
+    }
+    setCbhsImage(imageData);
   };
 
+  //Formdata 형식으로 회원가입 요청
   const signup = async () => {
+    const birth = new Date().toISOString();
     const signupFormData = new FormData();
     signupFormData.append("email", email);
     signupFormData.append("password", password);
     signupFormData.append("name", name);
-    signupFormData.append("phoneNum", phoneNum);
+    signupFormData.append("phoneNumber", phoneNum);
     signupFormData.append("nickname", nickname);
-    signupFormData.append("cbhsNum", cbhsNum);
-    signupFormData.append("cbhsImage", cbhsImage);
-    signupFormData.append("birthday", new Date().toISOString());
-    try {
-      const result = await onRegister(signupFormData);
-      if (result) {
-        Alert.alert("회원가입이 완료되었습니다! 로그인 해주세요 :)");
-        navigation.popToTop();
-      }
-    } catch (error) {
-      console.log(error);
+    signupFormData.append("dormitoryCode", cbhsNum);
+    signupFormData.append("dormitoryCard", {
+      uri: cbhsImage.uri,
+      name: cbhsImage.fileName,
+      type: cbhsImage.mimeType,
+    });
+    signupFormData.append("birthday", birth);
+    const { success, data } = await onRegister(signupFormData);
+    if (success) {
+      console.log("signup success");
+      Alert.alert("회원가입이 완료되었습니다! 로그인 해주세요 :)");
+      navigation.reset({ routes: [{ name: "로그인" }] });
+    } else {
+      //에러시 메세지 띄우기용 state
+      setErrorMsg(data);
+      console.log(errormsg);
     }
   };
 
-  //다른 스택 컴포넌트로 갔다가 돌아오는 상태를 관찰하는 훅
-  useFocusEffect(
-    useCallback(() => {
-      // 스크린이 포커스 될 때 실행될 로직
-      setEmail("");
-      setPassword("");
-      setPasswordCheck("");
-      setBirth("");
-      setCbhsNum("");
-      setName("");
-      setPhoneNum("");
-      setNickname("");
-      setCbhsImage(null);
-    }, [])
-  );
+  useEffect(() => {
+    if (password === passwordCheck) {
+      setValidPasswordCheck(true);
+    } else {
+      setValidPasswordCheck(false);
+    }
+  }, [passwordCheck]);
 
   return (
-    <ScrollView>
+    <ScrollView style={{ backgroundColor: "white" }}>
       <KeyboardAvoidingView style={styles.containerView} behavior="padding">
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.loginFormView}>
@@ -94,14 +103,29 @@ export default function Signup({ navigation }) {
               돔토리는 충북학사생 전용 커뮤니티 서비스입니다.
             </Text>
             <View styles={styles.inputWrapper}>
+              <View
+                style={{
+                  justifyContent: "center",
+                  paddingLeft: 5,
+                }}
+              >
+                <Text style={{ fontSize: 17, fontWeight: 700 }}>가입정보</Text>
+              </View>
               <TextInput
+                spellCheck={false}
+                autoCorrect={false}
                 placeholder="이메일"
                 placeholderColor="#c4c3cb"
                 style={styles.signupFormTextInput}
                 onChangeText={(text) => setEmail(text)}
                 value={email}
               />
+              {errormsg.email ? (
+                <Text style={{ color: "red" }}>{errormsg.email}</Text>
+              ) : null}
               <TextInput
+                spellCheck={false}
+                autoCorrect={false}
                 placeholder="비밀번호"
                 placeholderColor="#c4c3cb"
                 style={styles.signupFormTextInput}
@@ -109,7 +133,12 @@ export default function Signup({ navigation }) {
                 onChangeText={(text) => setPassword(text)}
                 value={password}
               />
+              {errormsg.password ? (
+                <Text style={{ color: "red" }}>{errormsg.password}</Text>
+              ) : null}
               <TextInput
+                spellCheck={false}
+                autoCorrect={false}
                 placeholder="비밀번호 확인"
                 placeholderColor="#c4c3cb"
                 style={styles.signupFormTextInput}
@@ -117,6 +146,20 @@ export default function Signup({ navigation }) {
                 onChangeText={(text) => setPasswordCheck(text)}
                 value={passwordCheck}
               />
+              {validPasswordCheck ? null : (
+                <Text style={{ color: "red" }}>
+                  비밀번호와 일치하지 않아요!
+                </Text>
+              )}
+              <View
+                style={{
+                  justifyContent: "center",
+                  marginTop: 20,
+                  paddingLeft: 5,
+                }}
+              >
+                <Text style={{ fontSize: 17, fontWeight: 700 }}>학사정보</Text>
+              </View>
               <View
                 style={{
                   flexDirection: "row",
@@ -124,43 +167,52 @@ export default function Signup({ navigation }) {
                   justifyContent: "space-between",
                 }}
               >
+                <View>
+                  <TextInput
+                    spellCheck={false}
+                    autoCorrect={false}
+                    placeholder="이름"
+                    placeholderColor="#c4c3cb"
+                    style={styles.signupFormTextInputHalf}
+                    onChangeText={(text) => setName(text)}
+                    value={name}
+                  />
+                  {errormsg.name ? (
+                    <Text style={{ color: "red" }}>{errormsg.name}</Text>
+                  ) : null}
+                </View>
                 <TextInput
-                  placeholder="이름"
+                  spellCheck={false}
+                  autoCorrect={false}
+                  placeholder="학사번호"
                   placeholderColor="#c4c3cb"
                   style={styles.signupFormTextInputHalf}
-                  onChangeText={(text) => setName(text)}
-                  value={name}
-                />
-                <TextInput
-                  placeholder="생일"
-                  placeholderColor="#c4c3cb"
-                  style={styles.signupFormTextInputHalf}
-                  onChangeText={(text) => setBirth(text)}
-                  value={birth}
+                  onChangeText={(text) => setCbhsNum(text)}
+                  value={cbhsNum}
+                  keyboardType="number-pad"
                 />
               </View>
               <TextInput
+                spellCheck={false}
+                autoCorrect={false}
                 placeholder="휴대폰번호(-를 제외하고 적어주세요!)"
                 placeholderColor="#c4c3cb"
                 style={styles.signupFormTextInput}
-                secureTextEntry={true}
                 onChangeText={(text) => setPhoneNum(text)}
                 value={phoneNum}
               />
               <TextInput
+                spellCheck={false}
+                autoCorrect={false}
                 placeholder="닉네임"
                 placeholderColor="#c4c3cb"
                 style={styles.signupFormTextInput}
                 onChangeText={(text) => setNickname(text)}
                 value={nickname}
               />
-              <TextInput
-                placeholder="학사번호"
-                placeholderColor="#c4c3cb"
-                style={styles.signupFormTextInputHalf}
-                onChangeText={(text) => setCbhsNum(text)}
-                value={cbhsNum}
-              />
+              {errormsg.name ? (
+                <Text style={{ color: "red" }}>{errormsg.name}</Text>
+              ) : null}
               <View
                 style={{
                   flexDirection: "row",
@@ -181,11 +233,44 @@ export default function Signup({ navigation }) {
               {cbhsImage && (
                 <Image
                   source={{ uri: cbhsImage.uri }}
-                  style={{ width: 150, height: 150 }}
+                  style={{
+                    width: 150,
+                    height: 150,
+                    marginTop: 10,
+                    marginLeft: 10,
+                  }}
                 />
               )}
             </View>
-            <TouchableOpacity style={styles.loginButton} onPress={signup}>
+            <TouchableOpacity
+              style={[
+                styles.loginButton,
+                !(
+                  email &&
+                  password &&
+                  validPasswordCheck &&
+                  name &&
+                  cbhsNum &&
+                  cbhsImage &&
+                  phoneNum
+                )
+                  ? styles.disabledButton // 버튼이 비활성화된 경우의 스타일
+                  : {},
+              ]}
+              onPress={signup}
+              // 필드가 채워져야만 버튼 활성화
+              disabled={
+                !(
+                  email &&
+                  password &&
+                  validPasswordCheck &&
+                  name &&
+                  cbhsNum &&
+                  cbhsImage &&
+                  phoneNum
+                )
+              }
+            >
               <Text style={{ fontSize: 20, color: "white", fontWeight: 700 }}>
                 회원가입
               </Text>
@@ -235,7 +320,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderWidth: 1,
     borderColor: "orange",
-    backgroundColor: "#fafafa",
+    backgroundColor: "#fff",
     paddingLeft: 10,
     marginTop: 10,
     marginBottom: 10,
@@ -258,7 +343,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderWidth: 1,
     borderColor: "orange",
-    backgroundColor: "#fafafa",
+    backgroundColor: "#fff",
     paddingLeft: 10,
     marginTop: 10,
     marginBottom: 10,
@@ -271,5 +356,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 15,
+  },
+  disabledButton: {
+    color: "white",
+    backgroundColor: "#eaeaea",
+    borderRadius: 15,
+    width: 350,
+    height: 60,
+    marginTop: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 10,
   },
 });

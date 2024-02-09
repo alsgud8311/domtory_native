@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { apiBe } from "../server";
-// import * as SecureStore from "expo-secure-store";
+import * as SecureStore from "expo-secure-store";
 import axios from "axios";
 
 const AuthContext = createContext();
@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
   const [authState, setAuthState] = useState({
     accessToken: null,
     refreshToken: null,
-    authenticated: null,
+    authenticated: false,
     member: {
       id: null,
       email: null,
@@ -24,9 +24,10 @@ export const AuthProvider = ({ children }) => {
     const loadToken = async () => {
       const accessToken = await SecureStore.getItemAsync(ACCESS_TOKEN);
       const refreshToken = await SecureStore.getItemAsync(REFRESH_TOKEN);
-      const member = await SecureStore.getItemAsync(MEMBER);
-      console.log("sotred:", token);
-      if (token) {
+      const memberString = await SecureStore.getItemAsync(MEMBER);
+      const member = memberString ? JSON.parse(memberString) : null;
+
+      if (accessToken) {
         axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
         setAuthState({
           accessToken: accessToken,
@@ -42,9 +43,9 @@ export const AuthProvider = ({ children }) => {
   const signUp = async (formdata) => {
     try {
       const { data } = await apiBe.post("/member/signup/", formdata);
-      return data;
+      return { success: true, data: data };
     } catch (error) {
-      console.error(error.response);
+      return { success: false, data: error.response.data };
     }
   };
 
