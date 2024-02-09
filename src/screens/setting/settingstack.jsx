@@ -27,9 +27,6 @@ export default function SettingStack() {
         name="내 정보"
         component={Mypage}
         options={{
-          headerLeft: () => {
-            return <Header />;
-          },
           headerBackTitleStyle: {
             color: "black",
           },

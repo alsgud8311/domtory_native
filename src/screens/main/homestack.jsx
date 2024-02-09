@@ -17,6 +17,8 @@ import CouncilNotice from "../notice/councilNotice/CouncilNotice";
 import CouncilNoticeDetail from "../notice/councilNotice/CouncilNoticeDetail";
 import Header from "../../components/common/header";
 import { stackscreenOptions } from "../../constants/screenoptions";
+import { Image } from "react-native";
+import domtoryText from "../../assets/domtory_text.png";
 
 const HomeStack = () => {
   const Stack = createNativeStackNavigator();
@@ -27,10 +29,10 @@ const HomeStack = () => {
         name="Domtory Main"
         component={Home}
         options={{
-          headerLeft: () => {
+          title: "",
+          header: () => {
             return <Header />;
           },
-          title: "",
           headerBackTitleStyle: {
             color: "black",
           },

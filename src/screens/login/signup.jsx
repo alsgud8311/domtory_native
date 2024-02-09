@@ -94,8 +94,8 @@ export default function Signup({ navigation }) {
   }, [passwordCheck]);
 
   return (
-    <ScrollView style={{ backgroundColor: "white" }}>
-      <KeyboardAvoidingView style={styles.containerView} behavior="padding">
+    <ScrollView style={{ width: "100%", backgroundColor: "white" }}>
+      <KeyboardAvoidingView style={styles.containerView}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.loginFormView}>
             <Text style={styles.logoText}>돔토리 회원가입</Text>
@@ -124,6 +124,7 @@ export default function Signup({ navigation }) {
                 <Text style={{ color: "red" }}>{errormsg.email}</Text>
               ) : null}
               <TextInput
+                textContentType="oneTimeCode"
                 spellCheck={false}
                 autoCorrect={false}
                 placeholder="비밀번호"
@@ -137,6 +138,7 @@ export default function Signup({ navigation }) {
                 <Text style={{ color: "red" }}>{errormsg.password}</Text>
               ) : null}
               <TextInput
+                textContentType="oneTimeCode"
                 spellCheck={false}
                 autoCorrect={false}
                 placeholder="비밀번호 확인"
@@ -230,9 +232,19 @@ export default function Signup({ navigation }) {
                 />
                 <Text>학사증 사진 업로드</Text>
               </View>
-              {cbhsImage && (
+              {cbhsImage ? (
                 <Image
                   source={{ uri: cbhsImage.uri }}
+                  style={{
+                    width: 150,
+                    height: 150,
+                    marginTop: 10,
+                    marginLeft: 10,
+                  }}
+                />
+              ) : (
+                <Image
+                  source={logo}
                   style={{
                     width: 150,
                     height: 150,
@@ -291,7 +303,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
-    paddingBottom: 300,
+    marginBottom: 50,
   },
   logoText: {
     fontSize: 40,

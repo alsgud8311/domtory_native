@@ -1,13 +1,14 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../store/AuthContext";
+import logo from "../../assets/domtory_icon.png";
 
 export default function Profile() {
   const { authState } = useAuth();
 
   return (
     <View style={styles.container}>
-      <Ionicons name="person-circle-outline" size={100} color="black" />
+      <Image source={logo} style={{ width: 100, height: 100 }} />
       <View style={{ gap: 10 }}>
         <Text style={{ fontSize: 30 }}>{authState.member.nickname}</Text>
         <Text style={{ fontSize: 17, color: "gray" }}>
