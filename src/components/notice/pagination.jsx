@@ -3,13 +3,20 @@ import { AntDesign } from '@expo/vector-icons';
 
 const Pagination = ({ totalPages, currentPage, onPageChange }) => {
     const pageNumbers = [];
-    for (let i = 1; i <= Math.min(5, totalPages); i++) {
+    const maxPageNumWindow = 5;
+    let startPage = Math.floor((currentPage - 1) / maxPageNumWindow) * maxPageNumWindow + 1;
+    let endPage = Math.min(startPage + maxPageNumWindow - 1, totalPages);
+
+    for (let i = startPage; i <= endPage; i++) {
         pageNumbers.push(i);
     }
 
+    // 현재 페이지가 마지막 페이지 그룹에 속하는지 확인
+    const isLastPageGroup = endPage === totalPages;
+
     return (
         <View style={styles.paginationContainer}>
-            <TouchableOpacity disabled={currentPage === 1} onPress={() => onPageChange(1)}>
+            <TouchableOpacity disabled={currentPage === 1} onPress={() => onPageChange(startPage - maxPageNumWindow)}>
                 <AntDesign name="doubleleft" style={styles.pageArrow} />
             </TouchableOpacity>
 
@@ -31,7 +38,7 @@ const Pagination = ({ totalPages, currentPage, onPageChange }) => {
                 <AntDesign name="right" style={styles.pageArrow} />
             </TouchableOpacity>
 
-            <TouchableOpacity disabled={currentPage === totalPages} onPress={() => onPageChange(totalPages)}>
+            <TouchableOpacity disabled={isLastPageGroup} onPress={() => onPageChange(startPage + maxPageNumWindow)}>
                 <AntDesign name="doubleright" style={styles.pageArrow} />
             </TouchableOpacity>
         </View>
@@ -43,6 +50,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
+        paddingBottom: 10
     },
     pageArrow: {
         margin: 8,
@@ -55,20 +63,20 @@ const styles = StyleSheet.create({
         margin: 3,
         paddingVertical: 8,
         paddingHorizontal: 13,
-        height: 40,
-        width: 40,
-        justifyContent: 'center', 
-        alignItems: 'center', 
+        height: 35,
+        width: 35,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     pageNumActive: {
         margin: 3,
         paddingVertical: 9,
         paddingHorizontal: 13,
         borderRadius: 50,
-        backgroundColor: 'rgba(182, 182, 182, 0.6)',
-        height: 42,
-        width: 42,
-        justifyContent: 'center', 
+        backgroundColor: 'rgba(255, 164, 81, 1)',
+        height: 35,
+        width: 35,
+        justifyContent: 'center',
         alignItems: 'center',
     },
 });
