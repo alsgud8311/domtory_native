@@ -39,6 +39,7 @@ export default function Signup({ navigation }) {
     name: null,
     nickname: null,
   });
+
   const { onLogin, onRegister } = useAuth();
 
   const onPressPhoto = async () => {
@@ -59,7 +60,7 @@ export default function Signup({ navigation }) {
 
   //Formdata 형식으로 회원가입 요청
   const signup = async () => {
-    const birth = new Date().toISOString();
+    const birth = new Date();
     const signupFormData = new FormData();
     signupFormData.append("email", email);
     signupFormData.append("password", password);
@@ -72,7 +73,7 @@ export default function Signup({ navigation }) {
       name: cbhsImage.fileName,
       type: cbhsImage.mimeType,
     });
-    signupFormData.append("birthday", birth);
+    signupFormData.append("birthday", birth.toISOString());
     const { success, data } = await onRegister(signupFormData);
     if (success) {
       console.log("signup success");
