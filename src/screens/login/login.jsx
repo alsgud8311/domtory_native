@@ -65,11 +65,13 @@ export default function LoginScreen({ navigation }) {
               style={styles.loginFormTextInput}
               onChangeText={(text) => setEmail(text)}
               value={email}
+              autoCapitalize="none"
             />
             {loginError.email ? (
               <Text style={{ color: "red" }}>{loginError.email}</Text>
             ) : null}
             <TextInput
+              autoCapitalize="none"
               autoCorrect={false}
               spellCheck={false}
               placeholder="비밀번호"

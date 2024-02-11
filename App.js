@@ -29,7 +29,7 @@ export const Layout = () => {
   console.log(authState);
   useEffect(() => {
     if (!authState.authenticated) {
-      console.log("로그아웃 되었습니다.");
+      console.log("로그아웃 상태");
     }
   }, [authState.authenticated]);
   return (

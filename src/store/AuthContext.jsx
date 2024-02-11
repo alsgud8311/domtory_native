@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { apiBe } from "../server";
 import * as SecureStore from "expo-secure-store";
-import axios from "axios";
 
 //AuthContext + SecureStore을 이용한 로그인
 const AuthContext = createContext();
@@ -76,7 +75,6 @@ export const AuthProvider = ({ children }) => {
       await SecureStore.setItemAsync(MEMBER, data.member);
       return { success: true, data: data };
     } catch (error) {
-      console.log(error.response.data);
       return { success: false, data: error.response.data };
     }
   };

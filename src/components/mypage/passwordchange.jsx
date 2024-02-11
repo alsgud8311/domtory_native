@@ -14,7 +14,7 @@ const PasswordChangeView = () => {
   const [oldPassword, setoldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [newPasswordCheck, setoldPasswordCheck] = useState("");
-  const [passwordvalid, setPasswordvalid] = useState(false);
+  const [passwordvalid, setPasswordvalid] = useState(true);
   const { onLogout, onPasswordChange } = useAuth();
 
   const passwordchange = async () => {
@@ -36,7 +36,7 @@ const PasswordChangeView = () => {
   return (
     <KeyboardAvoidingView style={styles.container}>
       <View style={styles.wrapper}>
-        <View>
+        <View style={styles.inputWrapper}>
           <TextInput
             spellCheck={false}
             autoCorrect={false}
@@ -110,6 +110,10 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     marginTop: 10,
     marginBottom: 10,
+  },
+  inputWrapper: {
+    justifyContent: "center",
+    alignItems: "center",
   },
   disabledButton: {
     color: "white",

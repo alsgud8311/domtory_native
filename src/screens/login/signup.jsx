@@ -113,6 +113,7 @@ export default function Signup({ navigation }) {
                 <Text style={{ fontSize: 17, fontWeight: 700 }}>가입정보</Text>
               </View>
               <TextInput
+                autoCapitalize="none"
                 spellCheck={false}
                 autoCorrect={false}
                 placeholder="이메일"
@@ -125,6 +126,7 @@ export default function Signup({ navigation }) {
                 <Text style={{ color: "red" }}>{errormsg.email}</Text>
               ) : null}
               <TextInput
+                autoCapitalize="none"
                 textContentType="oneTimeCode"
                 spellCheck={false}
                 autoCorrect={false}
@@ -139,6 +141,7 @@ export default function Signup({ navigation }) {
                 <Text style={{ color: "red" }}>{errormsg.password}</Text>
               ) : null}
               <TextInput
+                autoCapitalize="none"
                 textContentType="oneTimeCode"
                 spellCheck={false}
                 autoCorrect={false}
@@ -203,6 +206,7 @@ export default function Signup({ navigation }) {
                 style={styles.signupFormTextInput}
                 onChangeText={(text) => setPhoneNum(text)}
                 value={phoneNum}
+                keyboardType="number-pad"
               />
               <TextInput
                 spellCheck={false}
