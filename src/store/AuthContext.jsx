@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }) => {
       const { data } = await apiBe.post("/member/signup/", formdata);
       return { success: true, data: data };
     } catch (error) {
-      return { success: false, data: error.response.data };
+      return { success: false, data: error.response };
     }
   };
 
@@ -68,6 +68,8 @@ export const AuthProvider = ({ children }) => {
       const { AuthorizationSuccess } = await requestUserPermission();
       if (AuthorizationSuccess) {
         const token = await messaging().getToken();
+        setAuthState({ pushToken: token });
+        await SecureStore.setItemAsync("PUSH_TOKEN", token);
         if (token) {
           console.log("Push Token: ", token);
           try {
@@ -75,8 +77,6 @@ export const AuthProvider = ({ children }) => {
               pushToken: token,
             };
             await apiBe.post("/push/token/", data);
-            setAuthState({ pushToken: token });
-            await SecureStore.setItemAsync(PUSH_TOKEN, token);
             console.log("Sending Push Token Success");
           } catch (error) {
             console.log("Sending Push Token error", error);
@@ -86,7 +86,8 @@ export const AuthProvider = ({ children }) => {
         }
       }
 
-      setAuthState({
+      setAuthState((prevState) => ({
+        ...prevState,
         accessToken: data.accessToken,
         refreshToken: data.refreshToken,
         authenticated: true,
@@ -95,11 +96,11 @@ export const AuthProvider = ({ children }) => {
           email: data.member.email,
           nickname: data.member.nickname,
         },
-      });
+      }));
 
-      await SecureStore.setItemAsync(ACCESS_TOKEN, data.accessToken);
-      await SecureStore.setItemAsync(REFRESH_TOKEN, data.refreshToken);
-      await SecureStore.setItemAsync(MEMBER, data.member);
+      await SecureStore.setItemAsync("ACCESS_TOKEN", data.accessToken);
+      await SecureStore.setItemAsync("REFRESH_TOKEN", data.refreshToken);
+      await SecureStore.setItemAsync("MEMBER", data.member);
       return { success: true, data: data };
     } catch (error) {
       return { success: false, data: error.response.data };
