@@ -27,7 +27,7 @@ const PasswordChangeView = () => {
     }
   };
   useEffect(() => {
-    if (newPassword === newPasswordCheck && newPassword.length > 0) {
+    if (newPassword === newPasswordCheck || newPassword.length === 0) {
       setPasswordvalid(true);
     } else {
       setPasswordvalid(false);
@@ -58,7 +58,9 @@ const PasswordChangeView = () => {
               onChangeText={(text) => setNewPassword(text)}
               value={newPassword}
             />
-            <Text>비밀번호는 6자리 이상이며, 특수기호가 포함되어야 합니다</Text>
+            <Text style={{ paddingLeft: 10 }}>
+              비밀번호는 6자리 이상이며, 특수기호가 포함되어야 합니다
+            </Text>
           </View>
           <View>
             <TextInput
@@ -72,13 +74,20 @@ const PasswordChangeView = () => {
               value={newPasswordCheck}
             />
             {!passwordvalid ? (
-              <Text style={{ color: "red" }}>비밀번호가 일치하지 않아요!</Text>
+              <Text style={{ color: "red", paddingLeft: 10 }}>
+                비밀번호가 일치하지 않아요!
+              </Text>
             ) : null}
           </View>
           <TouchableOpacity
-            style={[styles.button, passwordvalid ? {} : styles.disabledButton]}
+            style={[
+              styles.button,
+              passwordvalid && oldPassword.length > 5 && newPassword.length > 2
+                ? {}
+                : styles.disabledButton,
+            ]}
             onPress={passwordchange}
-            disabled={!passwordvalid}
+            disabled={!passwordvalid && !oldPassword && newPassword.length > 2}
           >
             <Text>비밀번호 변경</Text>
           </TouchableOpacity>

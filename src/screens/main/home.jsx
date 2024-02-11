@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from "react";
 import * as Notifications from "expo-notifications";
 import messaging from "@react-native-firebase/messaging";
 import React from "react";
+import { apiBe } from "../../server";
 // import * as SplashScreen from "expo-splash-screen";
 
 Notifications.setNotificationHandler({
@@ -37,17 +38,33 @@ export default function Home({ navigation }) {
   const notificationListener = useRef();
   const responseListener = useRef();
 
-  useEffect(() => {
+  useEffect(async () => {
     if (requestUserPermission()) {
       //기기별 fcm 토큰 받기
-      messaging()
-        .getToken()
-        .then((token) => {
-          console.log("token: ", token);
-        })
-        .catch((error) => {
-          console.log("cannot get token: ", error);
-        });
+      const token = await messaging().getToken();
+      if (token) {
+        console.log(token);
+        try {
+          const data = {
+            pushToken: token,
+          };
+          await apiBe.post("/push/token/", data);
+        } catch (error) {
+          console.log("sending push token error", error);
+        }
+      } else {
+        console.log("get token failed");
+      }
+
+      // messaging()
+      //   .getToken()
+      //   .then((token) => {
+      //     const response = apiBe.post("/push/token/", token);
+      //     console.log("token push success");
+      //   })
+      //   .catch((error) => {
+      //     console.log("cannot get token: ", error);
+      //   });
     }
 
     //개별 알림이 사용가능한지 확인
