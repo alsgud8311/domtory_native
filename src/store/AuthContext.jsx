@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
       const member = memberString ? JSON.parse(memberString) : null;
 
       if (accessToken) {
-        axios.defaults.headers.common[
+        apiBe.defaults.headers.common[
           "Authorization"
         ] = `Bearer ${accessToken}`;
         setAuthState({
@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }) => {
         },
       });
 
-      axios.defaults.headers.common[
+      apiBe.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${data.accessToken}`;
 
@@ -76,6 +76,7 @@ export const AuthProvider = ({ children }) => {
       await SecureStore.setItemAsync(MEMBER, data.member);
       return { success: true, data: data };
     } catch (error) {
+      console.log(error.response.data);
       return { success: false, data: error.response.data };
     }
   };
@@ -85,7 +86,7 @@ export const AuthProvider = ({ children }) => {
     await SecureStore.deleteItemAsync("REFRESH_TOKEN");
     await SecureStore.deleteItemAsync("MEMBER");
 
-    axios.defaults.headers.common["Authorization"] = "";
+    apiBe.defaults.headers.common["Authorization"] = "";
 
     setAuthState({
       accessToken: null,
@@ -96,10 +97,32 @@ export const AuthProvider = ({ children }) => {
     console.log("logout");
   };
 
+  const changePassword = async (oldPassword, newPassword) => {
+    const data = { oldPassword: oldPassword, newPassword: newPassword };
+    try {
+      const response = await apiBe.post("/member/password/change/", data);
+      return { success: true, data: response.data };
+    } catch (error) {
+      console.log(error.response.data);
+      return { success: false, data: error.response.data };
+    }
+  };
+
+  const withdrawal = async () => {
+    try {
+      const response = await apiBe.post("/member/withdrawal/");
+      return { success: true, data: response.data };
+    } catch (error) {
+      return { success: false, data: error.response.data };
+    }
+  };
+
   const value = {
     onRegister: signUp,
     onLogin: signin,
     onLogout: signout,
+    onPasswordChange: changePassword,
+    onWithdrawal: withdrawal,
     authState: authState,
   };
 
