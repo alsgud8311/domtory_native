@@ -36,11 +36,11 @@ export default function DailyMenuCard({ navigation }) {
         <Text style={styles.dateText}>{menuData.formatedDate}</Text>
         <Text style={styles.mealTypeText}>{menuData.dayDiv}</Text>
         <View style={styles.menuList}>
-          {menuData.menuList.map((menu, index) => (
+          {/* {menuData.menuList.map((menu, index) => (
             <Text key={index} style={styles.menuItem}>
               {menu}
             </Text>
-          ))}
+          ))} */}
         </View>
       </TouchableOpacity>
     </View>

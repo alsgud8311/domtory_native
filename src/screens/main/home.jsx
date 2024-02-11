@@ -43,7 +43,7 @@ export default function Home({ navigation }) {
       //기기별 fcm 토큰 받기
       const token = await messaging().getToken();
       if (token) {
-        console.log(token);
+        console.log("push Token: ", token);
         try {
           const data = {
             pushToken: token,
