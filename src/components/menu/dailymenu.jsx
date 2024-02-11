@@ -11,16 +11,13 @@ export default function RecentPostCard({ selectedDate }) {
     const [recentPostData, setRecentPostData] = useState(null);
     
     function convertDateToCustomFormat(dateString) {
-        const originalDate = new Date(dateString);
+        const originalDate = new Date(dateString.replace(/\s/g, '-'));
         const day = originalDate.getUTCDate().toString().padStart(2, '0');
         const month = (originalDate.getUTCMonth() + 1).toString().padStart(2, '0');
         const year = originalDate.getUTCFullYear().toString().slice(2, 4);
       
         return year + month + day;
       }
-
-    const options = { month: '2-digit', day: '2-digit', weekday: 'short' };
-
 
 
     const [breakData, setBreakData] = useState(null);
@@ -51,7 +48,7 @@ export default function RecentPostCard({ selectedDate }) {
     return (
         <View style={styles.container}>
             <View style={styles.day}>
-                <Text style={styles.dayText}>{selectedDate.toLocaleDateString('ko-KR', options)} 식단</Text>
+                <Text style={styles.dayText}>식단</Text>
             </View>
             <View style={styles.meal}>
                 <View style={styles.card}>

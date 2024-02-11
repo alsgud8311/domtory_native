@@ -18,7 +18,12 @@ export default function Menu() {
     const [selectedDate, setSelectedDate] = useState(new Date());
 
     const handleDateSelection = (date) => {
-        setSelectedDate(date);
+        const koreanDate = date.toLocaleDateString('ko-KR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        }).replace(/\./g, '');
+        setSelectedDate(koreanDate);
     };
 
     return (
