@@ -7,9 +7,16 @@ import {
 import PasswordChange from "./passwordchange";
 import Mypage from "./mypage";
 import Header from "../../components/common/header";
+import { useAuth } from "../../store/AuthContext";
+import { useEffect } from "react";
 
 export default function SettingStack() {
   const Stack = createNativeStackNavigator();
+  const { authState } = useAuth();
+
+  useEffect(() => {
+    console.log(authState);
+  }, []);
 
   return (
     <Stack.Navigator
@@ -20,9 +27,6 @@ export default function SettingStack() {
         name="내 정보"
         component={Mypage}
         options={{
-          headerLeft: () => {
-            return <Header />;
-          },
           headerBackTitleStyle: {
             color: "black",
           },

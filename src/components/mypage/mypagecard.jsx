@@ -1,7 +1,17 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { AntDesign, MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
+import { useAuth } from "../../store/AuthContext";
+import { useNavigation } from "@react-navigation/native";
 
 export default function MypageCard() {
+  const { onLogout } = useAuth();
+  const navigation = useNavigation();
+  const onPressLogout = () => {
+    Alert.alert("로그아웃 하시나요?", "", [
+      { text: "아니요", style: "cancel" },
+      { text: "넹", onPress: () => onLogout() },
+    ]);
+  };
   return (
     <View style={styles.container}>
       <View style={styles.wrapper}>
@@ -11,7 +21,7 @@ export default function MypageCard() {
         </TouchableOpacity>
       </View>
       <View>
-        <TouchableOpacity style={styles.card}>
+        <TouchableOpacity style={styles.card} onPress={onPressLogout}>
           <AntDesign name="unlock" size={24} color="black" />
           <Text style={styles.cardText}>로그아웃</Text>
         </TouchableOpacity>

@@ -3,3 +3,5 @@ google-services.json
 GoogleService-Info.plist
 ios
 android
+.expo
+.idea

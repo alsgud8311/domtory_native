@@ -25,10 +25,7 @@ const CommunityStack = () => {
         name="커뮤니티 바로가기"
         component={CommunityShortCuts}
         options={{
-          headerLeft: () => {
-            return <Header />;
-          },
-          title: "",
+          title: "게시판",
           headerBackTitleStyle: {
             color: "black",
           },

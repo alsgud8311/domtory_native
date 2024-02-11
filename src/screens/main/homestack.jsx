@@ -17,7 +17,8 @@ import CbhsNotice from "../notice/cbhsNotice";
 import CouncilNoticeDetail from "../notice/CouncilNoticeDetail";
 import Header from "../../components/common/header";
 import { stackscreenOptions } from "../../constants/screenoptions";
-
+import { Image } from "react-native";
+import domtoryText from "../../assets/domtory_text.png";
 
 function Logo() {
   return (
@@ -26,7 +27,6 @@ function Logo() {
     </View>
   );
 }
-
 
 const HomeStack = () => {
   const Stack = createNativeStackNavigator();
@@ -37,10 +37,10 @@ const HomeStack = () => {
         name="Domtory Main"
         component={Home}
         options={{
-          headerLeft: () => {
+          title: "",
+          header: () => {
             return <Header />;
           },
-          title: "",
           headerBackTitleStyle: {
             color: "black",
           },
@@ -65,7 +65,7 @@ const HomeStack = () => {
       <Stack.Screen name="분실물 게시판" component={LostAndFound} />
       <Stack.Screen name="분실물 글 보기" component={LostAndFoundDetail} />
       <Stack.Screen name="설정" component={Setting} />
-      <Stack.Screen name="검색" component={Search} />
+      {/* <Stack.Screen name="검색" component={Search} /> */}
     </Stack.Navigator>
   );
 };
