@@ -8,5 +8,9 @@ export const requestUserPermission = async () => {
 
   if (enabled) {
     console.log("Authorization status:", authStatus);
+    return { AuthorizationSuccess: authStatus };
+  } else {
+    console.log("Authorization failed");
+    return { AuthorizationSuccess: authStatus };
   }
 };

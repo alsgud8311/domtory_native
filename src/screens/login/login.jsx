@@ -15,6 +15,8 @@ import {
 import { useAuth } from "../../store/AuthContext";
 import logo from "../../assets/domtory_icon.png";
 import { useFocusEffect } from "@react-navigation/native";
+import { requestUserPermission } from "../../utils/firebase/firebaseSetting";
+import messaging from "@react-native-firebase/messaging";
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -33,7 +35,7 @@ export default function LoginScreen({ navigation }) {
   const login = async () => {
     const { success, data } = await onLogin(email, password);
     if (success) {
-      navigation.navigate("홈 탭");
+      console.log("login success");
     } else {
       setLoginError(data);
       if (loginError.detail) {

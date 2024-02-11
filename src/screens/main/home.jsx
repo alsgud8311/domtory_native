@@ -16,21 +16,10 @@ import { apiBe } from "../../server";
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
-    shouldPlaySound: false,
+    shouldPlaySound: true,
     shouldSetBadge: false,
   }),
 });
-
-const requestUserPermission = async () => {
-  const authStatus = await messaging().requestPermission();
-  const enabled =
-    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-    authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
-  if (enabled) {
-    console.log("Authorization status:", authStatus);
-  }
-};
 
 export default function Home({ navigation }) {
   const [pushToken, setPushToken] = useState("");
@@ -38,36 +27,8 @@ export default function Home({ navigation }) {
   const notificationListener = useRef();
   const responseListener = useRef();
 
-  useEffect(async () => {
-    if (requestUserPermission()) {
-      //기기별 fcm 토큰 받기
-      const token = await messaging().getToken();
-      if (token) {
-        console.log("push Token: ", token);
-        try {
-          const data = {
-            pushToken: token,
-          };
-          await apiBe.post("/push/token/", data);
-        } catch (error) {
-          console.log("sending push token error", error);
-        }
-      } else {
-        console.log("get token failed");
-      }
-
-      // messaging()
-      //   .getToken()
-      //   .then((token) => {
-      //     const response = apiBe.post("/push/token/", token);
-      //     console.log("token push success");
-      //   })
-      //   .catch((error) => {
-      //     console.log("cannot get token: ", error);
-      //   });
-    }
-
-    //개별 알림이 사용가능한지 확인
+  //개별 알림이 사용가능한지 확인
+  useEffect(() => {
     messaging()
       .getInitialNotification()
       .then(async (remoteMessage) => {

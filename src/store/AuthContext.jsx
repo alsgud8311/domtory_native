@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { apiBe } from "../server";
 import * as SecureStore from "expo-secure-store";
+import { requestUserPermission } from "../utils/firebase/firebaseSetting";
+import messaging from "@react-native-firebase/messaging";
 
 //AuthContext + SecureStore을 이용한 로그인
 const AuthContext = createContext();
@@ -12,6 +14,7 @@ export const AuthProvider = ({ children }) => {
   const [authState, setAuthState] = useState({
     accessToken: null,
     refreshToken: null,
+    pushToken: null,
     authenticated: false,
     member: {
       id: null,
@@ -24,6 +27,7 @@ export const AuthProvider = ({ children }) => {
     const loadToken = async () => {
       const accessToken = await SecureStore.getItemAsync("ACCESS_TOKEN");
       const refreshToken = await SecureStore.getItemAsync("REFRESH_TOKEN");
+      const pushToken = await SecureStore.getItemAsync("PUSH_TOKEN");
       const memberString = await SecureStore.getItemAsync("MEMBER");
       const member = memberString ? JSON.parse(memberString) : null;
 
@@ -34,6 +38,7 @@ export const AuthProvider = ({ children }) => {
         setAuthState({
           accessToken: accessToken,
           refreshToken: refreshToken,
+          pushToken: pushToken,
           authenticated: true,
           member: member,
         });
@@ -53,8 +58,34 @@ export const AuthProvider = ({ children }) => {
 
   const signin = async (email, password) => {
     const signinData = { email: email, password: password };
+
     try {
       const { data } = await apiBe.post("/member/signin/", signinData);
+      apiBe.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${data.accessToken}`;
+
+      const { AuthorizationSuccess } = await requestUserPermission();
+      if (AuthorizationSuccess) {
+        const token = await messaging().getToken();
+        if (token) {
+          console.log("Push Token: ", token);
+          try {
+            const data = {
+              pushToken: token,
+            };
+            await apiBe.post("/push/token/", data);
+            setAuthState({ pushToken: token });
+            await SecureStore.setItemAsync(PUSH_TOKEN, token);
+            console.log("Sending Push Token Success");
+          } catch (error) {
+            console.log("Sending Push Token error", error);
+          }
+        } else {
+          console.log("getToken Failed");
+        }
+      }
+
       setAuthState({
         accessToken: data.accessToken,
         refreshToken: data.refreshToken,
@@ -66,10 +97,6 @@ export const AuthProvider = ({ children }) => {
         },
       });
 
-      apiBe.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${data.accessToken}`;
-
       await SecureStore.setItemAsync(ACCESS_TOKEN, data.accessToken);
       await SecureStore.setItemAsync(REFRESH_TOKEN, data.refreshToken);
       await SecureStore.setItemAsync(MEMBER, data.member);
@@ -80,19 +107,28 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signout = async () => {
-    await SecureStore.deleteItemAsync("ACCESS_TOKEN");
-    await SecureStore.deleteItemAsync("REFRESH_TOKEN");
-    await SecureStore.deleteItemAsync("MEMBER");
+    try {
+      const pushToken = await SecureStore.getItemAsync("PUSH_TOKEN");
+      await apiBe.post("/push/token/invalid/", pushToken);
+      await SecureStore.deleteItemAsync("ACCESS_TOKEN");
+      await SecureStore.deleteItemAsync("REFRESH_TOKEN");
+      await SecureStore.deleteItemAsync("PUSH_TOKEN");
+      await SecureStore.deleteItemAsync("MEMBER");
+      apiBe.defaults.headers.common["Authorization"] = "";
 
-    apiBe.defaults.headers.common["Authorization"] = "";
-
-    setAuthState({
-      accessToken: null,
-      refreshToken: null,
-      authenticated: false,
-      member: null,
-    });
-    console.log("logout");
+      setAuthState({
+        accessToken: null,
+        refreshToken: null,
+        pushToken: null,
+        authenticated: false,
+        member: null,
+      });
+      console.log("logout");
+      return { success: true };
+    } catch (error) {
+      console.log(error);
+      return { success: false };
+    }
   };
 
   const changePassword = async (oldPassword, newPassword) => {
