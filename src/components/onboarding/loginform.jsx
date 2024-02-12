@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Alert,
   Button,
@@ -11,6 +11,7 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { useAuth } from "../../store/AuthContext";
 import logo from "../../assets/domtory_icon.png";
@@ -23,6 +24,8 @@ export default function LoginForm({ navigation }) {
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState({ email: null, detail: "" });
   const { onLogin, onRegister } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [loginValid, setLoginValid] = useState(false);
   //다른 스택 컴포넌트로 갔다가 돌아오는 상태를 관찰하는 훅
   useFocusEffect(
     useCallback(() => {
@@ -31,8 +34,16 @@ export default function LoginForm({ navigation }) {
       setPassword("");
     }, [])
   );
+  useEffect(() => {
+    if (email.includes("@") && password.length > 5) {
+      setLoginValid(true);
+    } else {
+      setLoginValid(false);
+    }
+  }, [email, password]);
 
   const login = async () => {
+    setIsLoading(true);
     const { success, data } = await onLogin(email, password);
     if (success) {
       console.log("login success");
@@ -84,14 +95,28 @@ export default function LoginForm({ navigation }) {
               value={password}
             />
           </View>
-          <TouchableOpacity style={styles.loginButton} onPress={login}>
-            <Text style={{ fontSize: 20, color: "white", fontWeight: 700 }}>
-              로그인
-            </Text>
-          </TouchableOpacity>
+          {isLoading ? (
+            <TouchableOpacity style={styles.loginButton}>
+              <ActivityIndicator color="lemonchiffon" />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={[
+                styles.loginButton,
+                loginValid ? null : styles.disabledButton,
+              ]}
+              onPress={login}
+              disabled={!loginValid}
+            >
+              <Text style={{ fontSize: 20, color: "white", fontWeight: 700 }}>
+                로그인
+              </Text>
+            </TouchableOpacity>
+          )}
           <TouchableOpacity
             style={styles.signupButton}
             onPress={() => onSignupPress()}
+            disabled={isLoading}
           >
             <Text style={{ fontSize: 20, color: "orange", fontWeight: 700 }}>
               회원가입
@@ -146,6 +171,16 @@ const styles = StyleSheet.create({
   loginButton: {
     color: "orange",
     backgroundColor: "orange",
+    borderRadius: 15,
+    width: "80%",
+    height: 60,
+    marginTop: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  disabledButton: {
+    color: "white",
+    backgroundColor: "#eaeaea",
     borderRadius: 15,
     width: "80%",
     height: 60,
