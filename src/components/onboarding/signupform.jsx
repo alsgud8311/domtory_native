@@ -12,6 +12,7 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { useAuth } from "../../store/AuthContext";
 import logo from "../../assets/domtory_icon.png";
@@ -39,6 +40,7 @@ export default function SignupForm({ navigation }) {
     name: null,
     nickname: null,
   });
+  const [isLoading, setLoading] = useState(false);
 
   const { onLogin, onRegister } = useAuth();
 
@@ -60,6 +62,7 @@ export default function SignupForm({ navigation }) {
 
   //Formdata 형식으로 회원가입 요청
   const signup = async () => {
+    setLoading(true);
     const birth = new Date();
     const signupFormData = new FormData();
     signupFormData.append("email", email);
@@ -82,7 +85,10 @@ export default function SignupForm({ navigation }) {
     } else {
       //에러시 메세지 띄우기용 state
       setErrorMsg(data);
-      console.log(errormsg);
+      Alert.alert(
+        "회원가입 중에 오류가 발생했습니다. 다시 정보를 확인하고 시도해 주시겠어요?"
+      );
+      setLoading(false);
     }
   };
 
@@ -103,7 +109,7 @@ export default function SignupForm({ navigation }) {
             <Text style={{ fontSize: 15, marginBottom: 20, fontWeight: 700 }}>
               돔토리는 충북학사생 전용 커뮤니티 서비스입니다.
             </Text>
-            <View styles={styles.inputWrapper}>
+            <View style={styles.inputWrapper}>
               <View
                 style={{
                   justifyContent: "center",
@@ -173,20 +179,19 @@ export default function SignupForm({ navigation }) {
                   justifyContent: "space-between",
                 }}
               >
-                <View>
-                  <TextInput
-                    spellCheck={false}
-                    autoCorrect={false}
-                    placeholder="이름"
-                    placeholderColor="#c4c3cb"
-                    style={styles.signupFormTextInputHalf}
-                    onChangeText={(text) => setName(text)}
-                    value={name}
-                  />
-                  {errormsg.name ? (
-                    <Text style={{ color: "red" }}>{errormsg.name}</Text>
-                  ) : null}
-                </View>
+                <TextInput
+                  spellCheck={false}
+                  autoCorrect={false}
+                  placeholder="이름"
+                  placeholderColor="#c4c3cb"
+                  style={styles.signupFormTextInputHalf}
+                  onChangeText={(text) => setName(text)}
+                  value={name}
+                />
+                {errormsg.name ? (
+                  <Text style={{ color: "red" }}>{errormsg.name}</Text>
+                ) : null}
+
                 <TextInput
                   spellCheck={false}
                   autoCorrect={false}
@@ -259,39 +264,45 @@ export default function SignupForm({ navigation }) {
                 />
               )}
             </View>
-            <TouchableOpacity
-              style={[
-                styles.loginButton,
-                !(
-                  email &&
-                  password &&
-                  validPasswordCheck &&
-                  name &&
-                  cbhsNum &&
-                  cbhsImage &&
-                  phoneNum
-                )
-                  ? styles.disabledButton // 버튼이 비활성화된 경우의 스타일
-                  : {},
-              ]}
-              onPress={signup}
-              // 필드가 채워져야만 버튼 활성화
-              disabled={
-                !(
-                  email &&
-                  password &&
-                  validPasswordCheck &&
-                  name &&
-                  cbhsNum &&
-                  cbhsImage &&
-                  phoneNum
-                )
-              }
-            >
-              <Text style={{ fontSize: 20, color: "white", fontWeight: 700 }}>
-                회원가입
-              </Text>
-            </TouchableOpacity>
+            {isLoading ? (
+              <View style={styles.loginButton}>
+                <ActivityIndicator color="lemonchiffon" />
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={[
+                  styles.loginButton,
+                  !(
+                    email &&
+                    password &&
+                    validPasswordCheck &&
+                    name &&
+                    cbhsNum &&
+                    cbhsImage &&
+                    phoneNum
+                  )
+                    ? styles.disabledButton // 버튼이 비활성화된 경우의 스타일
+                    : {},
+                ]}
+                onPress={signup}
+                // 필드가 채워져야만 버튼 활성화
+                disabled={
+                  !(
+                    email &&
+                    password &&
+                    validPasswordCheck &&
+                    name &&
+                    cbhsNum &&
+                    cbhsImage &&
+                    phoneNum
+                  )
+                }
+              >
+                <Text style={{ fontSize: 20, color: "white", fontWeight: 700 }}>
+                  회원가입
+                </Text>
+              </TouchableOpacity>
+            )}
             <Text>
               ⚠️제출해주신 개인정보는 학사생 신원 확인용으로만 사용됩니다.
             </Text>
@@ -324,14 +335,13 @@ const styles = StyleSheet.create({
   inputWrapper: {
     width: "100%",
     justifyContent: "center",
-    alignItems: "center",
     padding: 20,
     textAlign: "center",
     flexDirection: "column",
-    gap: 30,
+    gap: 5,
   },
   signupFormTextInput: {
-    width: 350,
+    width: "100%",
     height: 60,
     fontSize: 20,
     borderRadius: 15,
@@ -354,7 +364,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   signupFormTextInputHalf: {
-    width: 160,
+    width: "45%",
     height: 60,
     fontSize: 20,
     borderRadius: 15,
