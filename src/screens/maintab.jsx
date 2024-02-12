@@ -46,6 +46,7 @@ const MainTab = () => {
               <Text style={{ marginTop: 5, color: "gray" }}>홈</Text>
             </View>
           ),
+          unmountOnBlur: true,
         }}
       />
       <Tab.Screen
@@ -94,6 +95,7 @@ const MainTab = () => {
               <Text style={{ marginTop: 5, color: "gray" }}>내 정보</Text>
             </View>
           ),
+          unmountOnBlur: true,
         }}
       />
     </Tab.Navigator>
