@@ -5,8 +5,8 @@ import { useAuth } from "../../store/AuthContext";
 export default function MypageCard({ navigation }) {
   const { onLogout, onWithdrawal } = useAuth();
   const logout = async () => {
-    const response = await onLogout();
-    if (response) {
+    const { success } = await onLogout();
+    if (success) {
       return;
     } else {
       Alert.alert("로그아웃 과정에서 오류가 발생했습니다.");
@@ -15,7 +15,7 @@ export default function MypageCard({ navigation }) {
   const onPressLogout = () => {
     Alert.alert("로그아웃 하시나요?", "", [
       { text: "아니요", style: "cancel" },
-      { text: "넹", onPress: () => onLogout() },
+      { text: "넹", onPress: logout },
     ]);
   };
 

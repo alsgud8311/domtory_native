@@ -16,11 +16,8 @@ export const AuthProvider = ({ children }) => {
     refreshToken: null,
     pushToken: null,
     authenticated: false,
-    member: {
-      id: null,
-      email: null,
-      nickname: null,
-    },
+    email: null,
+    nickname: null,
   });
 
   useEffect(() => {
@@ -28,8 +25,8 @@ export const AuthProvider = ({ children }) => {
       const accessToken = await SecureStore.getItemAsync("ACCESS_TOKEN");
       const refreshToken = await SecureStore.getItemAsync("REFRESH_TOKEN");
       const pushToken = await SecureStore.getItemAsync("PUSH_TOKEN");
-      const memberString = await SecureStore.getItemAsync("MEMBER");
-      const member = memberString ? JSON.parse(memberString) : null;
+      const nickname = await SecureStore.getItemAsync("NICKNAME");
+      const email = await SecureStore.getItemAsync("EMAIL");
 
       if (accessToken) {
         apiBe.defaults.headers.common[
@@ -40,19 +37,20 @@ export const AuthProvider = ({ children }) => {
           refreshToken: refreshToken,
           pushToken: pushToken,
           authenticated: true,
-          member: member,
+          nickname: nickname,
+          email: email,
         });
       }
     };
     loadToken();
-  }, [authState]);
+  }, []);
 
   const signUp = async (formdata) => {
     try {
       const { data } = await apiBe.post("/member/signup/", formdata);
       return { success: true, data: data };
     } catch (error) {
-      return { success: false, data: error.response };
+      return { success: false, data: error.response.data };
     }
   };
 
@@ -61,6 +59,7 @@ export const AuthProvider = ({ children }) => {
 
     try {
       const { data } = await apiBe.post("/member/signin/", signinData);
+      console.log(data);
       apiBe.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${data.accessToken}`;
@@ -91,16 +90,14 @@ export const AuthProvider = ({ children }) => {
         accessToken: data.accessToken,
         refreshToken: data.refreshToken,
         authenticated: true,
-        member: {
-          id: data.member.id,
-          email: data.member.email,
-          nickname: data.member.nickname,
-        },
+        nickname: data.member.nickname,
+        email: data.member.email,
       }));
 
       await SecureStore.setItemAsync("ACCESS_TOKEN", data.accessToken);
       await SecureStore.setItemAsync("REFRESH_TOKEN", data.refreshToken);
-      await SecureStore.setItemAsync("MEMBER", data.member);
+      await SecureStore.setItemAsync("NICKNAME", data.member.nickname);
+      await SecureStore.setItemAsync("EMAIL", data.member.email);
       return { success: true, data: data };
     } catch (error) {
       return { success: false, data: error.response.data };
@@ -110,11 +107,12 @@ export const AuthProvider = ({ children }) => {
   const signout = async () => {
     try {
       const pushToken = await SecureStore.getItemAsync("PUSH_TOKEN");
-      await apiBe.post("/push/token/invalid/", pushToken);
+      // await apiBe.post("/push/token/invalid/", pushToken);
       await SecureStore.deleteItemAsync("ACCESS_TOKEN");
       await SecureStore.deleteItemAsync("REFRESH_TOKEN");
       await SecureStore.deleteItemAsync("PUSH_TOKEN");
-      await SecureStore.deleteItemAsync("MEMBER");
+      await SecureStore.deleteItemAsync("NICKNAME");
+      await SecureStore.deleteItemAsync("EMAIL");
       apiBe.defaults.headers.common["Authorization"] = "";
 
       setAuthState({
@@ -122,7 +120,8 @@ export const AuthProvider = ({ children }) => {
         refreshToken: null,
         pushToken: null,
         authenticated: false,
-        member: null,
+        email: null,
+        nickname: null,
       });
       console.log("logout");
       return { success: true };
