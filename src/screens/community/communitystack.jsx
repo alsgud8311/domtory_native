@@ -12,9 +12,10 @@ import {
 } from "../../constants/screenoptions";
 import MyPosting from "./mypost/mypost";
 import Mycomment from "./mypost/mycomment";
+import { AntDesign } from "@expo/vector-icons";
 import CbhsNotice from "../notice/cbhsNotice";
 
-const CommunityStack = () => {
+const CommunityStack = ({ navigation }) => {
   const Stack = createNativeStackNavigator();
 
   return (
@@ -35,11 +36,86 @@ const CommunityStack = () => {
       <Stack.Screen name="내가 쓴 글" component={MyPosting} />
       <Stack.Screen name="내가 쓴 댓글" component={Mycomment} />
       <Stack.Screen name="공지사항" component={CbhsNotice} />
-      <Stack.Screen name="자유게시판" component={General} />
-      <Stack.Screen name="취준생 게시판" component={Jobseeker} />
-      <Stack.Screen name="번개모임 게시판" component={Impromptu} />
-      <Stack.Screen name="중고거래 게시판" component={FleeMarket} />
-      <Stack.Screen name="분실물 게시판" component={LostAndFound} />
+      <Stack.Screen
+        name="자유게시판"
+        component={General}
+        options={{
+          headerRight: () => {
+            return (
+              <AntDesign
+                name="search1"
+                size={30}
+                color="black"
+                onPress={() => navigation.navigate("검색")}
+              />
+            );
+          },
+        }}
+      />
+      <Stack.Screen
+        name="취준생 게시판"
+        component={Jobseeker}
+        options={{
+          headerRight: () => {
+            return (
+              <AntDesign
+                name="search1"
+                size={30}
+                color="black"
+                onPress={() => navigation.navigate("검색")}
+              />
+            );
+          },
+        }}
+      />
+      <Stack.Screen
+        name="번개모임 게시판"
+        component={Impromptu}
+        options={{
+          headerRight: () => {
+            return (
+              <AntDesign
+                name="search1"
+                size={30}
+                color="black"
+                onPress={() => navigation.navigate("검색")}
+              />
+            );
+          },
+        }}
+      />
+      <Stack.Screen
+        name="중고거래 게시판"
+        component={FleeMarket}
+        options={{
+          headerRight: () => {
+            return (
+              <AntDesign
+                name="search1"
+                size={30}
+                color="black"
+                onPress={() => navigation.navigate("검색")}
+              />
+            );
+          },
+        }}
+      />
+      <Stack.Screen
+        name="분실물 게시판"
+        component={LostAndFound}
+        options={{
+          headerRight: () => {
+            return (
+              <AntDesign
+                name="search1"
+                size={30}
+                color="black"
+                onPress={() => navigation.navigate("검색")}
+              />
+            );
+          },
+        }}
+      />
     </Stack.Navigator>
   );
 };

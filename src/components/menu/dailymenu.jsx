@@ -7,11 +7,17 @@ import {
 import { getLunchMenuData, getDinnerMenuData, getBreakMenuData } from "../../server/menu";
 
 
-export default function RecentPostCard({ selectedDate }) {
-    const [recentPostData, setRecentPostData] = useState(null);
-    
+export default function Menucard({ selectedDate }) {
+
+    const options = { month: '2-digit', day: '2-digit', weekday: 'short' };
+
+    // 렌더링 할 포멧 02. 12. (월)
+    const [formattedDate, setFormattedDate] = useState(new Date(selectedDate.replace(/\s/g, '-')).toLocaleDateString('ko-KR', options))
+ 
+    // api 호출할 포멧 240212
     function convertDateToCustomFormat(dateString) {
-        const originalDate = new Date(dateString);
+        const originalDate = new Date(dateString.replace(/\s/g, '-'));
+        setFormattedDate(originalDate.toLocaleDateString('ko-KR', options))
         const day = originalDate.getUTCDate().toString().padStart(2, '0');
         const month = (originalDate.getUTCMonth() + 1).toString().padStart(2, '0');
         const year = originalDate.getUTCFullYear().toString().slice(2, 4);
@@ -19,10 +25,7 @@ export default function RecentPostCard({ selectedDate }) {
         return year + month + day;
       }
 
-    const options = { month: '2-digit', day: '2-digit', weekday: 'short' };
-
-
-
+    // 아침 정보 호출
     const [breakData, setBreakData] = useState(null);
     useEffect(() => {
         (async () => {
@@ -32,6 +35,7 @@ export default function RecentPostCard({ selectedDate }) {
         })();
     }, [selectedDate]);
 
+    //점심 정보 호출
     const [lunchData, setLunchData] = useState(null);
     useEffect(() => {
         (async () => {
@@ -40,6 +44,7 @@ export default function RecentPostCard({ selectedDate }) {
         })();
     }, [selectedDate]);
 
+    // 저녁 정보 호출
     const [dinnerData, setDinnerData] = useState(null);
     useEffect(() => {
         (async () => {
@@ -51,7 +56,7 @@ export default function RecentPostCard({ selectedDate }) {
     return (
         <View style={styles.container}>
             <View style={styles.day}>
-                <Text style={styles.dayText}>{selectedDate.toLocaleDateString('ko-KR', options)} 식단</Text>
+                <Text style={styles.dayText}>{formattedDate} 식단</Text>
             </View>
             <View style={styles.meal}>
                 <View style={styles.card}>
