@@ -12,6 +12,7 @@ import LostAndFoundDetail from "../community/lostandfound/lostandfoundDetail";
 import General from "../community/general/general";
 import GeneralDetail from "../community/general/generalDetail";
 import Menu from "../menu/menu";
+import Search from "../search/search";
 
 import CbhsNotice from "../notice/cbhsNotice";
 import CouncilNoticeDetail from "../notice/CouncilNoticeDetail";
@@ -19,6 +20,7 @@ import Header from "../../components/common/header";
 import { stackscreenOptions } from "../../constants/screenoptions";
 import { Image } from "react-native";
 import domtoryText from "../../assets/domtory_text.png";
+import { AntDesign } from "@expo/vector-icons";
 
 function Logo() {
   return (
@@ -28,7 +30,7 @@ function Logo() {
   );
 }
 
-const HomeStack = () => {
+const HomeStack = ({ navigation }) => {
   const Stack = createNativeStackNavigator();
 
   return (
@@ -39,7 +41,7 @@ const HomeStack = () => {
         options={{
           title: "",
           header: () => {
-            return <Header />;
+            return <Header navigation={navigation} />;
           },
           headerBackTitleStyle: {
             color: "black",
@@ -56,7 +58,12 @@ const HomeStack = () => {
       />
       <Stack.Screen name="중고거래 게시판" component={FleeMarket} />
       <Stack.Screen name="중고거래 글 보기" component={FleeMarketDetail} />
-      <Stack.Screen name="자유게시판" component={General} />
+      <Stack.Screen name="자유게시판"
+        component={General}
+        options={{
+          headerRight: () => {
+            return <AntDesign name="search1" size={30} color="black" onPress={() => navigation.navigate("검색")}/>}
+          ,}} />
       <Stack.Screen name="자유게시판 글 보기" component={GeneralDetail} />
       <Stack.Screen name="번개모임 게시판" component={Impromptu} />
       <Stack.Screen name="번개모임 글 보기" component={ImpromptuDetail} />
@@ -65,7 +72,7 @@ const HomeStack = () => {
       <Stack.Screen name="분실물 게시판" component={LostAndFound} />
       <Stack.Screen name="분실물 글 보기" component={LostAndFoundDetail} />
       <Stack.Screen name="설정" component={Setting} />
-      {/* <Stack.Screen name="검색" component={Search} /> */}
+      <Stack.Screen name="검색" component={Search} />
     </Stack.Navigator>
   );
 };
