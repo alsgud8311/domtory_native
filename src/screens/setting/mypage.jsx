@@ -1,12 +1,12 @@
-import { ScrollView, Text } from "react-native";
+import { View } from "react-native";
 import MypageCard from "../../components/mypage/mypagecard";
 import Profile from "../../components/mypage/profile";
 
 export default function Mypage({ navigation }) {
   return (
-    <ScrollView>
+    <View style={{ width: "100%", backgroundColor: "white", height: "100%" }}>
       <Profile />
       <MypageCard navigation={navigation} />
-    </ScrollView>
+    </View>
   );
 }

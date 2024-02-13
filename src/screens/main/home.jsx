@@ -52,7 +52,10 @@ export default function Home({ navigation }) {
     });
 
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
-      Alert.alert(JSON.stringify(remoteMessage.notification.body));
+      Alert.alert(
+        JSON.stringify(remoteMessage.notification.title),
+        JSON.stringify(remoteMessage.notification.body)
+      );
     });
 
     return unsubscribe;
