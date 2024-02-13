@@ -3,6 +3,7 @@ import { apiBe } from "../server";
 import * as SecureStore from "expo-secure-store";
 import { requestUserPermission } from "../utils/firebase/firebaseSetting";
 import messaging from "@react-native-firebase/messaging";
+import { Alert } from "react-native";
 
 //AuthContext + SecureStore을 이용한 로그인
 const AuthContext = createContext();
@@ -47,10 +48,14 @@ export const AuthProvider = ({ children }) => {
 
   const signUp = async (formdata) => {
     try {
-      const { data } = await apiBe.post("/member/signup/", formdata);
-      return { success: true, data: data };
+      const response = await apiBe.post("/member/signup/", formdata);
+      return { success: true };
     } catch (error) {
-      return { success: false, data: error.response.data };
+      if (error.response && error.response.data) {
+        return { success: false, data: error.response.data };
+      } else {
+        console.log(error);
+      }
     }
   };
 
@@ -104,10 +109,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const signout = async () => {
+  const signout = async (pushToken) => {
     try {
       const pushToken = await SecureStore.getItemAsync("PUSH_TOKEN");
-      // await apiBe.post("/push/token/invalid/", pushToken);
+      await apiBe.post("/push/token/invalid/", { pushToken: pushToken });
       await SecureStore.deleteItemAsync("ACCESS_TOKEN");
       await SecureStore.deleteItemAsync("REFRESH_TOKEN");
       await SecureStore.deleteItemAsync("PUSH_TOKEN");
@@ -123,7 +128,7 @@ export const AuthProvider = ({ children }) => {
         email: null,
         nickname: null,
       });
-      console.log("logout");
+      Alert.alert("로그아웃 되었습니다.", "다음에 또 만나요!");
       return { success: true };
     } catch (error) {
       console.log(error);

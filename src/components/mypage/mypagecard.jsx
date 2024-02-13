@@ -3,7 +3,7 @@ import { AntDesign, MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import { useAuth } from "../../store/AuthContext";
 
 export default function MypageCard({ navigation }) {
-  const { onLogout, onWithdrawal } = useAuth();
+  const { onLogout, onWithdrawal, authState } = useAuth();
   const logout = async () => {
     const { success } = await onLogout();
     if (success) {
@@ -15,7 +15,7 @@ export default function MypageCard({ navigation }) {
   const onPressLogout = () => {
     Alert.alert("로그아웃 하시나요?", "", [
       { text: "아니요", style: "cancel" },
-      { text: "넹", onPress: logout },
+      { text: "넹", onPress: () => logout(authState.pushToken) },
     ]);
   };
 

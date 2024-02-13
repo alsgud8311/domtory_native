@@ -77,16 +77,22 @@ export default function SignupForm({ navigation }) {
       type: cbhsImage.mimeType,
     });
     signupFormData.append("birthday", birth.toISOString());
-    const { success, data } = await onRegister(signupFormData);
-    if (success) {
-      console.log("signup success");
-      Alert.alert("회원가입이 완료되었습니다! 로그인 해주세요 :)");
-      navigation.reset({ routes: [{ name: "로그인" }] });
-    } else {
-      //에러시 메세지 띄우기용 state
-      setErrorMsg(data);
+    try {
+      const response = await onRegister(signupFormData);
+      if (response.success) {
+        console.log("signup success");
+        Alert.alert("회원가입이 완료되었습니다! 로그인 해주세요 :)");
+        navigation.reset({ routes: [{ name: "로그인" }] });
+      } else {
+        //에러시 메세지 띄우기용 state
+        setErrorMsg(response.data);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.log(error);
       Alert.alert(
-        "회원가입 중에 오류가 발생했습니다. 다시 정보를 확인하고 시도해 주시겠어요?"
+        "회원가입 중에 오류가 발생했습니다.",
+        "다시 시도해 주시겠어요?"
       );
       setLoading(false);
     }

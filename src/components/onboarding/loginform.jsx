@@ -51,8 +51,14 @@ export default function LoginForm({ navigation }) {
       setLoginError(data);
       if (loginError.detail) {
         Alert.alert(loginError.detail);
+        setIsLoading(false);
         return;
       }
+      Alert.alert(
+        "로그인 오류",
+        "로그인 중에 오류가 발생했습니다. 다시 시도해 주시겠어요?"
+      );
+      setIsLoading(false);
     }
   };
 
@@ -150,12 +156,11 @@ const styles = StyleSheet.create({
   },
   inputWrapper: {
     width: "100%",
-    justifyContent: "center",
     alignItems: "center",
     padding: 20,
     textAlign: "center",
     flexDirection: "column",
-    gap: 10,
+    gap: 20,
   },
   loginFormTextInput: {
     width: "90%",
@@ -166,7 +171,6 @@ const styles = StyleSheet.create({
     borderColor: "orange",
     backgroundColor: "#fafafa",
     paddingLeft: 10,
-    marginBottom: 10,
   },
   loginButton: {
     color: "orange",
