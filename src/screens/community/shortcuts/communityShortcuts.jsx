@@ -4,7 +4,9 @@ import MyPostCard from "../../../components/community/shortcuts/mypostcard";
 
 export default function CommunityShortCuts({ navigation }) {
   return (
-    <ScrollView style={{ width: "100%", padding: 20 }}>
+    <ScrollView
+      style={{ width: "100%", padding: 20, backgroundColor: "white" }}
+    >
       <MyPostCard navigation={navigation} />
       <ShortcutCard navigation={navigation} />
     </ScrollView>
