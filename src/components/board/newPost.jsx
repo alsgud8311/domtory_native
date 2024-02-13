@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, View, Text, Image, StyleSheet, TextInput, TouchableOpacity, SafeAreaView, Alert, Keyboard, TouchableWithoutFeedback } from "react-native";
 import { AntDesign, Entypo } from '@expo/vector-icons';
+import { pickImage, getPhotoPermission } from '../../components/common/imagepicker'
 
 export default function NewPost({ isVisible, onClose }) {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('')
+    const [image, setImage] = useState(null);
 
     const onChangeTitle = (inputTitle) => {
         setTitle(inputTitle);
@@ -12,6 +14,22 @@ export default function NewPost({ isVisible, onClose }) {
     const onChangeContent = (inputContent) => {
         setContent(inputContent);
     }
+
+    const onPressPhoto = async () => {
+        const permission = await getPhotoPermission();
+        if (!permission) {
+            Alert.alert(
+                "사진을 업로드하기 위해서는 사진 접근 권한을 허용해야 합니다"
+            );
+            return;
+        }
+        const imageData = await pickImage();
+        if (!imageData) {
+            console.log("Image picking was failed");
+            return;
+        }
+        setImage(imageData);
+    };
 
     const [isTitleFocused, setIsTitleFocused] = useState(false);
     const [isContentFocused, setIsContentFocused] = useState(false);
@@ -85,13 +103,14 @@ export default function NewPost({ isVisible, onClose }) {
                         />
                         {/* 카메라, 완료버튼 */}
                         <View style={styles.buttonContainer}>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={onPressPhoto}>
                                 <Entypo name="camera" style={styles.camera} />
                             </TouchableOpacity>
                             <TouchableOpacity disabled={isButtonDisabled} style={styles.button} onPress={() => Alert.alert('Button pressed')}>
                                 <Text style={styles.buttonText}>완료</Text>
                             </TouchableOpacity>
                         </View>
+
                     </View>
                 </TouchableWithoutFeedback>
             </SafeAreaView>
@@ -104,7 +123,7 @@ const baseInput = {
     margin: 10,
     marginBottom: 6,
     padding: 12,
-    paddingTop: 12,
+    paddingTop: 10,
     borderWidth: 2.5,
     borderRadius: 15,
     minHeight: 42,
@@ -122,6 +141,7 @@ const baseInputContent = {
     minHeight: 350,
     fontSize: 16,
     borderColor: '#86868645',
+    textAlignVertical: 'top'
 };
 
 const styles = StyleSheet.create({
@@ -169,7 +189,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     buttonText: {
-        fontSize: 18,
+        fontSize: 17,
         fontWeight: '700',
         color: '#fff'
     },
@@ -195,5 +215,5 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '700',
         color: '#333333'
-    }
+    },
 });
