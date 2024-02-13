@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity, SafeAreaView } from "react-native";
-
+import NewPost from './newPost';
+import { AntDesign } from '@expo/vector-icons';
 
 const renderItem = ({ item }) => {
     return (
@@ -81,7 +82,7 @@ export default function Board() {
             'content': '멋사 지원하려고 하는데 해본 사람',
             'date': '2024-02-07',
             'user': 'umji',
-            'img': 'https://logo-resources.thevc.kr/products/200x200/866610da5e81de066cc925768458dedabbfdf41916e6b7143094e4362b9370f5_1619092921783967.jpg',
+            'img': '',
         },
         {
             'id': 8,
@@ -125,6 +126,16 @@ export default function Board() {
         },
     ]
 
+    const [isModalVisible, setModalVisible] = useState(false);
+
+    const handleOpenNewPost = () => {
+        setModalVisible(true);
+    };
+
+    const handleCloseNewPost = () => {
+        setModalVisible(false);
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <FlatList
@@ -133,6 +144,11 @@ export default function Board() {
                 keyExtractor={(item) => item.id}
                 contentContainerStyle={{ paddingVertical: 20 }}
             />
+            <TouchableOpacity onPress={handleOpenNewPost} style={styles.writeButton}>
+                <AntDesign name="form" size={24} color={'#fff'}/>
+            </TouchableOpacity>
+
+            <NewPost isVisible={isModalVisible} onClose={handleCloseNewPost} />
         </SafeAreaView>
     );
 }
@@ -143,6 +159,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         flex: 1,
     },
+    // 글 박스
     item: {
         backgroundColor: "#ffffff",
         borderRadius: 5,
@@ -173,8 +190,25 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
     image: {
-        width: 60, // 이미지 너비 설정.
+        width: 60,
         height: 60,
         borderRadius: 5
-    }
+    },
+    // 글쓰기 버튼
+    writeButton: {
+        position: 'absolute',
+        right: 20, 
+        bottom: 20, 
+        width: 50,
+        height: 50,
+        borderRadius: 28, 
+        backgroundColor: '#ffa451',
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 5,
+        shadowColor: '#5a5a5a',
+        shadowOffset: { width: 1, height: 1 },
+        shadowOpacity: 0.2,
+        shadowRadius: 6, 
+    },
 });
