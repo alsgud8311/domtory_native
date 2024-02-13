@@ -4,7 +4,7 @@ import { ListItem } from "react-native-elements";
 import Pagination from '../../components/notice/pagination';
 import { AntDesign } from '@expo/vector-icons';
 import axios from 'axios';
-
+import NewPost from '../board/newPost';
 
 const API_URL = "http://api.domtory.site/notice/";
 
@@ -159,6 +159,16 @@ export default function Noticebox() {
         fetchPosts(newPage);
     };
 
+    const [isModalVisible, setModalVisible] = useState(false);
+
+    const handleOpenNewPost = () => {
+        setModalVisible(true);
+    };
+
+    const handleCloseNewPost = () => {
+        setModalVisible(false);
+    };
+
     return (
         <View style={styles.container}>
             <View style={select.select}>
@@ -171,9 +181,13 @@ export default function Noticebox() {
                     </TouchableOpacity>
                 </View>
                 {category === 'council' && (
-                    <AntDesign name="form" style={select.writeText} />
+                    <TouchableOpacity onPress={handleOpenNewPost}>
+                        <AntDesign name="form" style={select.writeText} />
+                    </TouchableOpacity>
                 )}
             </View>
+
+            <NewPost isVisible={isModalVisible} onClose={handleCloseNewPost} />
 
             <FlatList
                 data={data}
