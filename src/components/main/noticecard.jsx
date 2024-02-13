@@ -17,7 +17,7 @@ export default function NoticeCard({ navigation }) {
         <Text style={styles.descriptionText}>학사 공지사항</Text>
         <TouchableOpacity
           style={styles.moreButton}
-          onPress={() => navigation.navigate("학사내 공지사항")}
+          onPress={() => navigation.navigate("학사내 공지사항 글 보기")}
         >
           <Text>더 보기</Text>
           <AntDesign name="right" size={15} />
