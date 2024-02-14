@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, ActivityIndicator, FlatList, TouchableOpacity } from "react-native";
+import { SafeAreaView, View, StyleSheet, Text, ActivityIndicator, FlatList, TouchableOpacity } from "react-native";
 import { ListItem } from "react-native-elements";
 import Pagination from '../../components/notice/pagination';
 import { AntDesign } from '@expo/vector-icons';
 import axios from 'axios';
+import NewPost from '../board/newPost';
+
+const API_URL = "http://api.domtory.site/notice/";
 
 export default function Noticebox() {
-    const [cbhsData, setCbhsData] = useState([]);
     const councilData = [
         {
             "id": 1,
@@ -89,21 +91,8 @@ export default function Noticebox() {
             "images": ""
         },
     ]
-
-
-    useEffect(() => {
-        axios
-            .get("http://api.domtory.site/notice/")
-            .then((response) => {
-                setCbhsData(response.data);
-                console.log(cbhsData)
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-    }, []);
-
-    const [data, setData] = useState(cbhsData);
+    const [cbhsData, setCbhsData] = useState([]);
+    const [data, setData] = useState('');
     const [category, setCategory] = useState('cbhs');
 
     useEffect(() => {
@@ -120,36 +109,68 @@ export default function Noticebox() {
         setCurrentPage(1);
     };
 
-    // 페이지네이션
-    const PAGE_SIZE = 10; // 페이지당 표시할 아이템의 수
-    const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 상태
-    const [loading, setLoading] = useState(false); // 데이터 로딩 상태
+    // // 페이지네이션
+    // const PAGE_SIZE = 10; // 페이지당 표시할 아이템의 수
+    // const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 상태
+    // const [loading, setLoading] = useState(false); // 데이터 로딩 상태
 
-    //총 페이지 수 계산
-    const totalPages = Math.ceil(data.length / PAGE_SIZE);
+    // //총 페이지 수 계산
+    // const totalPages = Math.ceil(data.length / PAGE_SIZE);
 
-    // 현재 페이지에 따라 표시할 데이터의 부분 집합 계산
-    const pageData = data.slice(
-        (currentPage - 1) * PAGE_SIZE,
-        currentPage * PAGE_SIZE
-    );
+    // // 현재 페이지에 따라 표시할 데이터의 부분 집합 계산
+    // const pageData = data.slice(
+    //     (currentPage - 1) * PAGE_SIZE,
+    //     currentPage * PAGE_SIZE
+    // );
+
+    // // 페이지 변경 함수
+    // const onPageChange = (newPage) => {
+    //     setCurrentPage(newPage);
+    // };
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        fetchPosts(currentPage);
+    }, []);
+
+    // 페이지 데이터를 불러오는 함수
+    const fetchPosts = (page) => {
+        setLoading(true);
+        axios.get(`${API_URL}?page=${page}`)
+            .then((response) => {
+                setCbhsData(response.data.postList);
+                setData(cbhsData);
+                setCurrentPage(response.data.curPage);
+                setTotalPages(response.data.pageCnt);
+            })
+            .catch((error) => {
+                console.error(error);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    };
 
     // 페이지 변경 함수
     const onPageChange = (newPage) => {
-        setCurrentPage(newPage);
+        fetchPosts(newPage);
     };
 
-    // 날짜 기준으로 내림차순 정렬
-    // const [sortedData, setSortedData] = useState([]);
-    // useEffect(() => {
-    //     const sorted = [...data].sort(
-    //         (a, b) => new Date(b.date) - new Date(a.date)
-    //     );
-    //     setSortedData(sorted);
-    // }, [data]);
+    const [isModalVisible, setModalVisible] = useState(false);
+
+    const handleOpenNewPost = () => {
+        setModalVisible(true);
+    };
+
+    const handleCloseNewPost = () => {
+        setModalVisible(false);
+    };
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <View style={select.select}>
                 <View style={{ flexDirection: 'row' }}>
                     <TouchableOpacity onPress={() => onCategoryChange('cbhs')}>
@@ -160,13 +181,17 @@ export default function Noticebox() {
                     </TouchableOpacity>
                 </View>
                 {category === 'council' && (
-                    <AntDesign name="form" style={select.writeText} />
+                    <TouchableOpacity onPress={handleOpenNewPost}>
+                        <AntDesign name="form" style={select.writeText} />
+                    </TouchableOpacity>
                 )}
             </View>
 
+            <NewPost isVisible={isModalVisible} onClose={handleCloseNewPost} />
+
             <FlatList
-                data={pageData}
-                renderItem={({ item }) => (
+                data={data}
+                renderItem={({ item, index }) => (
                     <ListItem bottomDivider>
                         <ListItem.Content style={list.content} onPress={() => navigateToDetailPage(item.id)}>
                             <ListItem.Subtitle style={list.number}>{item.id}</ListItem.Subtitle>
@@ -175,7 +200,7 @@ export default function Noticebox() {
                         </ListItem.Content>
                     </ListItem>
                 )}
-                keyExtractor={(item) => item.id.toString()}
+                keyExtractor={(item, index) => index.toString()}
                 ListFooterComponent={loading ? <ActivityIndicator /> : null}
             />
 
@@ -184,7 +209,7 @@ export default function Noticebox() {
                 currentPage={currentPage}
                 onPageChange={onPageChange}
             />
-        </View>
+        </SafeAreaView>
     );
 }
 
@@ -193,6 +218,7 @@ const styles = StyleSheet.create({
         width: "100%",
         backgroundColor: "#fff",
         flex: 1,
+        paddingBottom: 60
     },
     listHeader: {
         flexDirection: 'row',
@@ -210,12 +236,12 @@ const list = StyleSheet.create({
         minHeight: 30
     },
     number: {
-        flex: 0.4,
+        flex: 0.5,
         fontSize: 13,
     },
     title: {
         flex: 4,
-        fontSize: 14,
+        fontSize: 13,
         marginRight: 15
     },
     date: {

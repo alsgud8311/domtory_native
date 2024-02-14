@@ -6,6 +6,9 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
+      "android": {
+        "image": "ubuntu-18.04-jdk-11-ndk-r19c"
+      },
       "ios": {
         "resourceClass": "default"
       }
@@ -17,6 +20,20 @@
       }
     },
     "preview": {
+      "android": {
+        "buildType": "apk"
+      },
+      "distribution": "internal"
+    },
+    "preview2": {
+      "android": {
+        "gradleCommand": ":app:assembleRelease"
+      }
+    },
+    "preview3": {
+      "developmentClient": true
+    },
+    "preview4": {
       "distribution": "internal"
     },
     "production": {}

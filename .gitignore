@@ -1,7 +1,12 @@
-node_modules
+node_modules/
+ios/
+android/
+.expo/
+.idea/
+%ProgramData%/
+
+package-lock.json
 google-services.json
 GoogleService-Info.plist
-ios
-android
-.expo
-.idea
+
+.DS_Store

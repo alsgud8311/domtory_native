@@ -62,7 +62,6 @@ const styles = StyleSheet.create({
     pageNum: {
         margin: 3,
         paddingVertical: 8,
-        paddingHorizontal: 13,
         height: 35,
         width: 35,
         justifyContent: 'center',
@@ -71,7 +70,6 @@ const styles = StyleSheet.create({
     pageNumActive: {
         margin: 3,
         paddingVertical: 9,
-        paddingHorizontal: 13,
         borderRadius: 50,
         backgroundColor: 'rgba(255, 164, 81, 1)',
         height: 35,
