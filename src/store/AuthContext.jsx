@@ -19,7 +19,6 @@ export const AuthProvider = ({ children }) => {
     authenticated: false,
     email: null,
     nickname: null,
-    password: null,
   });
 
   useEffect(() => {
@@ -29,7 +28,6 @@ export const AuthProvider = ({ children }) => {
       const pushToken = await SecureStore.getItemAsync("PUSH_TOKEN");
       const nickname = await SecureStore.getItemAsync("NICKNAME");
       const email = await SecureStore.getItemAsync("EMAIL");
-      const password = await SecureStore.getItemAsync("PASSWORD");
 
       if (accessToken) {
         apiBe.defaults.headers.common[
@@ -42,7 +40,6 @@ export const AuthProvider = ({ children }) => {
           authenticated: true,
           nickname: nickname,
           email: email,
-          password: password,
         });
       }
     };
@@ -66,7 +63,6 @@ export const AuthProvider = ({ children }) => {
     const signinData = { email: email, password: password };
 
     try {
-      await SecureStore.setItemAsync("PASSWORD", password);
       const { data } = await apiBe.post("/member/signin/", signinData);
       console.log(data);
       apiBe.defaults.headers.common[
@@ -101,7 +97,6 @@ export const AuthProvider = ({ children }) => {
         authenticated: true,
         nickname: data.member.nickname,
         email: data.member.email,
-        password: password,
       }));
 
       await SecureStore.setItemAsync("ACCESS_TOKEN", data.accessToken);
@@ -125,7 +120,6 @@ export const AuthProvider = ({ children }) => {
       await SecureStore.deleteItemAsync("PUSH_TOKEN");
       await SecureStore.deleteItemAsync("NICKNAME");
       await SecureStore.deleteItemAsync("EMAIL");
-      await SecureStore.deleteItemAsync("PASSWORD");
       apiBe.defaults.headers.common["Authorization"] = "";
 
       setAuthState({
@@ -135,7 +129,6 @@ export const AuthProvider = ({ children }) => {
         authenticated: false,
         email: null,
         nickname: null,
-        password: null,
       });
       Alert.alert("로그아웃 되었습니다.", "다음에 또 만나요!");
       return { success: true };
@@ -165,12 +158,32 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const refresh = async () => {
+    try {
+      const token = await SecureStore.getItemAsync("REFRESH_TOKEN");
+
+      const { data } = await apiBe.post("/member/signin/", {
+        refreshToken: token,
+      });
+
+      await SecureStore.setItemAsync("REFRESH_TOKEN", data.refreshToken);
+      apiBe.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${data.refreshToken}`;
+      return { success: true };
+    } catch (error) {
+      console.log("refresh failed", error);
+      return { success: false };
+    }
+  };
+
   const value = {
     onRegister: signUp,
     onLogin: signin,
     onLogout: signout,
     onPasswordChange: changePassword,
     onWithdrawal: withdrawal,
+    onrefresh: refresh,
     authState: authState,
   };
 

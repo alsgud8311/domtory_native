@@ -5,11 +5,30 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
+import { getLatestPosts } from "../../server/board";
 
 export default function CommunityCard({ navigation }) {
   const [communityData, setCommunityData] = useState(null);
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const { success, data } = await getLatestPosts("1");
+        if (success) {
+          setCommunityData(data);
+        } else {
+          setCommunityData([{ title: "정보를 가져오는데 실패했습니다." }]);
+        }
+      } catch (error) {
+        setCommunityData([{ title: "정보를 가져오는데 실패했습니다." }]);
+      }
+    };
+    console.log(communityData);
+    getData();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -24,13 +43,25 @@ export default function CommunityCard({ navigation }) {
         </TouchableOpacity>
       </View>
       <View style={styles.card}>
-        <View>
-          <Text style={styles.postText}>자유게시판 글 1</Text>
-          <Text style={styles.postText}>자유게시판 글 2</Text>
-          <Text style={styles.postText}>자유게시판 글 3</Text>
-          <Text style={styles.postText}>자유게시판 글 4</Text>
-          <Text style={styles.postText}>자유게시판 글 5</Text>
-        </View>
+        {communityData ? (
+          <View>
+            {communityData.map((post) => (
+              <TouchableOpacity>
+                <Text style={styles.postText}>{post.title}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        ) : (
+          <TouchableOpacity
+            style={{
+              width: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <ActivityIndicator size="large" color="orange" />
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );

@@ -88,6 +88,7 @@ export const getLatestPosts = async (boardId) => {
     }
     return { success: false, data: "정보를 가져오는 중에 오류가 발생했습니다" };
   } catch (error) {
+    console.log(error);
     return { success: false, data: error.response.data };
   }
 };
