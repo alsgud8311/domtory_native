@@ -6,13 +6,37 @@ import {
     ScrollView,
     TouchableOpacity,
     TextInput,
-
+    FlatList,
     Keyboard,
     Image,
 } from "react-native";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faComment } from '@fortawesome/free-solid-svg-icons';
 import { getSearhedData } from "../../server/search";
+
+
+const renderItem = ({ item }) => {
+    return (
+        <View style={styles.postbox}>
+            <View>
+                <Text style={styles.board}>자유게시판</Text>
+                <Text style={styles.name}>익명 | {item.created_at}</Text>
+                <Text style={styles.title}>{item.title}</Text>
+                <View style={styles.comment}>
+                    <View style={styles.commenticon}>
+                        <FontAwesomeIcon size={15} color="#ffcc99" paddingTop='10' icon={faComment} />
+                    </View>
+                    <Text>3</Text>
+                </View>
+            </View>
+            <Image
+                source={{uri: item.thumbnail_url}} // Replace with the path to your image
+                style={styles.image}
+            />
+        </View>
+    )
+};
+
 
 export default function Search() {
 
@@ -28,31 +52,17 @@ export default function Search() {
     };
 
     const [data, setData] = useState(null)
-    // const handleSearch = () => {
-    //     // console.log(board, inputText);
-    //     // setData({
-    //     //     "board": "분실물 게시판",
-    //     //     "name": "윤서희",
-    //     //     "time": "2024-02-06",
-    //     //     "title": "3층 엘리베이터 앞 카드 주인 찾습니다.",
-    //     //     "commentcnt": 4
-    //     // });
-    //     async () => {
-    //         const data = await getSearhedData(3); 
-    //         console.log(data)
-    //     };
-    // };
 
     const handleSearch = async () => {
         try {
-            const searchData = await getSearhedData(3);
+            const searchData = await getSearhedData(0);
             setData(searchData);
             console.log(searchData);
         } catch (error) {
             console.error('Error occurred while fetching data:', error);
         }
     };
-    
+
 
 
     return (
@@ -69,44 +79,11 @@ export default function Search() {
                     <Text style={styles.canceltext}>취소</Text>
                 </TouchableOpacity>
             </View>
-            {data && (
-                <View style={styles.postbox}>
-                    <View>
-                        <Text style={styles.board}>{data.board}</Text>
-                        <Text style={styles.name}>{data.name} | {data.time}</Text>
-                        <Text style={styles.title}>{data.title}</Text>
-                        <View style={styles.comment}>
-                            <View style={styles.commenticon}>
-                                <FontAwesomeIcon size={15} color="#ffcc99" paddingTop='10' icon={faComment} />
-                            </View>
-                            <Text>{data.commentcnt}</Text>
-                        </View>
-                    </View>
-                    <Image
-                        source={require('../../assets/testimg.png')} // Replace with the path to your image
-                        style={styles.image}
-                    />
-                </View>
-            )}
-            {data && (
-                <View style={styles.postbox}>
-                    <View>
-                        <Text style={styles.board}>{data.board}</Text>
-                        <Text style={styles.name}>{data.name} | {data.time}</Text>
-                        <Text style={styles.title}>{data.title}</Text>
-                        <View style={styles.comment}>
-                            <View style={styles.commenticon}>
-                                <FontAwesomeIcon size={15} color="#ffcc99" paddingTop='10' icon={faComment} />
-                            </View>
-                            <Text>{data.commentcnt}</Text>
-                        </View>
-                    </View>
-                    <Image
-                        source={require('../../assets/testimg.png')} // Replace with the path to your image
-                        style={styles.image}
-                    />
-                </View>
-            )}
+            <FlatList
+                data={data}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id}
+            />
         </View>
     )
         ;
