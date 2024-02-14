@@ -48,7 +48,9 @@ export const AuthProvider = ({ children }) => {
 
   const signUp = async (formdata) => {
     try {
-      const response = await apiBe.post("/member/signup/", formdata);
+      const response = await apiBe.post("/member/signup/", formdata, {
+        headers: { "content-type": "multipart/form-data" },
+      });
       return { success: true };
     } catch (error) {
       if (error.response && error.response.data) {
