@@ -46,7 +46,12 @@ export default function CommunityCard({ navigation }) {
         {communityData ? (
           <View>
             {communityData.map((post, index) => (
-              <TouchableOpacity key={index}>
+              <TouchableOpacity
+                key={index}
+                onPress={() =>
+                  navigation.navigate("글 보기", { postId: post.id })
+                }
+              >
                 <Text style={styles.postText}>{post.title}</Text>
               </TouchableOpacity>
             ))}

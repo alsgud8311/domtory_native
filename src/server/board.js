@@ -30,9 +30,9 @@ export const writePost = async (boardId, images, title, body) => {
 };
 
 //게시글 상세 정보 가져오기
-export const getPostDetail = async (boardId) => {
+export const getPostDetail = async (postId) => {
   try {
-    const { data } = await apiBe.get(`/board/post/detail/${boardId}/`);
+    const { data } = await apiBe.get(`/board/post/detail/${postId}/`);
     if (data) {
       return { success: true, data: data };
     }
