@@ -8,24 +8,21 @@ import {
 } from "react-native";
 import getMenuData from "../../utils/getDate";
 import { getDateMenuData } from "../../server/menu";
+import { ActivityIndicator } from "react-native";
 
 export default function DailyMenuCard({ navigation }) {
   const [menuData, setMenuData] = useState(null);
   useEffect(() => {
-    (async () => {
-      const data = await getDateMenuData(); // 비동기 함수를 기다림
-      setMenuData(data); // 데이터 설정
-      console.log(data);
-    })();
+    const getData = async () => {
+      try {
+        const data = await getDateMenuData(); // 비동기 함수를 기다림
+        setMenuData(data); // 데이터 설정
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getData();
   }, []);
-
-  if (!menuData) {
-    return (
-      <View style={styles.container}>
-        <Text>Loading...</Text>
-      </View>
-    );
-  }
 
   return (
     <View style={styles.container}>
@@ -33,19 +30,23 @@ export default function DailyMenuCard({ navigation }) {
         style={styles.card}
         onPress={() => navigation.navigate("학사 식단")}
       >
-        <Text style={styles.dateText}>{menuData.formatedDate}</Text>
-        <Text style={styles.mealTypeText}>{menuData.dayDiv}</Text>
-        <View style={styles.menuList}>
-          {menuData.menuList ? (
-            menuData.menuList.map((menu, index) => (
-              <Text key={index} style={styles.menuItem}>
-                {menu}
-              </Text>
-            ))
-          ) : (
-            <Text style={styles.menuItem}>현재 정보를 가져올 수 없습니다</Text>
-          )}
-        </View>
+        {menuData ? (
+          <>
+            <Text style={styles.dateText}>{menuData.formatedDate}</Text>
+            <Text style={styles.mealTypeText}>{menuData.dayDiv}</Text>
+            <View style={styles.menuList}>
+              {menuData.menuList.map((menu, index) => (
+                <Text key={index} style={styles.menuItem}>
+                  {menu}
+                </Text>
+              ))}
+            </View>
+          </>
+        ) : (
+          <Text style={styles.menuItem}>
+            <ActivityIndicator size="large" color="orange" />
+          </Text>
+        )}
       </TouchableOpacity>
     </View>
   );
