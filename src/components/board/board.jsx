@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity, SafeAreaView } from "react-native";
 import NewPost from './newPost';
 import { AntDesign } from '@expo/vector-icons';
+//import { getCommunityListData } from '../../server/board';
+import { getPostList } from '../../server/board';
 
 const renderItem = ({ item }) => {
     return (
@@ -9,9 +11,9 @@ const renderItem = ({ item }) => {
             <View style={styles.item}>
                 <View style={{ flexDirection: 'column', marginBottom: 5 }}>
                     {/* 유저, 작성일 */}
-                    <View style={{ flexDirection: 'row', marginBottom: 5 }}>
-                        <Text style={styles.user}>{item.user}</Text>
-                        <Text style={styles.date}>{item.date}</Text>
+                    <View style={{ flexDirection: 'row', marginBottom: 3 }}>
+                        <Text style={styles.user}>{item.member}</Text>
+                        <Text style={styles.date}>{item.created_at}</Text>
                     </View>
                     {/* 제목, 내용 */}
                     <View>
@@ -20,113 +22,29 @@ const renderItem = ({ item }) => {
                     </View>
                 </View>
                 {/* 사진 */}
-                {item.img && <Image source={{ uri: item.img }} style={styles.image} />}
+                {item.thumbnail_url && <Image source={{ uri: item.thumbnail_url }} style={styles.image} />}
             </View>
         </TouchableOpacity>
     );
 };
 
-export default function Board() {
-    const data = [
-        {
-            'id': 1,
-            'title': '멋사 어떰?',
-            'content': '멋사 지원하려고 하는데 해본 사람',
-            'date': '2024-02-07',
-            'user': 'umji',
-            'img': 'https://logo-resources.thevc.kr/products/200x200/866610da5e81de066cc925768458dedabbfdf41916e6b7143094e4362b9370f5_1619092921783967.jpg',
-        },
-        {
-            'id': 2,
-            'title': '멋사 어떰?',
-            'content': '멋사 지원하려고 하는데 해본 사람',
-            'date': '2024-02-07',
-            'user': 'umji',
-            'img': '',
-        },
-        {
-            'id': 3,
-            'title': '멋사 어떰?',
-            'content': '멋사 지원하려고 하는데 해본 사람',
-            'date': '2024-02-07',
-            'user': 'umji',
-            'img': '',
-        },
-        {
-            'id': 4,
-            'title': '멋사 어떰?',
-            'content': '멋사 지원하려고 하는데 해본 사람',
-            'date': '2024-02-07',
-            'user': 'umji',
-            'img': 'https://logo-resources.thevc.kr/products/200x200/866610da5e81de066cc925768458dedabbfdf41916e6b7143094e4362b9370f5_1619092921783967.jpg',
-        },
-        {
-            'id': 5,
-            'title': '멋사 어떰?',
-            'content': '멋사 지원하려고 하는데 해본 사람',
-            'date': '2024-02-07',
-            'user': 'umji',
-            'img': '',
-        },
-        {
-            'id': 6,
-            'title': '멋사 어떰?',
-            'content': '멋사 지원하려고 하는데 해본 사람',
-            'date': '2024-02-07',
-            'user': 'umji',
-            'img': '',
-        },
-        {
-            'id': 7,
-            'title': '멋사 어떰?',
-            'content': '멋사 지원하려고 하는데 해본 사람',
-            'date': '2024-02-07',
-            'user': 'umji',
-            'img': '',
-        },
-        {
-            'id': 8,
-            'title': '멋사 어떰?',
-            'content': '멋사 지원하려고 하는데 해본 사람',
-            'date': '2024-02-07',
-            'user': 'umji',
-            'img': '',
-        },
-        {
-            'id': 9,
-            'title': '멋사 어떰?',
-            'content': '멋사 지원하려고 하는데 해본 사람',
-            'date': '2024-02-07',
-            'user': 'umji',
-            'img': '',
-        },
-        {
-            'id': 10,
-            'title': '멋사 어떰?',
-            'content': '멋사 지원하려고 하는데 해본 사람',
-            'date': '2024-02-07',
-            'user': 'umji',
-            'img': 'https://logo-resources.thevc.kr/products/200x200/866610da5e81de066cc925768458dedabbfdf41916e6b7143094e4362b9370f5_1619092921783967.jpg',
-        },
-        {
-            'id': 11,
-            'title': '멋사 어떰?',
-            'content': '멋사 지원하려고 하는데 해본 사람',
-            'date': '2024-02-07',
-            'user': 'umji',
-            'img': '',
-        },
-        {
-            'id': 12,
-            'title': '멋사 어떰?',
-            'content': '멋사 지원하려고 하는데 해본 사람',
-            'date': '2024-02-07',
-            'user': 'umji',
-            'img': '',
-        },
-    ]
-
+export default function Board({ boardId }) {
+    const [data, setData] = useState([]);
     const [isModalVisible, setModalVisible] = useState(false);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const result = await getPostList(boardId);
+                console.log(result);
+                setData(result.data);
+            } catch (error) {
+                console.error("Failed to fetch data:", error);
+            }
+        };
+
+        fetchData();
+    }, [boardId]);
 
     const handleOpenNewPost = () => {
         setModalVisible(true);
@@ -145,7 +63,7 @@ export default function Board() {
                 contentContainerStyle={{ paddingVertical: 20 }}
             />
             <TouchableOpacity onPress={handleOpenNewPost} style={styles.writeButton}>
-                <AntDesign name="form" size={24} color={'#fff'}/>
+                <AntDesign name="form" size={24} color={'#fff'} />
             </TouchableOpacity>
 
             <NewPost isVisible={isModalVisible} onClose={handleCloseNewPost} />
@@ -158,6 +76,7 @@ const styles = StyleSheet.create({
         width: "100%",
         backgroundColor: "#fff",
         flex: 1,
+        paddingBottom: 65
     },
     // 글 박스
     item: {
@@ -170,19 +89,21 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 1, height: 1 },
         shadowOpacity: 0.13,
         shadowRadius: 8,
-        elevation: 5,
+        elevation: 2,
         flexDirection: 'row',
         justifyContent: 'space-between'
     },
     date: {
-        fontSize: 10,
+        fontSize: 11,
+        color: '#5a5a5a'
     },
     user: {
-        fontSize: 10,
-        marginRight: 5
+        fontSize: 12,
+        marginRight: 5,
+        color: '#5a5a5a'
     },
     title: {
-        fontSize: 15,
+        fontSize: 14,
         fontWeight: '700',
         marginBottom: 2.5
     },
@@ -197,11 +118,11 @@ const styles = StyleSheet.create({
     // 글쓰기 버튼
     writeButton: {
         position: 'absolute',
-        right: 20, 
-        bottom: 20, 
+        right: 20,
+        bottom: 20,
         width: 50,
         height: 50,
-        borderRadius: 28, 
+        borderRadius: 28,
         backgroundColor: '#ffa451',
         justifyContent: 'center',
         alignItems: 'center',
@@ -209,6 +130,6 @@ const styles = StyleSheet.create({
         shadowColor: '#5a5a5a',
         shadowOffset: { width: 1, height: 1 },
         shadowOpacity: 0.2,
-        shadowRadius: 6, 
+        shadowRadius: 6,
     },
 });
