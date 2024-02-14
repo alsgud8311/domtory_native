@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, ActivityIndicator, FlatList, TouchableOpacity } from "react-native";
+import { SafeAreaView, View, StyleSheet, Text, ActivityIndicator, FlatList, TouchableOpacity } from "react-native";
 import { ListItem } from "react-native-elements";
 import Pagination from '../../components/notice/pagination';
 import { AntDesign } from '@expo/vector-icons';
@@ -170,7 +170,7 @@ export default function Noticebox() {
     };
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <View style={select.select}>
                 <View style={{ flexDirection: 'row' }}>
                     <TouchableOpacity onPress={() => onCategoryChange('cbhs')}>
@@ -209,7 +209,7 @@ export default function Noticebox() {
                 currentPage={currentPage}
                 onPageChange={onPageChange}
             />
-        </View>
+        </SafeAreaView>
     );
 }
 
@@ -218,6 +218,7 @@ const styles = StyleSheet.create({
         width: "100%",
         backgroundColor: "#fff",
         flex: 1,
+        paddingBottom: 60
     },
     listHeader: {
         flexDirection: 'row',
