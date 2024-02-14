@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faComment } from '@fortawesome/free-solid-svg-icons';
+import { getSearhedData } from "../../server/search";
 
 export default function Search() {
 
@@ -27,16 +28,31 @@ export default function Search() {
     };
 
     const [data, setData] = useState(null)
-    const handleSearch = (board) => {
-        console.log(board, inputText);
-        setData({
-            "board": "분실물 게시판",
-            "name": "윤서희",
-            "time": "2024-02-06",
-            "title": "3층 엘리베이터 앞 카드 주인 찾습니다.",
-            "commentcnt": 4
-        });
+    // const handleSearch = () => {
+    //     // console.log(board, inputText);
+    //     // setData({
+    //     //     "board": "분실물 게시판",
+    //     //     "name": "윤서희",
+    //     //     "time": "2024-02-06",
+    //     //     "title": "3층 엘리베이터 앞 카드 주인 찾습니다.",
+    //     //     "commentcnt": 4
+    //     // });
+    //     async () => {
+    //         const data = await getSearhedData(3); 
+    //         console.log(data)
+    //     };
+    // };
+
+    const handleSearch = async () => {
+        try {
+            const searchData = await getSearhedData(3);
+            setData(searchData);
+            console.log(searchData);
+        } catch (error) {
+            console.error('Error occurred while fetching data:', error);
+        }
     };
+    
 
 
     return (
