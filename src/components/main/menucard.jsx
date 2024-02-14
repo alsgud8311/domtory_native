@@ -36,7 +36,7 @@ export default function DailyMenuCard({ navigation }) {
         <Text style={styles.dateText}>{menuData.formatedDate}</Text>
         <Text style={styles.mealTypeText}>{menuData.dayDiv}</Text>
         <View style={styles.menuList}>
-          {menuData ? (
+          {menuData.menuList ? (
             menuData.menuList.map((menu, index) => (
               <Text key={index} style={styles.menuItem}>
                 {menu}
