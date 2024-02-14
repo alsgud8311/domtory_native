@@ -93,7 +93,7 @@ export default function Noticebox() {
 
     useEffect(() => {
         axios
-            .get("http://api.domtory.site/notice/")
+            .get("http://api.domtory.site/notice?page=1/")
             .then((response) => {
                 setCbhsData(response.data);
                 console.log(cbhsData)
