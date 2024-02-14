@@ -38,8 +38,8 @@ export default function NoticeCard({ navigation }) {
       </View>
       <View style={styles.card}>
         {noticeData ? (
-          noticeData.map((notice) => (
-            <TouchableOpacity>
+          noticeData.map((notice, index) => (
+            <TouchableOpacity key={index}>
               <Text>{notice.date}</Text>
               <Text style={styles.postText}>{notice.title}</Text>
             </TouchableOpacity>

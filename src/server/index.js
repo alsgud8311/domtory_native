@@ -1,5 +1,5 @@
 import axios from "axios";
-import * as SecureStore from "expo-secure-store";
+
 import { useAuth } from "../store/AuthContext";
 
 export const apiBe = axios.create({

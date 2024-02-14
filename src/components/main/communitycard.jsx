@@ -45,8 +45,8 @@ export default function CommunityCard({ navigation }) {
       <View style={styles.card}>
         {communityData ? (
           <View>
-            {communityData.map((post) => (
-              <TouchableOpacity>
+            {communityData.map((post, index) => (
+              <TouchableOpacity key={index}>
                 <Text style={styles.postText}>{post.title}</Text>
               </TouchableOpacity>
             ))}
