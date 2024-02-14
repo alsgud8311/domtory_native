@@ -5,8 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="436e0348-13cb-49fc-b3a9-dd7cd767bd7d" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/screens/setting/mypage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/setting/mypage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eas.json" beforeDir="false" afterPath="$PROJECT_DIR$/eas.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/board/board.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/board/board.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/board/newPost.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/board/newPost.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/main/menucard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/main/menucard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/menu/dailymenu.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/menu/dailymenu.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/menu/datecard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/menu/datecard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/notice/pagination.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/notice/pagination.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/community/general/general.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/community/general/general.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,6 +39,7 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
