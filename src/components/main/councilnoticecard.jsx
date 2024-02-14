@@ -23,9 +23,15 @@ export default function CouncilNoticeCard({ navigation }) {
           <AntDesign name="right" size={15} />
         </TouchableOpacity>
       </View>
-      <ScrollView style={styles.scrollContainer} horizontal={true}>
+      <ScrollView
+        showsHorizontalScrollIndicator={false}
+        style={styles.scrollContainer}
+        horizontal={true}
+      >
         <View style={styles.card}>
-          <Text style={styles.postText}>자유게시판 글 1</Text>
+          <Text style={styles.postText}>
+            자유게시판 글 1qwriqwrjoiwqjrjqowirjiowqjroijqwiorjoqwrjiowjqrio
+          </Text>
         </View>
         <View style={styles.card}>
           <Text style={styles.postText}>자유게시판 글 1</Text>
@@ -82,5 +88,6 @@ const styles = StyleSheet.create({
   postText: {
     fontSize: 16,
     paddingVertical: 5,
+    textAlign: "center",
   },
 });

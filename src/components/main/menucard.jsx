@@ -36,11 +36,15 @@ export default function DailyMenuCard({ navigation }) {
         <Text style={styles.dateText}>{menuData.formatedDate}</Text>
         <Text style={styles.mealTypeText}>{menuData.dayDiv}</Text>
         <View style={styles.menuList}>
-          {menuData.menuList.map((menu, index) => (
-            <Text key={index} style={styles.menuItem}>
-              {menu}
-            </Text>
-          ))}
+          {menuData ? (
+            menuData.menuList.map((menu, index) => (
+              <Text key={index} style={styles.menuItem}>
+                {menu}
+              </Text>
+            ))
+          ) : (
+            <Text style={styles.menuItem}>현재 정보를 가져올 수 없습니다</Text>
+          )}
         </View>
       </TouchableOpacity>
     </View>
