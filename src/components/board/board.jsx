@@ -42,19 +42,19 @@ export default function Board({ boardId, navigation }) {
             let screenName;
             switch (boardId) {
                 case 1:
-                    screenName = "자유게시판 글 보기";
+                    screenName = "자유 게시판";
                     break;
                 case 2:
-                    screenName = "중고거래 글 보기";
+                    screenName = "중고거래게시판";
                     break;
                 case 3:
-                    screenName = "취준생 글 보기";
+                    screenName = "취준생게시판";
                     break;
                 case 4:
-                    screenName = "번개모임 글 보기";
+                    screenName = "번개모임게시판";
                     break;
                 case 5:
-                    screenName = "분실물 글 보기";
+                    screenName = "분실물게시판";
                     break;
                 default:
                     screenName = "일치하는 게시판 없음";

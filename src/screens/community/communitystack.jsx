@@ -46,7 +46,7 @@ const CommunityStack = ({ navigation }) => {
       <Stack.Screen name="내가 쓴 글" component={MyPosting} />
       <Stack.Screen name="내가 쓴 댓글" component={Mycomment} />
       <Stack.Screen name="공지사항" component={CbhsNotice} />
-      <Stack.Screen name="자유게시판 글 보기" component={GeneralDetail} />
+      <Stack.Screen name="자유 게시판" component={GeneralDetail} />
       <Stack.Screen
         name="자유게시판"
         component={General}
@@ -63,7 +63,7 @@ const CommunityStack = ({ navigation }) => {
           },
         }}
       />
-      <Stack.Screen name="취준생 글 보기" component={JobseekerDetail} />
+      <Stack.Screen name="취준생게시판" component={JobseekerDetail} />
       <Stack.Screen
         name="취준생 게시판"
         component={Jobseeker}
@@ -80,7 +80,7 @@ const CommunityStack = ({ navigation }) => {
           },
         }}
       />
-      <Stack.Screen name="번개모임 글 보기" component={ImpromptuDetail} />
+      <Stack.Screen name="번개모임게시판" component={ImpromptuDetail} />
       <Stack.Screen
         name="번개모임 게시판"
         component={Impromptu}
@@ -97,7 +97,7 @@ const CommunityStack = ({ navigation }) => {
           },
         }}
       />
-      <Stack.Screen name="중고거래 글 보기" component={FleeMarketDetail} />
+      <Stack.Screen name="중고거래게시판" component={FleeMarketDetail} />
       <Stack.Screen
         name="중고거래 게시판"
         component={FleeMarket}
@@ -114,7 +114,7 @@ const CommunityStack = ({ navigation }) => {
           },
         }}
       />
-      <Stack.Screen name="분실물 글 보기" component={LostAndFoundDetail} />
+      <Stack.Screen name="분실물게시판" component={LostAndFoundDetail} />
       <Stack.Screen
         name="분실물 게시판"
         component={LostAndFound}
