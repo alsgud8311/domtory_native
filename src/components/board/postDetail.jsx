@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import {
     SafeAreaView, View, Text, Image, Dimensions, StyleSheet, ScrollView,
-    KeyboardAvoidingView, TextInput, Platform, TouchableOpacity
+    KeyboardAvoidingView, TextInput, Platform, TouchableOpacity, Alert
 } from 'react-native';
 import { Octicons, FontAwesome, Feather } from '@expo/vector-icons';
 import domtory from '../../assets/icon.png';
-import { postComment } from '../../server/board'
+import { postComment, deleteComment } from '../../server/board'
 
 export default function PostDetail({ data, reloadData, postId }) {
     if (!data) {
-        return <View><Text>Loading...</Text></View>; // 데이터가 아직 로드되지 않았을 때 로딩 표시
+        return <View><Text>Loading...</Text></View>;
     }
 
     // 각 이미지의 높이를 저장할 배열 상태
@@ -17,14 +17,14 @@ export default function PostDetail({ data, reloadData, postId }) {
     const screenWidth = Dimensions.get('window').width - 40;
     useEffect(() => {
         if (data && data.post_image) {
-            const heights = data.post_image.map(() => 0); // 초기 높이는 0으로 설정
+            const heights = data.post_image.map(() => 0);
             data.post_image.forEach((img, index) => {
                 if (!img.is_deleted) {
                     Image.getSize(img.image_url, (width, height) => {
                         const scaleFactor = width / screenWidth;
                         const imageHeight = height / scaleFactor;
-                        heights[index] = imageHeight; // 계산된 높이를 저장
-                        setImageHeights([...heights]); // 상태 업데이트
+                        heights[index] = imageHeight;
+                        setImageHeights([...heights]);
                     });
                 }
             });
@@ -52,6 +52,36 @@ export default function PostDetail({ data, reloadData, postId }) {
         }
     };
 
+    const confirmDelete = (commentId) => {
+        Alert.alert(
+            "댓글 삭제",
+            "댓글을 삭제하시겠습니까?",
+            [
+                {
+                    text: "취소",
+                    style: "cancel"
+                },
+                {
+                    text: "예", onPress: () => handleDelete(commentId)
+                }
+            ],
+            { cancelable: false }
+        );
+    };
+
+    const handleDelete = async (commentId) => {
+        const result = await deleteComment(commentId);
+
+        if (result.success) {
+            console.log('댓글이 성공적으로 삭제되었습니다.');
+            setComment('');
+            reloadData();
+        } else {
+            console.error('댓글 삭제에 실패했습니다:', data);
+            Alert.alert('댓글 삭제', '댓글 삭제에 실패했습니다.');
+        }
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
@@ -74,7 +104,7 @@ export default function PostDetail({ data, reloadData, postId }) {
                                 source={{ uri: img.image_url }}
                                 style={{
                                     width: screenWidth,
-                                    height: imageHeights[index], // 각 이미지의 높이 사용
+                                    height: imageHeights[index],
                                     resizeMode: 'contain',
                                     borderRadius: 3,
                                     marginBottom: 10,
@@ -87,21 +117,38 @@ export default function PostDetail({ data, reloadData, postId }) {
                     <Octicons name="comment" style={styles.commentIcon} />
                     <Text style={styles.commentNum}>{data.comment_cnt}</Text>
                 </View>
-                {/* 댓글 */}
+                {/* /댓글 */}
                 {data.comment && data.comment.length > 0 && (
                     <View style={styles.commentSection}>
-                        {data.comment.map((comment, index) => (
-                            <View key={index} style={styles.commentContainer}>
-                                <View style={{flexDirection:'row', justifyContent:'space-between'}}>
-                                    <Text style={styles.commentMember}>{comment.member}</Text>
-                                    <View style={styles.commentOption}>
-                                        <Octicons name="comment-discussion" style={styles.commnetReply} />
-                                        <Octicons name="trash" style={styles.commnetDelete} />
-                                        <Octicons name="stop" style={styles.commnetReport} />
+                        {data.comment.map((comment) => (
+                            <View key={comment.id} style={styles.commentContainer}>
+                                {!comment.is_deleted && (
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <Image source={domtory} style={{ width: 23, height: 23, borderRadius: 3 }} />
+                                            <Text style={styles.commentMember}>{comment.member}</Text>
+                                        </View>
+                                        <View style={styles.commentOption}>
+                                            <Octicons name="comment-discussion" style={styles.commnetReply} />
+                                            <TouchableOpacity onPress={() => confirmDelete(comment.id)}>
+                                                <Octicons name="trash" style={styles.commnetDelete} />
+                                            </TouchableOpacity>
+                                            <Octicons name="stop" style={styles.commnetReport} />
+                                        </View>
                                     </View>
-                                </View>
-                                <Text style={styles.commentContent}>{comment.body}</Text>
-                                <Text style={styles.commentDate}>{comment.created_at}</Text>
+                                )}
+                                {comment.is_deleted ? (
+                                    <>
+                                        <Image source={domtory} style={{ width: 23, height: 23, borderRadius: 3 }} />
+                                        <Text style={styles.commentDeleted}>삭제된 댓글입니다.</Text>
+                                    </>
+                                ) : (
+                                    <>
+
+                                        <Text style={styles.commentContent}>{comment.body}</Text>
+                                        <Text style={styles.commentDate}>{comment.created_at}</Text>
+                                    </>
+                                )}
                             </View>
                         ))}
                     </View>
@@ -217,11 +264,13 @@ const styles = StyleSheet.create({
     },
     commentMember: {
         fontSize: 16,
-        fontWeight: '700'
+        fontWeight: '700',
+        marginLeft: 5
     },
     commentContent: {
-        fontSize: 16,
+        fontSize: 15,
         color: '#333',
+        marginTop: 3,
         marginBottom: 4,
     },
     commentDate: {
@@ -252,6 +301,10 @@ const styles = StyleSheet.create({
         fontSize: 13,
         color: '#66666675',
         paddingHorizontal: 15
+    },
+    commentDeleted: {
+        paddingVertical: 13,
+        color: '#666666'
     },
 
     // 댓글 작성
