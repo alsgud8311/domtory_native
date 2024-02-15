@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { getLatestPosts } from "../../server/board";
+import { Octicons } from "@expo/vector-icons";
 
 export default function RecentPostCard({ navigation }) {
   const [recentPostData, setRecentPostData] = useState(null);
@@ -38,14 +39,30 @@ export default function RecentPostCard({ navigation }) {
         <Text style={styles.descriptionText}>새로 올라온 글</Text>
       </View>
       {recentPostData ? (
-        recentPostData.map((data) => (
-          <TouchableOpacity style={styles.card}>
+        recentPostData.map((data, index) => (
+          <TouchableOpacity
+            key={index}
+            style={styles.card}
+            onPress={() => navigation.navigate("글 보기", { postId: data.id })}
+          >
             <View>
               <View style={styles.postWrapper}>
                 <Text style={styles.postText}>익명</Text>
                 <Text style={styles.postText}>{boardList[data.board]}</Text>
               </View>
               <Text style={styles.postText}>{data.title}</Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  paddingTop: 10,
+                  paddingBottom: 5,
+                  gap: 5,
+                }}
+              >
+                <Text>{data.comment_cnt}</Text>
+                <Octicons name="comment" style={styles.commentIcon} />
+              </View>
             </View>
           </TouchableOpacity>
         ))
@@ -97,7 +114,7 @@ const styles = StyleSheet.create({
   },
   postText: {
     fontSize: 16,
-    paddingVertical: 5,
+    paddingTop: 10,
   },
   postWrapper: {
     flexDirection: "row",
