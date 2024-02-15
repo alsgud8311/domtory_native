@@ -8,7 +8,7 @@ export const writePost = async (boardId, images, title, body) => {
     body: body,
   };
   try {
-    const { data } = await apiBe.post(`/board/post/create/${boardId}/`);
+    const { data } = await apiBe.post(`/board/post/create/${boardId}/`, postData);
     return { success: true };
   } catch (error) {
     return { success: false, data: error.response.data };

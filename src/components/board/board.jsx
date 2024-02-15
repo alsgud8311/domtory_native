@@ -5,9 +5,11 @@ import NewPost from './newPost';
 import { AntDesign } from '@expo/vector-icons';
 import { getPostList } from '../../server/board';
 
+
 export default function Board({ boardId, navigation }) {
     const [data, setData] = useState([]);
     const [isModalVisible, setModalVisible] = useState(false);
+    const [refreshFlag, setRefreshFlag] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -21,7 +23,7 @@ export default function Board({ boardId, navigation }) {
         };
 
         fetchData();
-    }, [boardId]);
+    }, [boardId, refreshFlag]);
 
     const handleOpenNewPost = () => {
         setModalVisible(true);
@@ -29,6 +31,10 @@ export default function Board({ boardId, navigation }) {
 
     const handleCloseNewPost = () => {
         setModalVisible(false);
+    };
+
+    const handleNewPostSubmit = () => {
+        setRefreshFlag(!refreshFlag);
     };
 
     const renderItem = ({ item }) => {
@@ -59,7 +65,8 @@ export default function Board({ boardId, navigation }) {
             } else {
                 // 게시판이 일치하지 않는 경우의 처리 로직
             }
-        };
+        }
+
         return (
             <TouchableOpacity onPress={navigateToDetailScreen}>
                 <View style={styles.item}>
@@ -94,7 +101,7 @@ export default function Board({ boardId, navigation }) {
                 <AntDesign name="form" size={24} color={'#fff'} />
             </TouchableOpacity>
 
-            <NewPost isVisible={isModalVisible} onClose={handleCloseNewPost} />
+            <NewPost isVisible={isModalVisible} onClose={handleCloseNewPost} boardId={boardId} onPostSubmit={handleNewPostSubmit} />
         </SafeAreaView>
     );
 }
@@ -147,7 +154,7 @@ const styles = StyleSheet.create({
     writeButton: {
         position: 'absolute',
         right: 20,
-        bottom: 20,
+        bottom: 90,
         width: 50,
         height: 50,
         borderRadius: 28,
