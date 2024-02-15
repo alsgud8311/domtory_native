@@ -146,10 +146,7 @@ export const postReply = async (commentId, reply) => {
     body: reply,
   };
   try {
-    const { data } = await apiBe.post(
-      `/board/reply/create/${commentId}/`,
-      replyData
-    );
+    const { data } = await apiBe.post(`/board/reply/create/${commentId}/`, replyData);
     if (data) {
       return { success: true, data: data };
     }
@@ -167,6 +164,19 @@ export const deleteReply = async (commentId) => {
       return { success: true, data: data };
     }
     return { success: false, data: "답글을 삭제하는 중에 오류가 발생했습니다" };
+  } catch (error) {
+    return { success: false, data: error.response.data };
+  }
+};
+
+// 신고
+export const report = async (type, id) => {
+  try {
+    const { data } = await apiBe.post(`/report/${type}/${id}/`);
+    if (data) {
+      return { success: true, data: data };
+    }
+    return { success: false, data: "신고 처리중 오류가 발생했습니다" };
   } catch (error) {
     return { success: false, data: error.response.data };
   }
