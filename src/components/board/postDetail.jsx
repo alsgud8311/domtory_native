@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { Octicons, FontAwesome, Feather } from '@expo/vector-icons';
 import domtory from '../../assets/icon.png';
-import { postComment, deleteComment, postReply, deleteReply } from '../../server/board'
+import { postComment, deleteComment, postReply, deleteReply, updatePost, report } from '../../server/board'
 
 export default function PostDetail({ data, reloadData, postId }) {
     if (!data) {
@@ -147,6 +147,35 @@ export default function PostDetail({ data, reloadData, postId }) {
         }
     };
 
+    // 신고 확인 및 처리
+    const confirmAndReport = (type, id) => {
+        Alert.alert(
+            "신고",
+            "이 게시글/댓글을 신고하시겠습니까?",
+            [
+                {
+                    text: "취소",
+                    style: "cancel"
+                },
+                {
+                    text: "예", onPress: () => handleReport(type, id)
+                }
+            ],
+            { cancelable: false }
+        );
+    };
+
+    // 신고
+    const handleReport = async (type, id) => {
+        const result = await report(type, id);
+        if (result.success) {
+            Alert.alert('신고 완료', '해당 게시글/댓글 신고를 완료했습니다.');
+        } else {
+            console.error('신고 실패:', result.data);
+            Alert.alert('오류', '신고에 실패했습니다. 다시 시도해주세요.');
+        }
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
@@ -205,7 +234,7 @@ export default function PostDetail({ data, reloadData, postId }) {
                                         <TouchableOpacity onPress={() => confirmDelete(comment.id)}>
                                             <Octicons name="trash" style={styles.commnetDelete} />
                                         </TouchableOpacity>
-                                        <Octicons name="stop" style={styles.commnetReport} />
+                                        <Octicons name="stop" style={styles.commnetReport} onPress={() => confirmAndReport('comment', comment.id)} />
                                     </View>
                                 </View>
 
@@ -233,7 +262,7 @@ export default function PostDetail({ data, reloadData, postId }) {
                                                 <View style={styles.commentOption}>
                                                     <Octicons name="comment-discussion" style={styles.commnetReply} onPress={() => promptForReply(comment.id)} />
                                                     <Octicons name="trash" style={styles.commnetDelete} onPress={() => confirmReplyDelete(reply.id)} />
-                                                    <Octicons name="stop" style={styles.commnetReport} />
+                                                    <Octicons name="stop" style={styles.commnetReport} onPress={() => confirmAndReport('comment', reply.id)} />
                                                 </View>
                                             </View>
                                             <Text style={styles.commentContent}>{reply.body}</Text>
