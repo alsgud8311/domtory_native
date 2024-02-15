@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { Octicons, FontAwesome, Feather } from '@expo/vector-icons';
 import domtory from '../../assets/icon.png';
-import { postComment, deleteComment, postReply } from '../../server/board'
+import { postComment, deleteComment, postReply, deleteReply } from '../../server/board'
 
 export default function PostDetail({ data, reloadData, postId }) {
     if (!data) {
@@ -104,7 +104,7 @@ export default function PostDetail({ data, reloadData, postId }) {
             { cancelable: false }
         );
     };
-    
+
     // 댓글 삭제
     const handleDelete = async (commentId) => {
         const result = await deleteComment(commentId);
@@ -114,6 +114,36 @@ export default function PostDetail({ data, reloadData, postId }) {
         } else {
             console.error('댓글 삭제에 실패했습니다:', result.data);
             Alert.alert('댓글 삭제', '댓글 삭제에 실패했습니다. 다시 시도해주세요.');
+        }
+    };
+
+    // 대댓글 삭제 확인창
+    const confirmReplyDelete = (commentId) => {
+        Alert.alert(
+            "대댓글 삭제",
+            "대댓글을 삭제하시겠습니까?",
+            [
+                {
+                    text: "취소",
+                    style: "cancel"
+                },
+                {
+                    text: "예", onPress: () => handleReplyDelete(commentId)
+                }
+            ],
+            { cancelable: false }
+        );
+    };
+
+    // 대댓글 삭제
+    const handleReplyDelete = async (commentId) => {
+        const result = await deleteReply(commentId);
+        if (result.success) {
+            console.log('대댓글이 성공적으로 삭제되었습니다.');
+            reloadData();
+        } else {
+            console.error('대댓글 삭제에 실패했습니다:', result.data);
+            Alert.alert('대댓글 삭제', '대댓글 삭제에 실패했습니다. 다시 시도해주세요.');
         }
     };
 
@@ -189,10 +219,10 @@ export default function PostDetail({ data, reloadData, postId }) {
                             <View style={styles.replyContainer}>
                                 {comment.reply.map((reply) => (
                                     reply.is_deleted ? (
-                                        <>
+                                        <View style={styles.reply}>
                                             <Image source={domtory} style={{ width: 23, height: 23, borderRadius: 3 }} />
                                             <Text key={reply.id} style={styles.commentDeleted}>삭제된 댓글입니다.</Text>
-                                        </>
+                                        </View>
                                     ) : (
                                         <View style={styles.reply}>
                                             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -202,9 +232,7 @@ export default function PostDetail({ data, reloadData, postId }) {
                                                 </View>
                                                 <View style={styles.commentOption}>
                                                     <Octicons name="comment-discussion" style={styles.commnetReply} onPress={() => promptForReply(comment.id)} />
-                                                    <TouchableOpacity onPress={() => confirmDelete(comment.id)}>
-                                                        <Octicons name="trash" style={styles.commnetDelete} />
-                                                    </TouchableOpacity>
+                                                    <Octicons name="trash" style={styles.commnetDelete} onPress={() => confirmReplyDelete(reply.id)} />
                                                     <Octicons name="stop" style={styles.commnetReport} />
                                                 </View>
                                             </View>
@@ -375,7 +403,7 @@ const styles = StyleSheet.create({
     },
     // 대댓글 1개 컨테이너
     reply: {
-        backgroundColor:'#e1e1e170',
+        backgroundColor: '#e1e1e170',
         marginBottom: 10,
         borderRadius: 10,
         padding: 6
