@@ -4,37 +4,31 @@ import {
     KeyboardAvoidingView, TextInput, Platform, TouchableOpacity
 } from 'react-native';
 import { Octicons, FontAwesome, Feather } from '@expo/vector-icons';
-import domtory from '../../../assets/icon.png';
+import domtory from '../../assets/icon.png';
 
-export default function PostDetail() {
-    const data = {
-        user: '익명',
-        title: '멋사 어떰?',
-        content: '멋사 지원하려고 하는데 해본 사람',
-        date: '2024-02-07',
-        img: 'https://cdn.coindeskkorea.com//news/photo/202306/91930_32455_4813.png',
-        coment_num: 3,
-        coment: [
-            { content: '나 해봣음', date: '02/10 00:16' },
-            { content: 'ㅇㅇ 지원하셈 좋음', date: '02/10 00:16' },
-            { content: '오 나도 지원할건데', date: '02/10 00:16' }
-        ]
-    };
+export default function PostDetail({ data }) {
+    if (!data) {
+        return <View><Text>Loading...</Text></View>; // 데이터가 아직 로드되지 않았을 때 로딩 표시
+    }
 
-    // 이미지 너비
+    // 각 이미지의 높이를 저장할 배열 상태
+    const [imageHeights, setImageHeights] = useState([]);
     const screenWidth = Dimensions.get('window').width - 40;
-    // 이미지의 높이
-    const [imageHeight, setImageHeight] = useState(0);
-
     useEffect(() => {
-        if (data.img) {
-            Image.getSize(data.img, (width, height) => {
-                const scaleFactor = width / screenWidth;
-                const imageHeight = height / scaleFactor;
-                setImageHeight(imageHeight);
+        if (data && data.post_image) {
+            const heights = data.post_image.map(() => 0); // 초기 높이는 0으로 설정
+            data.post_image.forEach((img, index) => {
+                if (!img.is_deleted) {
+                    Image.getSize(img.image_url, (width, height) => {
+                        const scaleFactor = width / screenWidth;
+                        const imageHeight = height / scaleFactor;
+                        heights[index] = imageHeight; // 계산된 높이를 저장
+                        setImageHeights([...heights]); // 상태 업데이트
+                    });
+                }
             });
         }
-    }, [data.img]);
+    }, [data]);
 
     // 작성 댓글
     const [comment, setComment] = useState('');
@@ -51,30 +45,35 @@ export default function PostDetail() {
                 <View style={styles.header}>
                     <Image source={domtory} style={{ width: 45, height: 45, borderRadius: 10 }} />
                     <View style={{ flexDirection: 'column', marginLeft: 8 }}>
-                        <Text style={styles.user}>{data.user}</Text>
-                        <Text style={styles.date}>{data.date}</Text>
+                        <Text style={styles.user}>{data.member}</Text>
+                        <Text style={styles.date}>{data.created_at}</Text>
                     </View>
                 </View>
                 <Text style={styles.title}>{data.title}</Text>
-                <Text style={styles.content}>{data.content}</Text>
+                <Text style={styles.content}>{data.body}</Text>
                 {/* 사진 */}
-                {data.img && (
-                    <Image
-                        source={{ uri: data.img }}
-                        style={{
-                            width: screenWidth,
-                            height: imageHeight,
-                            resizeMode: 'contain',
-                            borderRadius: 3,
-                            marginBottom: 10,
-                        }}
-                    />
-                )}
+                {data && data.post_image && data.post_image.map((img, index) => {
+                    if (!img.is_deleted) {
+                        return (
+                            <Image
+                                key={img.id}
+                                source={{ uri: img.image_url }}
+                                style={{
+                                    width: screenWidth,
+                                    height: imageHeights[index], // 각 이미지의 높이 사용
+                                    resizeMode: 'contain',
+                                    borderRadius: 3,
+                                    marginBottom: 10,
+                                }}
+                            />
+                        );
+                    }
+                })}
                 <View style={styles.comment}>
                     <Octicons name="comment" style={styles.commentIcon} />
                     <Text style={styles.commentNum}>3</Text>
                 </View>
-                {/* 댓글 */}
+                {/* 댓글
                 <View style={styles.commentSection}>
                     {data.coment.map((comment, index) => (
                         <View key={index} style={styles.commentContainer}>
@@ -82,7 +81,7 @@ export default function PostDetail() {
                             <Text style={styles.commentDate}>{comment.date}</Text>
                         </View>
                     ))}
-                </View>
+                </View> */}
             </ScrollView>
 
             {/* 댓글 작성 */}
