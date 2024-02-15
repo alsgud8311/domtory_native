@@ -40,7 +40,7 @@ export const Layout = () => {
         ) : (
           <>
             <Stack.Screen name="로그인" component={Login} />
-            <Stack.Screen
+            {/* <Stack.Screen
               name="회원가입"
               component={Signup}
               options={{
@@ -49,7 +49,7 @@ export const Layout = () => {
                 headerTintColor: "orange",
                 title: "",
               }}
-            />
+            /> */}
           </>
         )}
       </Stack.Navigator>

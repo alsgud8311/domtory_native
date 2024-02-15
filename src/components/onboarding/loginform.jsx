@@ -79,7 +79,7 @@ export default function LoginForm({ navigation }) {
             <TextInput
               autoCorrect={false}
               spellCheck={false}
-              placeholder="이메일"
+              placeholder="학사번호(- 포함)"
               placeholderColor="#c4c3cb"
               style={styles.loginFormTextInput}
               onChangeText={(text) => setEmail(text)}
@@ -89,17 +89,28 @@ export default function LoginForm({ navigation }) {
             {loginError.email ? (
               <Text style={{ color: "red" }}>{loginError.email}</Text>
             ) : null}
-            <TextInput
-              autoCapitalize="none"
-              autoCorrect={false}
-              spellCheck={false}
-              placeholder="비밀번호"
-              placeholderColor="#c4c3cb"
-              style={styles.loginFormTextInput}
-              secureTextEntry={true}
-              onChangeText={(text) => setPassword(text)}
-              value={password}
-            />
+            <View
+              style={{
+                width: "100%",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <TextInput
+                autoCapitalize="none"
+                autoCorrect={false}
+                spellCheck={false}
+                placeholder="비밀번호"
+                placeholderColor="#c4c3cb"
+                style={styles.loginFormTextInput}
+                secureTextEntry={true}
+                onChangeText={(text) => setPassword(text)}
+                value={password}
+              />
+            </View>
+            <View>
+              <Text>🔒초기 비밀번호는 생년월일 6자리입니다.🔒</Text>
+            </View>
           </View>
           {isLoading ? (
             <TouchableOpacity style={styles.loginButton}>
@@ -119,7 +130,7 @@ export default function LoginForm({ navigation }) {
               </Text>
             </TouchableOpacity>
           )}
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.signupButton}
             onPress={() => onSignupPress()}
             disabled={isLoading}
@@ -127,7 +138,7 @@ export default function LoginForm({ navigation }) {
             <Text style={{ fontSize: 20, color: "orange", fontWeight: 700 }}>
               회원가입
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
