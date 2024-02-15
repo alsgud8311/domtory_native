@@ -92,7 +92,14 @@ export default function PostDetail({ data, reloadData, postId }) {
                     <View style={styles.commentSection}>
                         {data.comment.map((comment, index) => (
                             <View key={index} style={styles.commentContainer}>
-                                <Text style={styles.commentContent}>{comment.member}</Text>
+                                <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+                                    <Text style={styles.commentMember}>{comment.member}</Text>
+                                    <View style={styles.commentOption}>
+                                        <Octicons name="comment-discussion" style={styles.commnetReply} />
+                                        <Octicons name="trash" style={styles.commnetDelete} />
+                                        <Octicons name="stop" style={styles.commnetReport} />
+                                    </View>
+                                </View>
                                 <Text style={styles.commentContent}>{comment.body}</Text>
                                 <Text style={styles.commentDate}>{comment.created_at}</Text>
                             </View>
@@ -175,6 +182,7 @@ const styles = StyleSheet.create({
         fontSize: 15,
         marginBottom: 13,
     },
+
     // 댓글
     comment: {
         flexDirection: 'row',
@@ -207,15 +215,45 @@ const styles = StyleSheet.create({
         paddingBottom: 8,
         marginBottom: 8,
     },
+    commentMember: {
+        fontSize: 16,
+        fontWeight: '700'
+    },
     commentContent: {
         fontSize: 16,
         color: '#333',
         marginBottom: 4,
     },
     commentDate: {
-        fontSize: 14,
-        color: 'grey',
+        fontSize: 13,
+        color: '#666666'
     },
+    commentOption: {
+        flexDirection: 'row',
+        padding: 4,
+        borderRadius: 10,
+        backgroundColor: '#e0e0e06a'
+    },
+    commnetReply: {
+        fontSize: 14,
+        color: '#66666675',
+        paddingHorizontal: 13,
+        borderRightWidth: 1,
+        borderRightColor: '#6666665e'
+    },
+    commnetDelete: {
+        fontSize: 14,
+        color: '#66666675',
+        paddingHorizontal: 13,
+        borderRightWidth: 1,
+        borderRightColor: '#6666665e'
+    },
+    commnetReport: {
+        fontSize: 13,
+        color: '#66666675',
+        paddingHorizontal: 15
+    },
+
     // 댓글 작성
     writeComment: {
         flexDirection: 'row',
@@ -228,7 +266,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#fff',
         borderRadius: 15,
-        backgroundColor: '#d8d8d872',
+        backgroundColor: '#d8d8d853',
         marginTop: 3,
         marginBottom: 7,
         marginHorizontal: 10,
