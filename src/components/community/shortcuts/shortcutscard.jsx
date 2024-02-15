@@ -9,7 +9,7 @@ import logo from "../../../assets/domtory_icon.png";
 export default function ShortcutCard({ navigation }) {
   return (
     <>
-      <View style={styles.container}>
+      <View style={styles.noticeContainer}>
         <View style={{ marginBottom: 5 }}>
           <Text style={styles.boardTitle}>공지사항</Text>
           <Text style={styles.boardsubTitle}>
@@ -76,6 +76,12 @@ export default function ShortcutCard({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  noticeContainer: {
+    width: "100%",
+    padding: 20,
+    borderTopColor: "gray",
+    borderTopWidth: 1,
+  },
   container: {
     width: "100%",
     padding: 20,
