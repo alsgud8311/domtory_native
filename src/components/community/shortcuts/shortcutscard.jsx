@@ -81,6 +81,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderTopColor: "gray",
     borderTopWidth: 1,
+    paddingBottom: 110
   },
   sortcutButton: {
     flexDirection: "row",
