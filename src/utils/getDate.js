@@ -7,16 +7,16 @@ function getDate() {
   let dayDivForApi;
   let dayDiv;
 
-  if (hour <= 7 && hour >= 0) {
+  if (hour <= 8 && hour >= 0) {
     dayDiv = "아침";
     dayDivForApi = "breakfast";
-  } else if (hour >= 8 && hour <= 12) {
+  } else if (hour >= 9 && hour <= 13) {
     dayDiv = "점심";
     dayDivForApi = "lunch";
-  } else if (hour >= 13 && hour <= 19) {
+  } else if (hour >= 14 && hour <= 20) {
     dayDiv = "저녁";
     dayDivForApi = "dinner";
-  } else if (hour >= 20 && hour <= 23) {
+  } else if (hour >= 21 && hour <= 24) {
     dayDiv = "아침";
     dayDivForApi = "breakfast";
     today.setDate(today.getDate() + 1);

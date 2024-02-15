@@ -63,6 +63,7 @@ export default function SignupForm({ navigation }) {
   //Formdata 형식으로 회원가입 요청
   const signup = async () => {
     setLoading(true);
+    console.log("Image", cbhsImage);
     const birth = new Date();
     const signupFormData = new FormData();
     signupFormData.append("email", email);
@@ -74,7 +75,7 @@ export default function SignupForm({ navigation }) {
     signupFormData.append("dormitoryCard", {
       uri: cbhsImage.uri,
       name: cbhsImage.fileName,
-      type: cbhsImage.mimeType,
+      type: cbhsImage.fileType,
     });
     signupFormData.append("birthday", birth.toISOString());
     try {

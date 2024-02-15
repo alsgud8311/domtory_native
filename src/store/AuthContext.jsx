@@ -48,13 +48,15 @@ export const AuthProvider = ({ children }) => {
 
   const signUp = async (formdata) => {
     try {
-      const response = await apiBe.post("/member/signup/", formdata);
+      const response = await apiBe.post("/member/signup/", formdata, {
+        headers: { "content-type": "multipart/form-data" },
+      });
       return { success: true };
     } catch (error) {
       if (error.response && error.response.data) {
         return { success: false, data: error.response.data };
       } else {
-        console.log(error);
+        console.error(error);
       }
     }
   };
@@ -109,10 +111,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const signout = async (pushToken) => {
+  const signout = async () => {
     try {
       const pushToken = await SecureStore.getItemAsync("PUSH_TOKEN");
-      await apiBe.post("/push/token/invalid/", { pushToken: pushToken });
+      // await apiBe.post("/push/token/invalid/", {
+      //   pushToken: pushToken,
+      // });
       await SecureStore.deleteItemAsync("ACCESS_TOKEN");
       await SecureStore.deleteItemAsync("REFRESH_TOKEN");
       await SecureStore.deleteItemAsync("PUSH_TOKEN");
@@ -156,12 +160,32 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const refresh = async () => {
+    try {
+      const token = await SecureStore.getItemAsync("REFRESH_TOKEN");
+
+      const { data } = await apiBe.post("/member/signin/", {
+        refreshToken: token,
+      });
+
+      await SecureStore.setItemAsync("REFRESH_TOKEN", data.refreshToken);
+      apiBe.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${data.refreshToken}`;
+      return { success: true };
+    } catch (error) {
+      console.log("refresh failed", error);
+      return { success: false };
+    }
+  };
+
   const value = {
     onRegister: signUp,
     onLogin: signin,
     onLogout: signout,
     onPasswordChange: changePassword,
     onWithdrawal: withdrawal,
+    onrefresh: refresh,
     authState: authState,
   };
 

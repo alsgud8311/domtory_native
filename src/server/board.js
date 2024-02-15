@@ -30,9 +30,9 @@ export const writePost = async (boardId, images, title, body) => {
 };
 
 //게시글 상세 정보 가져오기
-export const getPostDetail = async (boardId) => {
+export const getPostDetail = async (postId) => {
   try {
-    const { data } = await apiBe.get(`/board/post/detail/${boardId}/`);
+    const { data } = await apiBe.get(`/board/post/detail/${postId}/`);
     if (data) {
       return { success: true, data: data };
     }
@@ -102,6 +102,7 @@ export const getLatestPosts = async (boardId) => {
     }
     return { success: false, data: "정보를 가져오는 중에 오류가 발생했습니다" };
   } catch (error) {
+    console.log(error);
     return { success: false, data: error.response.data };
   }
 };
