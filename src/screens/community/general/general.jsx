@@ -1,9 +1,9 @@
 import React from 'react';
 import Board from '../../../components/board/board'
 
-export default function General() {
+export default function General({navigation}) {
   return (
-    <Board/>
+    <Board boardId={1} navigation={navigation}/>
   );
 }
 

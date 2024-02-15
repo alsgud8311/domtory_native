@@ -1,8 +1,8 @@
 import React from 'react';
 import Board from '../../../components/board/board'
 
-export default function FleeMarket() {
+export default function FleeMarket({ navigation }) {
   return (
-    <Board/>
+    <Board boardId={2} navigation={navigation} />
   );
 }

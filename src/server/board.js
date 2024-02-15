@@ -1,19 +1,5 @@
 import { apiBe } from ".";
 
-// import axios from "axios";
-// import { apiBe } from ".";
-// //http://api.domtory.site/board/post/list/{board_id}/
-
-// export const getCommunityListData = async (boardId) => {
-//     try {
-//         const response = await axios.get(`http://api.domtory.site/board/post/list/${boardId}/`, {
-//         });
-//         return response.data;
-//     } catch (error) {
-//         throw error;
-//     }
-// };
-
 //게시글 작성
 export const writePost = async (boardId, images, title, body) => {
   const postData = {
