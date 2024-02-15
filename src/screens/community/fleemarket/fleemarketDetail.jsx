@@ -8,21 +8,21 @@ export default function FleeMarketDetail() {
   const route = useRoute();
   const { postId } = route.params;
 
-  useEffect(() => {
-    const fetchData = async () => {
-        try {
-            const result = await getPostDetail(postId);
-            console.log(result);
-            setData(result.data);
-        } catch (error) {
-            console.error("Failed to fetch data:", error);
-        }
-    };
+  const reloadData = async () => {
+    try {
+      const result = await getPostDetail(postId);
+      console.log(result)
+      setData(result.data);
+    } catch (error) {
+      console.error("Failed to reload data:", error);
+    }
+  };
 
-    fetchData();
-}, [postId]);
+  useEffect(() => {
+    reloadData();
+  }, [postId]);
 
   return (
-    <PostDetail data={data}/>
+    <PostDetail data={data} reloadData={reloadData} postId={postId}/>
   );
 }

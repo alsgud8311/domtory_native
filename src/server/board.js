@@ -117,10 +117,7 @@ export const postComment = async (postId, comment) => {
     body: comment,
   };
   try {
-    const { data } = await apiBe.post(
-      `/board/comment/create/${postId}/`,
-      commentData
-    );
+    const { data } = await apiBe.post(`/board/comment/create/${postId}/`, commentData);
     if (data) {
       return { success: true, data: data };
     }

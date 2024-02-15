@@ -5,8 +5,9 @@ import {
 } from 'react-native';
 import { Octicons, FontAwesome, Feather } from '@expo/vector-icons';
 import domtory from '../../assets/icon.png';
+import { postComment } from '../../server/board'
 
-export default function PostDetail({ data }) {
+export default function PostDetail({ data, reloadData, postId }) {
     if (!data) {
         return <View><Text>Loading...</Text></View>; // 데이터가 아직 로드되지 않았을 때 로딩 표시
     }
@@ -32,11 +33,24 @@ export default function PostDetail({ data }) {
 
     // 작성 댓글
     const [comment, setComment] = useState('');
-    const [anonymous, setAnonymous] = useState(false);
+    //const [anonymous, setAnonymous] = useState(false);
 
     const onChangeComment = (inputComment) => {
         setComment(inputComment);
     }
+
+    const handleSubmit = async () => {
+        const result = await postComment(postId, comment);
+
+        if (result.success) {
+            console.log('댓글이 성공적으로 작성되었습니다.');
+            setComment('');
+            reloadData();
+        } else {
+            console.error('댓글 작성에 실패했습니다:', data);
+            Alert.alert('오류', '댓글 작성에 실패했습니다. 다시 시도해주세요.');
+        }
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -71,17 +85,20 @@ export default function PostDetail({ data }) {
                 })}
                 <View style={styles.comment}>
                     <Octicons name="comment" style={styles.commentIcon} />
-                    <Text style={styles.commentNum}>3</Text>
+                    <Text style={styles.commentNum}>{data.comment_cnt}</Text>
                 </View>
-                {/* 댓글
-                <View style={styles.commentSection}>
-                    {data.coment.map((comment, index) => (
-                        <View key={index} style={styles.commentContainer}>
-                            <Text style={styles.commentContent}>{comment.content}</Text>
-                            <Text style={styles.commentDate}>{comment.date}</Text>
-                        </View>
-                    ))}
-                </View> */}
+                {/* 댓글 */}
+                {data.comment && data.comment.length > 0 && (
+                    <View style={styles.commentSection}>
+                        {data.comment.map((comment, index) => (
+                            <View key={index} style={styles.commentContainer}>
+                                <Text style={styles.commentContent}>{comment.member}</Text>
+                                <Text style={styles.commentContent}>{comment.body}</Text>
+                                <Text style={styles.commentDate}>{comment.created_at}</Text>
+                            </View>
+                        ))}
+                    </View>
+                )}
             </ScrollView>
 
             {/* 댓글 작성 */}
@@ -90,7 +107,7 @@ export default function PostDetail({ data }) {
                 style={styles.writeComment}
             >
                 <View style={styles.inputBox}>
-                    {/* 익명 체크박스 */}
+                    {/* 익명 체크박스
                     <TouchableOpacity style={styles.anonymousCheck} onPress={() => setAnonymous(!anonymous)}>
                         {anonymous ? (
                             <FontAwesome name="check-square-o" size={17} color='#ffa451' />
@@ -98,7 +115,7 @@ export default function PostDetail({ data }) {
                             <FontAwesome name="square-o" size={17} color='#848484' />
                         )}
                         <Text style={[styles.checkboxLabel, anonymous && { color: '#ffa451' }]}>익명</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                     {/* 댓글 입력 */}
                     <TextInput
                         placeholder="댓글을 입력하세요"
@@ -106,10 +123,11 @@ export default function PostDetail({ data }) {
                         multiline={true}
                         scrollEnabled={true}
                         onChangeText={onChangeComment}
+                        value={comment}
                         style={styles.commentInput}
                     />
                     {/* 작성 버튼 */}
-                    <TouchableOpacity style={styles.submitButton}>
+                    <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
                         <Feather name="edit-3" size={23} color='#ffa451' />
                     </TouchableOpacity>
                 </View>
@@ -203,6 +221,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         backgroundColor: 'white',
         width: '100%',
+        paddingBottom: 70
     },
     inputBox: {
         flexDirection: 'row',
