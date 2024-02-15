@@ -12,6 +12,7 @@ import {
   Platform,
   TouchableOpacity,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { Octicons, FontAwesome, Feather } from "@expo/vector-icons";
 import domtory from "../../assets/icon.png";
@@ -51,7 +52,7 @@ export default function PostDetail({ navigation }) {
         Alert.alert("정보를 가져오는 중에 오류가 발생했습니다.");
         navigation.reset({
           index: 0,
-          routes: [{ name: "Main" }],
+          routes: [{ name: "Domtory Main" }],
         });
       }
     };
