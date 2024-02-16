@@ -1,19 +1,5 @@
 import { apiBe } from ".";
 
-// import axios from "axios";
-// import { apiBe } from ".";
-// //http://api.domtory.site/board/post/list/{board_id}/
-
-// export const getCommunityListData = async (boardId) => {
-//     try {
-//         const response = await axios.get(`http://api.domtory.site/board/post/list/${boardId}/`, {
-//         });
-//         return response.data;
-//     } catch (error) {
-//         throw error;
-//     }
-// };
-
 //게시글 작성
 export const writePost = async (boardId, images, title, body) => {
   const postData = {
@@ -22,7 +8,7 @@ export const writePost = async (boardId, images, title, body) => {
     body: body,
   };
   try {
-    const { data } = await apiBe.post(`/board/post/create/${boardId}/`);
+    const { data } = await apiBe.post(`/board/post/create/${boardId}/`, postData);
     return { success: true };
   } catch (error) {
     return { success: false, data: error.response.data };
@@ -132,10 +118,7 @@ export const postComment = async (postId, comment) => {
     body: comment,
   };
   try {
-    const { data } = await apiBe.post(
-      `/board/comment/create/${postId}/`,
-      commentData
-    );
+    const { data } = await apiBe.post(`/board/comment/create/${postId}/`, commentData);
     if (data) {
       return { success: true, data: data };
     }
@@ -164,10 +147,7 @@ export const postReply = async (commentId, reply) => {
     body: reply,
   };
   try {
-    const { data } = await apiBe.post(
-      `/board/reply/create/${commentId}/`,
-      replyData
-    );
+    const { data } = await apiBe.post(`/board/reply/create/${commentId}/`, replyData);
     if (data) {
       return { success: true, data: data };
     }
@@ -185,6 +165,19 @@ export const deleteReply = async (commentId) => {
       return { success: true, data: data };
     }
     return { success: false, data: "답글을 삭제하는 중에 오류가 발생했습니다" };
+  } catch (error) {
+    return { success: false, data: error.response.data };
+  }
+};
+
+// 신고
+export const report = async (type, id) => {
+  try {
+    const { data } = await apiBe.post(`/report/${type}/${id}/`);
+    if (data) {
+      return { success: true, data: data };
+    }
+    return { success: false, data: "신고 처리중 오류가 발생했습니다" };
   } catch (error) {
     return { success: false, data: error.response.data };
   }

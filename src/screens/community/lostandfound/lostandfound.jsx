@@ -1,8 +1,8 @@
 import React from 'react';
 import Board from '../../../components/board/board'
 
-export default function LostAndFound() {
+export default function LostAndFound({navigation}) {
   return (
-    <Board/>
+    <Board boardId={5} navigation={navigation}/>
   );
 }

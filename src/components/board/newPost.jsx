@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, View, Text, Image, StyleSheet, TextInput, TouchableOpacity, SafeAreaView, Alert, Keyboard, TouchableWithoutFeedback } from "react-native";
 import { AntDesign, Entypo } from '@expo/vector-icons';
-import { pickImage, getPhotoPermission } from '../../components/common/imagepicker'
+import { pickImage, getPhotoPermission } from '../../components/common/imagepicker';
+import { writePost } from '../../server/board'
 
-export default function NewPost({ isVisible, onClose }) {
+export default function NewPost({ isVisible, onClose, boardId, onPostSubmit }) {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('')
     const [image, setImage] = useState(null);
@@ -60,6 +61,28 @@ export default function NewPost({ isVisible, onClose }) {
         );
     };
 
+    const handleSubmit = async () => {
+        // 이미지가 있다면 이미지의 URI를 배열에 담고, 없다면 빈 배열을 할당합니다.
+        const images = image ? [image] : [];
+
+        // 이미 title과 content 상태는 선언되어 있으므로, 그 값을 사용합니다.
+        // 위에서 title과 content는 이미 상태로 관리되고 있기 때문에 추가로 할당할 필요가 없습니다.
+
+        // API 함수 `writePost`를 호출합니다.
+        const result = await writePost(boardId, images, title, content);
+
+        if (result.success) {
+            console.log('게시글이 성공적으로 작성되었습니다.');
+            setTitle('');
+            setContent('');
+            setImage(null);
+            onClose();
+            onPostSubmit();
+        } else {
+            console.error('게시글 작성에 실패했습니다:', result.data);
+            Alert.alert('오류', '게시글 작성에 실패했습니다. 다시 시도해주세요.');
+        }
+    };
 
     return (
         <Modal
@@ -106,7 +129,7 @@ export default function NewPost({ isVisible, onClose }) {
                             <TouchableOpacity onPress={onPressPhoto}>
                                 <Entypo name="camera" style={styles.camera} />
                             </TouchableOpacity>
-                            <TouchableOpacity disabled={isButtonDisabled} style={styles.button} onPress={() => Alert.alert('Button pressed')}>
+                            <TouchableOpacity disabled={isButtonDisabled} style={styles.button} onPress={handleSubmit}>
                                 <Text style={styles.buttonText}>완료</Text>
                             </TouchableOpacity>
                         </View>

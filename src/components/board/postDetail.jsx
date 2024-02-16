@@ -1,306 +1,263 @@
-import React, { useState, useEffect } from "react";
-import {
-  SafeAreaView,
-  View,
-  Text,
-  Image,
-  Dimensions,
-  StyleSheet,
-  ScrollView,
-  KeyboardAvoidingView,
-  TextInput,
-  Platform,
-  TouchableOpacity,
-  ActivityIndicator,
-  Alert,
-} from "react-native";
-import { Octicons, FontAwesome, Feather } from "@expo/vector-icons";
-import domtory from "../../assets/icon.png";
-import { getPostDetail } from "../../server/board";
-import { useRoute } from "@react-navigation/native";
+import React, { useState, useEffect } from 'react';
+import { Modal, View, Text, Image, StyleSheet, TextInput, TouchableOpacity, SafeAreaView, Alert, Keyboard, TouchableWithoutFeedback } from "react-native";
+import { AntDesign, Entypo } from '@expo/vector-icons';
+import { pickImage, getPhotoPermission } from '../../components/common/communityImage';
+import { writePost } from '../../server/board'
 
-export default function PostDetail({ navigation }) {
-  const [data, setData] = useState(null);
-  //   const data = {
-  //     user: "익명",
-  //     title: "멋사 어떰?",
-  //     content: "멋사 지원하려고 하는데 해본 사람",
-  //     date: "2024-02-07",
-  //     img: "https://cdn.coindeskkorea.com//news/photo/202306/91930_32455_4813.png",
-  //     coment_num: 3,
-  //     coment: [
-  //       { content: "나 해봣음", date: "02/10 00:16" },
-  //       { content: "ㅇㅇ 지원하셈 좋음", date: "02/10 00:16" },
-  //       { content: "오 나도 지원할건데", date: "02/10 00:16" },
-  //     ],
-  //   };
+export default function NewPost({ isVisible, onClose, boardId, onPostSubmit }) {
+    const [title, setTitle] = useState('');
+    const [content, setContent] = useState('')
+    const [image, setImage] = useState([]);
 
-  const route = useRoute();
-  const { postId } = route.params;
-  // 이미지 너비
-  const screenWidth = Dimensions.get("window").width - 40;
-  // 이미지의 높이
-  const [imageHeight, setImageHeight] = useState(0);
+    const onChangeTitle = (inputTitle) => {
+        setTitle(inputTitle);
+    }
+    const onChangeContent = (inputContent) => {
+        setContent(inputContent);
+    }
 
-  useEffect(() => {
-    const getData = async () => {
-      const { success, data } = await getPostDetail(postId);
-      if (success) {
-        setData(data);
-        console.log(data);
-      } else {
-        Alert.alert("정보를 가져오는 중에 오류가 발생했습니다.");
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "Domtory Main" }],
-        });
-      }
+    const onPressPhoto = async () => {
+        const permission = await getPhotoPermission();
+        if (!permission) {
+            Alert.alert(
+                "사진을 업로드하기 위해서는 사진 접근 권한을 허용해야 합니다"
+            );
+            return;
+        }
+        const imageData = await pickImage();
+        if (!imageData) {
+            console.log("Image picking was failed");
+            return;
+        }
+        setImage(imageData);
+        //console.log(image);
     };
-    getData();
-    // if (data.img) {
-    //   Image.getSize(data.img, (width, height) => {
-    //     const scaleFactor = width / screenWidth;
-    //     const imageHeight = height / scaleFactor;
-    //     setImageHeight(imageHeight);
-    //   });
-    // }
-  }, []);
 
-  // 작성 댓글
-  const [comment, setComment] = useState("");
-  const [anonymous, setAnonymous] = useState(false);
+    const [isTitleFocused, setIsTitleFocused] = useState(false);
+    const [isContentFocused, setIsContentFocused] = useState(false);
 
-  const onChangeComment = (inputComment) => {
-    setComment(inputComment);
-  };
+    const isButtonDisabled = title.trim() === '' || content.trim() === '';
 
-  if (!data) {
+    // 키보드 내리는 함수
+    const dismissKeyboard = () => {
+        Keyboard.dismiss();
+    };
+
+    const handleClose = () => {
+        Alert.alert(
+            "작성을 취소하시겠습니까?",
+            "",
+            [{
+                text: "네", onPress: () => {
+                    setTitle('');
+                    setContent('');
+                    setIsTitleFocused(false);
+                    setIsContentFocused(false);
+                    onClose();
+                },
+            },
+            { text: "아니오", style: "cancel", },
+            ],
+            { cancelable: false }
+        );
+    };
+
+    // const handleSubmit = async () => {
+    //     const images = image ? [image] : [];
+    //     // console.log(images);
+
+    //     const result = await writePost(boardId, image, title, content);
+    
+    //     if (result.success) {
+    //         console.log('게시글이 성공적으로 작성되었습니다.');
+    //         setTitle('');
+    //         setContent('');
+    //         setImage(null);
+    //         onClose();
+    //         onPostSubmit();
+    //     } else {
+    //         console.error('게시글 작성에 실패했습니다:', result.data);
+    //         Alert.alert('오류', '게시글 작성에 실패했습니다. 다시 시도해주세요.');
+    //     }
+    // };
+
+    const handleSubmit = async () => {
+        const formData = new FormData();
+    
+        // 사진, 제목, 내용을 FormData에 추가
+        formData.append("images", image);
+        formData.append("title", title);
+        formData.append("content", content);
+        
+        console.log(formData);
+        try {
+            const result = await writePost(boardId, formData);
+    
+            if (result.success) {
+                console.log('게시글이 성공적으로 작성되었습니다.');
+            } else {
+                console.error('게시글 작성에 실패했습니다:', result.data);
+                Alert.alert('오류', '게시글 작성에 실패했습니다. 다시 시도해주세요.');
+            }
+        } catch (error) {
+            console.error('Error submitting post:', error);
+            Alert.alert('오류', '게시글 전송 중 오류가 발생했습니다.');
+        }
+    };
+
     return (
-      <View
-        style={{
-          width: "100%",
-          height: "100%",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <ActivityIndicator />
-      </View>
+        <Modal
+            animationType="slide"
+            transparent={false}
+            visible={isVisible}
+            onRequestClose={handleClose}
+        >
+            <SafeAreaView style={styles.safeArea}>
+                <TouchableWithoutFeedback onPress={dismissKeyboard}>
+                    <View style={styles.container}>
+                        <View style={styles.header}>
+                            <TouchableOpacity onPress={handleClose}>
+                                <AntDesign name="close" size={22} />
+                            </TouchableOpacity>
+                            <Text style={styles.headerText}>새 글 작성</Text>
+                        </View>
+                        {/* 제목 */}
+                        <TextInput
+                            style={isTitleFocused ? styles.titleFocused : styles.titleNotFocused}
+                            onFocus={() => setIsTitleFocused(true)}
+                            onBlur={() => setIsTitleFocused(false)}
+                            selectionColor='#ffa551dc'
+                            onChangeText={onChangeTitle}
+                            value={title}
+                            placeholder={'제목'}
+                            placeholderTextColor={"#959595"}
+                            multiline={true}
+                        />
+                        {/* 내용 */}
+                        <TextInput
+                            style={isContentFocused ? styles.focused : styles.inputContent}
+                            onFocus={() => setIsContentFocused(true)}
+                            onBlur={() => setIsContentFocused(false)}
+                            selectionColor='#ffa551dc'
+                            onChangeText={onChangeContent}
+                            value={content}
+                            placeholder={'내용'}
+                            placeholderTextColor={"#959595"}
+                            multiline={true}
+                        />
+                        {/* 카메라, 완료버튼 */}
+                        <View style={styles.buttonContainer}>
+                            <TouchableOpacity onPress={onPressPhoto}>
+                                <Entypo name="camera" style={styles.camera} />
+                            </TouchableOpacity>
+                            <TouchableOpacity disabled={isButtonDisabled} style={styles.button} onPress={handleSubmit}>
+                                <Text style={styles.buttonText}>완료</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                    </View>
+                </TouchableWithoutFeedback>
+            </SafeAreaView>
+        </Modal>
     );
-  }
+};
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        style={styles.scrollView}
-      >
-        {/* 글내용 */}
-        <View style={styles.header}>
-          <Image
-            source={domtory}
-            style={{ width: 45, height: 45, borderRadius: 10 }}
-          />
-          <View style={{ flexDirection: "column", marginLeft: 8 }}>
-            <Text style={styles.user}>익명</Text>
-            <Text style={styles.date}>{data.created_at}</Text>
-          </View>
-        </View>
-        <Text style={styles.title}>{data.title}</Text>
-        <Text style={styles.content}>{data.body}</Text>
-        {/* 사진 */}
-        {data.post_image && (
-          <ScrollView style={{ flexDirection: "row", gap: 20 }}>
-            {data.post_image.map((data) => (
-              <Image
-                source={{ uri: data.image_url }}
-                style={{
-                  width: screenWidth,
-                  height: imageHeight,
-                  resizeMode: "contain",
-                  borderRadius: 3,
-                  marginBottom: 10,
-                }}
-              />
-            ))}
-          </ScrollView>
-        )}
-        <View style={styles.comment}>
-          <Octicons name="comment" style={styles.commentIcon} />
-          <Text style={styles.commentNum}>{data.comment.length}</Text>
-        </View>
-        {/* 댓글 */}
-        {data.comment ? (
-          <View style={styles.commentSection}>
-            {data.comment.map((comment, index) => (
-              <View key={index} style={styles.commentContainer}>
-                <Text style={styles.commentContent}>{comment.content}</Text>
-                <Text style={styles.commentDate}>{comment.date}</Text>
-              </View>
-            ))}
-          </View>
-        ) : (
-          <Text>Loading...</Text>
-        )}
-      </ScrollView>
+// 공통 스타일
+const baseInput = {
+    margin: 10,
+    marginBottom: 6,
+    padding: 12,
+    paddingTop: 10,
+    borderWidth: 2.5,
+    borderRadius: 15,
+    minHeight: 42,
+    fontSize: 16,
+    borderColor: '#86868645'
+};
 
-      {/* 댓글 작성 */}
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.writeComment}
-      >
-        <View style={styles.inputBox}>
-          {/* 익명 체크박스 */}
-          <TouchableOpacity
-            style={styles.anonymousCheck}
-            onPress={() => setAnonymous(!anonymous)}
-          >
-            {anonymous ? (
-              <FontAwesome name="check-square-o" size={17} color="#ffa451" />
-            ) : (
-              <FontAwesome name="square-o" size={17} color="#848484" />
-            )}
-            <Text
-              style={[styles.checkboxLabel, anonymous && { color: "#ffa451" }]}
-            >
-              익명
-            </Text>
-          </TouchableOpacity>
-          {/* 댓글 입력 */}
-          <TextInput
-            placeholder="댓글을 입력하세요"
-            placeholderTextColor={"#848484"}
-            multiline={true}
-            scrollEnabled={true}
-            onChangeText={onChangeComment}
-            style={styles.commentInput}
-          />
-          {/* 작성 버튼 */}
-          <TouchableOpacity style={styles.submitButton}>
-            <Feather name="edit-3" size={23} color="#ffa451" />
-          </TouchableOpacity>
-        </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
-  );
-}
+const baseInputContent = {
+    margin: 10,
+    marginTop: 0,
+    padding: 12,
+    paddingTop: 14,
+    borderWidth: 2.5,
+    borderRadius: 20,
+    minHeight: 350,
+    fontSize: 16,
+    borderColor: '#86868645',
+    textAlignVertical: 'top'
+};
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  scrollView: {
-    marginHorizontal: 20,
-    marginTop: 25,
-    marginBottom: 5,
-    flex: 1,
-  },
-  // 내용
-  header: {
-    flexDirection: "row",
-    marginBottom: 15,
-    alignItems: "center",
-  },
-  user: {
-    fontSize: 16,
-    fontWeight: "700",
-    marginBottom: 2,
-  },
-  date: {
-    fontSize: 12,
-    color: "grey",
-  },
-  image: {
-    borderRadius: 3,
-    marginBottom: 10,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "700",
-    marginBottom: 5,
-  },
-  content: {
-    fontSize: 15,
-    marginBottom: 13,
-  },
-  // 댓글
-  comment: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginLeft: 3,
-    paddingBottom: 5,
-    borderBottomWidth: 1,
-    borderBottomColor: "#e1e1e1",
-  },
-  commentIcon: {
-    fontSize: 17,
-    marginRight: 5,
-    color: "#666666",
-  },
-  commentNum: {
-    fontSize: 15,
-    color: "#666666",
-  },
-  commentSection: {
-    marginTop: 10,
-  },
-  commentTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  commentContainer: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#e1e1e1",
-    paddingBottom: 8,
-    marginBottom: 8,
-  },
-  commentContent: {
-    fontSize: 16,
-    color: "#333",
-    marginBottom: 4,
-  },
-  commentDate: {
-    fontSize: 14,
-    color: "grey",
-  },
-  // 댓글 작성
-  writeComment: {
-    flexDirection: "row",
-    backgroundColor: "white",
-    width: "100%",
-  },
-  inputBox: {
-    flexDirection: "row",
-    borderWidth: 1,
-    borderColor: "#fff",
-    borderRadius: 15,
-    backgroundColor: "#d8d8d872",
-    marginTop: 3,
-    marginBottom: 7,
-    marginHorizontal: 10,
-    paddingHorizontal: 10,
-    alignItems: "center",
-    flex: 1,
-  },
-  commentInput: {
-    flex: 1,
-    paddingHorizontal: 10,
-    paddingBottom: 1.5,
-    minHeight: 45,
-    fontSize: 14,
-  },
-  anonymousCheck: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  checkboxLabel: {
-    color: "#848484",
-    marginBottom: 3,
-    marginLeft: 4,
-  },
-  submitButton: {
-    marginRight: 3,
-  },
+    safeArea: {
+        flex: 1,
+        backgroundColor: "#fff",
+    },
+    container: {
+        flex: 1,
+        padding: 15,
+    },
+    // 제목 작성시
+    titleFocused: {
+        ...baseInput,
+        borderColor: '#ff910097',
+    },
+    // 제목
+    titleNotFocused: {
+        ...baseInput,
+    },
+    // 내용 작성시
+    focused: {
+        ...baseInputContent,
+        borderColor: '#ff910097',
+    },
+    // 내용
+    inputContent: {
+        ...baseInputContent,
+    },
+    // 완료 버튼
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingHorizontal: 10,
+        paddingVertical: 10,
+    },
+    button: {
+        borderWidth: 1,
+        borderColor: '#fff',
+        borderRadius: 15,
+        backgroundColor: '#ffa451',
+        width: 90,
+        height: 35,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    buttonText: {
+        fontSize: 17,
+        fontWeight: '700',
+        color: '#fff'
+    },
+    // 카메라 아이콘
+    camera: {
+        marginHorizontal: 10,
+        marginTop: 3,
+        fontSize: 33,
+        color: '#686868'
+    },
+    // 헤더
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 10,
+        marginBottom: 15
+    },
+    headerText: {
+        textAlign: 'center',
+        flex: 1,
+        paddingRight: 25,
+        fontSize: 18,
+        fontWeight: '700',
+        color: '#333333'
+    },
 });
