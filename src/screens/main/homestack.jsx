@@ -57,7 +57,6 @@ const HomeStack = ({ navigation }) => {
         name="자율회 공지사항 글 보기"
         component={CouncilNoticeDetail}
       />
-
       {/* <Stack.Screen name="자유게시판"
         component={General}
         options={{

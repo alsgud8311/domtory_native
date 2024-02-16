@@ -9,142 +9,51 @@ import NewPost from '../board/newPost';
 const API_URL = "http://api.domtory.site/notice/";
 
 export default function Noticebox() {
-    const councilData = [
-        {
-            "id": 1,
-            "post_id": "227926",
-            "title": "충북학사 동서울관 이동신청자에 대한 공지",
-            "date": "2019-12-31",
-            "content": "충북학사 서서울관에 입사하여 n재사중인 학생 중에서동서울관으로이동 신청한 학생들에",
-            "images": ""
-        },
-        {
-            "id": 2,
-            "post_id": "227927",
-            "title": "충북학사 동서울관 이동신청자에 대한 두 번째 공지",
-            "date": "2019-12-31",
-            "content": "두 번째 공지사항 내용...",
-            "images": ""
-        },
-        {
-            "id": 3,
-            "post_id": "227928",
-            "title": "충북학사 동서울관 이동신청자에 대한 세 번째 공지",
-            "date": "2019-12-31",
-            "content": "세 번째 공지사항 내용...",
-            "images": ""
-        },
-        {
-            "id": 4,
-            "post_id": "227926",
-            "title": "충북학사 동서울관 이동신청자에 대한 공지",
-            "date": "2019-12-31",
-            "content": "충북학사 서서울관에 입사하여 n재사중인 학생 중에서동서울관으로이동 신청한 학생들에",
-            "images": ""
-        },
-        {
-            "id": 5,
-            "post_id": "227927",
-            "title": "충북학사 동서울관 이동신청자에 대한 두 번째 공지",
-            "date": "2019-12-31",
-            "content": "두 번째 공지사항 내용...",
-            "images": ""
-        },
-        {
-            "id": 6,
-            "post_id": "227928",
-            "title": "충북학사 동서울관 이동신청자에 대한 세 번째 공지",
-            "date": "2019-12-31",
-            "content": "세 번째 공지사항 내용...",
-            "images": ""
-        },
-        {
-            "id": 7,
-            "post_id": "227926",
-            "title": "충북학사 동서울관 이동신청자에 대한 공지",
-            "date": "2019-12-31",
-            "content": "충북학사 서서울관에 입사하여 n재사중인 학생 중에서동서울관으로이동 신청한 학생들에",
-            "images": ""
-        },
-        {
-            "id": 8,
-            "post_id": "227927",
-            "title": "충북학사 동서울관 이동신청자에 대한 두 번째 공지",
-            "date": "2019-12-31",
-            "content": "두 번째 공지사항 내용...",
-            "images": ""
-        },
-        {
-            "id": 9,
-            "post_id": "227928",
-            "title": "충북학사 동서울관 이동신청자에 대한 세 번째 공지",
-            "date": "2019-12-31",
-            "content": "세 번째 공지사항 내용...",
-            "images": ""
-        },
-        {
-            "id": 10,
-            "post_id": "227926",
-            "title": "충북학사 동서울관 이동신청자에 대한 공지",
-            "date": "2019-12-31",
-            "content": "충북학사 서서울관에 입사하여 n재사중인 학생 중에서동서울관으로이동 신청한 학생들에",
-            "images": ""
-        },
-    ]
+    const [councilData, setCouncilData] = useState([]);
     const [cbhsData, setCbhsData] = useState([]);
     const [data, setData] = useState('');
     const [category, setCategory] = useState('cbhs');
 
     useEffect(() => {
-        if (category === 'cbhs') {
-            setData(cbhsData);
-            setCurrentPage(1);
-        }
-    }, [cbhsData, category]);
+        // 컴포넌트 마운트 시 또는 currentPage, category가 변경될 때마다 데이터 불러오기
+        fetchPosts(currentPage);
+    }, [currentPage, category]);
 
     // 카테고리 변경 함수
     const onCategoryChange = (newCategory) => {
         setCategory(newCategory);
-        setData(newCategory === 'cbhs' ? cbhsData : councilData);
-        setCurrentPage(1);
+        // 카테고리 변경 시 데이터를 즉시 불러옵니다.
+        // 첫 페이지부터 불러오도록 설정
+        fetchPosts(1);
     };
 
-    // // 페이지네이션
-    // const PAGE_SIZE = 10; // 페이지당 표시할 아이템의 수
-    // const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 상태
-    // const [loading, setLoading] = useState(false); // 데이터 로딩 상태
-
-    // //총 페이지 수 계산
-    // const totalPages = Math.ceil(data.length / PAGE_SIZE);
-
-    // // 현재 페이지에 따라 표시할 데이터의 부분 집합 계산
-    // const pageData = data.slice(
-    //     (currentPage - 1) * PAGE_SIZE,
-    //     currentPage * PAGE_SIZE
-    // );
-
-    // // 페이지 변경 함수
-    // const onPageChange = (newPage) => {
-    //     setCurrentPage(newPage);
-    // };
-
     const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(0);
+    const [cbhsTotalPages, setCbhsTotalPages] = useState(0);
+    const [councilTotalPages, setCouncilTotalPages] = useState(0);
     const [loading, setLoading] = useState(false);
-
-    useEffect(() => {
-        fetchPosts(currentPage);
-    }, []);
 
     // 페이지 데이터를 불러오는 함수
     const fetchPosts = (page) => {
         setLoading(true);
-        axios.get(`${API_URL}?page=${page}`)
+        let apiUrl = `${API_URL}?page=${page}`;
+        // 카테고리에 따라 API URL을 조정
+        if (category === 'council') {
+            apiUrl = 'http://api.domtory.site/board/post/list/6/';
+        }
+
+        axios.get(apiUrl)
             .then((response) => {
-                setCbhsData(response.data.postList);
-                setData(cbhsData);
+                // 카테고리에 따라 적절한 상태를 설정
+                if (category === 'cbhs') {
+                    setCbhsData(response.data.postList);
+                    setData(response.data.postList);
+                    setCbhsTotalPages(response.data.pageCnt);
+                } else if (category === 'council') {
+                    setCouncilData(response.data.postList);
+                    setData(response.data.postList);
+                    setCouncilTotalPages(response.data.pageCnt);
+                }
                 setCurrentPage(response.data.curPage);
-                setTotalPages(response.data.pageCnt);
             })
             .catch((error) => {
                 console.error(error);
@@ -154,11 +63,16 @@ export default function Noticebox() {
             });
     };
 
+    useEffect(() => {
+        fetchPosts(currentPage);
+    }, []);
+
     // 페이지 변경 함수
     const onPageChange = (newPage) => {
         fetchPosts(newPage);
     };
 
+    // 자율회 공지사항 글쓰기
     const [isModalVisible, setModalVisible] = useState(false);
 
     const handleOpenNewPost = () => {
@@ -187,7 +101,11 @@ export default function Noticebox() {
                 )}
             </View>
 
-            <NewPost isVisible={isModalVisible} onClose={handleCloseNewPost} />
+            <NewPost
+                isVisible={isModalVisible}
+                onClose={handleCloseNewPost}
+                council= 'true'
+            />
 
             <FlatList
                 data={data}
@@ -205,7 +123,7 @@ export default function Noticebox() {
             />
 
             <Pagination
-                totalPages={totalPages}
+                totalPages={cbhsTotalPages}
                 currentPage={currentPage}
                 onPageChange={onPageChange}
             />

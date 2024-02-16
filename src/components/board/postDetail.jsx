@@ -1,285 +1,579 @@
 import React, { useState, useEffect } from "react";
 import {
-  Modal,
+  SafeAreaView,
   View,
   Text,
   Image,
+  Dimensions,
   StyleSheet,
+  ScrollView,
+  KeyboardAvoidingView,
   TextInput,
+  Platform,
   TouchableOpacity,
-  SafeAreaView,
   Alert,
-  Keyboard,
-  TouchableWithoutFeedback,
 } from "react-native";
-import { AntDesign, Entypo } from "@expo/vector-icons";
+import { Octicons, FontAwesome, Feather } from "@expo/vector-icons";
+import domtory from "../../assets/icon.png";
 import {
-  pickImage,
-  getPhotoPermission,
-} from "../../components/common/imagepicker";
-import { writePost } from "../../server/board";
+  postComment,
+  deleteComment,
+  postReply,
+  deleteReply,
+  updatePost,
+  report,
+} from "../../server/board";
 
-export default function NewPost({ isVisible, onClose, boardId, onPostSubmit }) {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [image, setImage] = useState([]);
+export default function PostDetail({ data, reloadData, postId }) {
+  if (!data) {
+    return (
+      <View>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
-  const onChangeTitle = (inputTitle) => {
-    setTitle(inputTitle);
-  };
-  const onChangeContent = (inputContent) => {
-    setContent(inputContent);
-  };
-
-  const onPressPhoto = async () => {
-    const permission = await getPhotoPermission();
-    if (!permission) {
-      Alert.alert(
-        "사진을 업로드하기 위해서는 사진 접근 권한을 허용해야 합니다"
-      );
-      return;
+  const [imageHeights, setImageHeights] = useState([]);
+  const screenWidth = Dimensions.get("window").width - 40;
+  useEffect(() => {
+    if (data && data.post_image) {
+      const heights = data.post_image.map(() => 0);
+      data.post_image.forEach((img, index) => {
+        if (!img.is_deleted) {
+          Image.getSize(img.image_url, (width, height) => {
+            const scaleFactor = width / screenWidth;
+            const imageHeight = height / scaleFactor;
+            heights[index] = imageHeight;
+            setImageHeights([...heights]);
+          });
+        }
+      });
     }
-    const imageData = await pickImage();
-    if (!imageData) {
-      console.log("Image picking was failed");
-      return;
-    }
-    setImage(imageData);
-    //console.log(image);
+  }, [data]);
+
+  // 댓글
+  //const [anonymous, setAnonymous] = useState(false);
+  const [comment, setComment] = useState("");
+  const [currentReplyingTo, setCurrentReplyingTo] = useState(null);
+
+  const onChangeComment = (inputComment) => {
+    setComment(inputComment);
   };
 
-  const [isTitleFocused, setIsTitleFocused] = useState(false);
-  const [isContentFocused, setIsContentFocused] = useState(false);
-
-  const isButtonDisabled = title.trim() === "" || content.trim() === "";
-
-  // 키보드 내리는 함수
-  const dismissKeyboard = () => {
-    Keyboard.dismiss();
-  };
-
-  const handleClose = () => {
+  // 대댓글 작성 확인창
+  const promptForReply = (commentId) => {
     Alert.alert(
-      "작성을 취소하시겠습니까?",
-      "",
+      "대댓글 작성",
+      "대댓글을 작성하시겠습니까?",
       [
         {
-          text: "네",
-          onPress: () => {
-            setTitle("");
-            setContent("");
-            setIsTitleFocused(false);
-            setIsContentFocused(false);
-            onClose();
-          },
+          text: "취소",
+          style: "cancel",
         },
-        { text: "아니오", style: "cancel" },
+        {
+          text: "예",
+          onPress: () => setCurrentReplyingTo(commentId),
+        },
       ],
       { cancelable: false }
     );
   };
 
-  // const handleSubmit = async () => {
-  //     const images = image ? [image] : [];
-  //     // console.log(images);
+  // 댓글 POST
+  const handleCommentSubmit = async () => {
+    const result = await postComment(postId, comment);
+    if (result.success) {
+      console.log("댓글이 성공적으로 작성되었습니다.");
+      setComment("");
+      reloadData();
+    } else {
+      console.error("댓글 작성에 실패했습니다:", result.data);
+      Alert.alert("오류", "댓글 작성에 실패했습니다. 다시 시도해주세요.");
+    }
+  };
 
-  //     const result = await writePost(boardId, image, title, content);
+  // 대댓글 POST
+  const handleReplySubmit = async () => {
+    if (!currentReplyingTo) return;
 
-  //     if (result.success) {
-  //         console.log('게시글이 성공적으로 작성되었습니다.');
-  //         setTitle('');
-  //         setContent('');
-  //         setImage(null);
-  //         onClose();
-  //         onPostSubmit();
-  //     } else {
-  //         console.error('게시글 작성에 실패했습니다:', result.data);
-  //         Alert.alert('오류', '게시글 작성에 실패했습니다. 다시 시도해주세요.');
-  //     }
-  // };
+    const result = await postReply(currentReplyingTo, comment);
+    if (result.success) {
+      console.log("대댓글이 성공적으로 작성되었습니다.");
+      setComment("");
+      setCurrentReplyingTo(null);
+      reloadData();
+    } else {
+      console.error("대댓글 작성에 실패했습니다:", result.data);
+      Alert.alert("오류", "대댓글 작성에 실패했습니다. 다시 시도해주세요.");
+    }
+  };
 
-  const handleSubmit = async () => {
-    const formData = new FormData();
+  // 댓글 삭제 확인창
+  const confirmDelete = (commentId) => {
+    Alert.alert(
+      "댓글 삭제",
+      "댓글을 삭제하시겠습니까?",
+      [
+        {
+          text: "취소",
+          style: "cancel",
+        },
+        {
+          text: "예",
+          onPress: () => handleDelete(commentId),
+        },
+      ],
+      { cancelable: false }
+    );
+  };
 
-    // 사진, 제목, 내용을 FormData에 추가
-    formData.append("images", image);
-    formData.append("title", title);
-    formData.append("content", content);
+  // 댓글 삭제
+  const handleDelete = async (commentId) => {
+    const result = await deleteComment(commentId);
+    if (result.success) {
+      console.log("댓글이 성공적으로 삭제되었습니다.");
+      reloadData();
+    } else {
+      console.error("댓글 삭제에 실패했습니다:", result.data);
+      Alert.alert("댓글 삭제", "댓글 삭제에 실패했습니다. 다시 시도해주세요.");
+    }
+  };
 
-    console.log(formData);
-    try {
-      const result = await writePost(boardId, formData);
+  // 대댓글 삭제 확인창
+  const confirmReplyDelete = (commentId) => {
+    Alert.alert(
+      "대댓글 삭제",
+      "대댓글을 삭제하시겠습니까?",
+      [
+        {
+          text: "취소",
+          style: "cancel",
+        },
+        {
+          text: "예",
+          onPress: () => handleReplyDelete(commentId),
+        },
+      ],
+      { cancelable: false }
+    );
+  };
 
-      if (result.success) {
-        console.log("게시글이 성공적으로 작성되었습니다.");
-      } else {
-        console.error("게시글 작성에 실패했습니다:", result.data);
-        Alert.alert("오류", "게시글 작성에 실패했습니다. 다시 시도해주세요.");
-      }
-    } catch (error) {
-      console.error("Error submitting post:", error);
-      Alert.alert("오류", "게시글 전송 중 오류가 발생했습니다.");
+  // 대댓글 삭제
+  const handleReplyDelete = async (commentId) => {
+    const result = await deleteReply(commentId);
+    if (result.success) {
+      console.log("대댓글이 성공적으로 삭제되었습니다.");
+      reloadData();
+    } else {
+      console.error("대댓글 삭제에 실패했습니다:", result.data);
+      Alert.alert(
+        "대댓글 삭제",
+        "대댓글 삭제에 실패했습니다. 다시 시도해주세요."
+      );
+    }
+  };
+
+  // 신고 확인 및 처리
+  const confirmAndReport = (type, id) => {
+    Alert.alert(
+      "신고",
+      "이 게시글/댓글을 신고하시겠습니까?",
+      [
+        {
+          text: "취소",
+          style: "cancel",
+        },
+        {
+          text: "예",
+          onPress: () => handleReport(type, id),
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  // 신고
+  const handleReport = async (type, id) => {
+    const result = await report(type, id);
+    if (result.success) {
+      Alert.alert("신고 완료", "해당 게시글/댓글 신고를 완료했습니다.");
+    } else {
+      console.error("신고 실패:", result.data);
+      Alert.alert("오류", "신고에 실패했습니다. 다시 시도해주세요.");
     }
   };
 
   return (
-    <Modal
-      animationType="slide"
-      transparent={false}
-      visible={isVisible}
-      onRequestClose={handleClose}
-    >
-      <SafeAreaView style={styles.safeArea}>
-        <TouchableWithoutFeedback onPress={dismissKeyboard}>
-          <View style={styles.container}>
-            <View style={styles.header}>
-              <TouchableOpacity onPress={handleClose}>
-                <AntDesign name="close" size={22} />
-              </TouchableOpacity>
-              <Text style={styles.headerText}>새 글 작성</Text>
-            </View>
-            {/* 제목 */}
-            <TextInput
-              style={
-                isTitleFocused ? styles.titleFocused : styles.titleNotFocused
-              }
-              onFocus={() => setIsTitleFocused(true)}
-              onBlur={() => setIsTitleFocused(false)}
-              selectionColor="#ffa551dc"
-              onChangeText={onChangeTitle}
-              value={title}
-              placeholder={"제목"}
-              placeholderTextColor={"#959595"}
-              multiline={true}
-            />
-            {/* 내용 */}
-            <TextInput
-              style={isContentFocused ? styles.focused : styles.inputContent}
-              onFocus={() => setIsContentFocused(true)}
-              onBlur={() => setIsContentFocused(false)}
-              selectionColor="#ffa551dc"
-              onChangeText={onChangeContent}
-              value={content}
-              placeholder={"내용"}
-              placeholderTextColor={"#959595"}
-              multiline={true}
-            />
-            {/* 카메라, 완료버튼 */}
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity onPress={onPressPhoto}>
-                <Entypo name="camera" style={styles.camera} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                disabled={isButtonDisabled}
-                style={styles.button}
-                onPress={handleSubmit}
-              >
-                <Text style={styles.buttonText}>완료</Text>
-              </TouchableOpacity>
-            </View>
+    <SafeAreaView style={styles.container}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={styles.scrollView}
+      >
+        {/* 글내용 */}
+        <View style={styles.header}>
+          <Image
+            source={domtory}
+            style={{ width: 45, height: 45, borderRadius: 10 }}
+          />
+          <View style={{ flexDirection: "column", marginLeft: 8 }}>
+            <Text style={styles.user}>
+              {data.status === "ACTIVE" ? data.member : "알 수 없음"}
+            </Text>
+            <Text style={styles.date}>{data.created_at}</Text>
           </View>
-        </TouchableWithoutFeedback>
-      </SafeAreaView>
-    </Modal>
+        </View>
+        <Text style={styles.title}>{data.title}</Text>
+        <Text style={styles.content}>{data.body}</Text>
+        {/* 사진 */}
+        {data &&
+          data.post_image &&
+          data.post_image.map((img, index) => {
+            if (!img.is_deleted) {
+              return (
+                <Image
+                  key={img.id}
+                  source={{ uri: img.image_url }}
+                  style={{
+                    width: screenWidth,
+                    height: imageHeights[index],
+                    resizeMode: "contain",
+                    borderRadius: 3,
+                    marginBottom: 10,
+                  }}
+                />
+              );
+            }
+          })}
+        <View style={styles.comment}>
+          <Octicons name="comment" style={styles.commentIcon} />
+          <Text style={styles.commentNum}>{data.comment_cnt}</Text>
+        </View>
+        {/* /댓글 */}
+        {data.comment &&
+          data.comment.length > 0 &&
+          data.comment.map((comment) => (
+            <View key={comment.id} style={styles.commentContainer}>
+              {/* 댓글 본문 (삭제 여부 확인) */}
+              {comment.is_deleted ? (
+                <>
+                  <Image
+                    source={domtory}
+                    style={{ width: 23, height: 23, borderRadius: 3 }}
+                  />
+                  <Text style={styles.commentDeleted}>삭제된 댓글입니다.</Text>
+                </>
+              ) : (
+                <>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <View style={{ flexDirection: "row" }}>
+                      <Image
+                        source={domtory}
+                        style={{ width: 23, height: 23, borderRadius: 3 }}
+                      />
+                      <Text style={styles.commentMember}>{comment.member}</Text>
+                    </View>
+                    <View style={styles.commentOption}>
+                      <Octicons
+                        name="comment-discussion"
+                        style={styles.commnetReply}
+                        onPress={() => promptForReply(comment.id)}
+                      />
+                      <TouchableOpacity
+                        onPress={() => confirmDelete(comment.id)}
+                      >
+                        <Octicons name="trash" style={styles.commnetDelete} />
+                      </TouchableOpacity>
+                      <Octicons
+                        name="stop"
+                        style={styles.commnetReport}
+                        onPress={() => confirmAndReport("comment", comment.id)}
+                      />
+                    </View>
+                  </View>
+
+                  <Text style={styles.commentContent}>{comment.body}</Text>
+                  <Text style={styles.commentDate}>{comment.created_at}</Text>
+                </>
+              )}
+
+              {/* 대댓글 렌더링 부분 */}
+              {comment.reply && comment.reply.length > 0 && (
+                <View style={styles.replyContainer}>
+                  {comment.reply.map((reply) =>
+                    reply.is_deleted ? (
+                      <View style={styles.reply}>
+                        <Image
+                          source={domtory}
+                          style={{ width: 23, height: 23, borderRadius: 3 }}
+                        />
+                        <Text key={reply.id} style={styles.commentDeleted}>
+                          삭제된 댓글입니다.
+                        </Text>
+                      </View>
+                    ) : (
+                      <View style={styles.reply}>
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <View style={{ flexDirection: "row" }}>
+                            <Image
+                              source={domtory}
+                              style={{ width: 23, height: 23, borderRadius: 3 }}
+                            />
+                            <Text style={styles.commentMember}>
+                              {reply.member}
+                            </Text>
+                          </View>
+                          <View style={styles.commentOption}>
+                            <Octicons
+                              name="comment-discussion"
+                              style={styles.commnetReply}
+                              onPress={() => promptForReply(comment.id)}
+                            />
+                            <Octicons
+                              name="trash"
+                              style={styles.commnetDelete}
+                              onPress={() => confirmReplyDelete(reply.id)}
+                            />
+                            <Octicons
+                              name="stop"
+                              style={styles.commnetReport}
+                              onPress={() =>
+                                confirmAndReport("comment", reply.id)
+                              }
+                            />
+                          </View>
+                        </View>
+                        <Text style={styles.commentContent}>{reply.body}</Text>
+                        <Text style={styles.commentDate}>
+                          {reply.created_at}
+                        </Text>
+                      </View>
+                    )
+                  )}
+                </View>
+              )}
+            </View>
+          ))}
+      </ScrollView>
+
+      {/* 댓글 작성 */}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.writeComment}
+      >
+        <View style={styles.inputBox}>
+          {/* 익명 체크박스
+                    <TouchableOpacity style={styles.anonymousCheck} onPress={() => setAnonymous(!anonymous)}>
+                        {anonymous ? (
+                            <FontAwesome name="check-square-o" size={17} color='#ffa451' />
+                        ) : (
+                            <FontAwesome name="square-o" size={17} color='#848484' />
+                        )}
+                        <Text style={[styles.checkboxLabel, anonymous && { color: '#ffa451' }]}>익명</Text>
+                    </TouchableOpacity> */}
+          <TextInput
+            placeholder={
+              currentReplyingTo ? "대댓글을 입력하세요" : "댓글을 입력하세요"
+            }
+            placeholderTextColor={"#848484"}
+            multiline={true}
+            scrollEnabled={true}
+            onChangeText={onChangeComment}
+            value={comment}
+            style={styles.commentInput}
+          />
+          {/* 작성 버튼 */}
+          <TouchableOpacity
+            style={styles.submitButton}
+            onPress={
+              currentReplyingTo ? handleReplySubmit : handleCommentSubmit
+            }
+          >
+            <Feather name="edit-3" size={23} color="#ffa451" />
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
-// 공통 스타일
-const baseInput = {
-  margin: 10,
-  marginBottom: 6,
-  padding: 12,
-  paddingTop: 10,
-  borderWidth: 2.5,
-  borderRadius: 15,
-  minHeight: 42,
-  fontSize: 16,
-  borderColor: "#86868645",
-};
-
-const baseInputContent = {
-  margin: 10,
-  marginTop: 0,
-  padding: 12,
-  paddingTop: 14,
-  borderWidth: 2.5,
-  borderRadius: 20,
-  minHeight: 350,
-  fontSize: 16,
-  borderColor: "#86868645",
-  textAlignVertical: "top",
-};
-
 const styles = StyleSheet.create({
-  safeArea: {
+  container: {
     flex: 1,
     backgroundColor: "#fff",
   },
-  container: {
+  scrollView: {
+    marginHorizontal: 20,
+    marginTop: 25,
+    marginBottom: 5,
     flex: 1,
-    padding: 15,
-  },
-  // 제목 작성시
-  titleFocused: {
-    ...baseInput,
-    borderColor: "#ff910097",
-  },
-  // 제목
-  titleNotFocused: {
-    ...baseInput,
-  },
-  // 내용 작성시
-  focused: {
-    ...baseInputContent,
-    borderColor: "#ff910097",
   },
   // 내용
-  inputContent: {
-    ...baseInputContent,
-  },
-  // 완료 버튼
-  buttonContainer: {
+  header: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 10,
-    paddingVertical: 10,
+    marginBottom: 15,
+    alignItems: "center",
   },
-  button: {
+  user: {
+    fontSize: 16,
+    fontWeight: "700",
+    marginBottom: 2,
+  },
+  date: {
+    fontSize: 12,
+    color: "grey",
+  },
+  image: {
+    borderRadius: 3,
+    marginBottom: 10,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "700",
+    marginBottom: 5,
+  },
+  content: {
+    fontSize: 15,
+    marginBottom: 13,
+  },
+
+  // 댓글 아이콘, 댓글수
+  comment: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: 3,
+    paddingBottom: 5,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e1e1e1",
+    marginBottom: 13,
+  },
+  commentIcon: {
+    fontSize: 17,
+    marginRight: 5,
+    color: "#666666",
+  },
+  commentNum: {
+    fontSize: 15,
+    color: "#666666",
+  },
+  // 댓글 컨테이너
+  commentContainer: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#e1e1e1",
+    paddingBottom: 8,
+    marginBottom: 8,
+  },
+  // 댓글 작성자
+  commentMember: {
+    fontSize: 16,
+    fontWeight: "700",
+    marginLeft: 5,
+  },
+  // 댓글 내용
+  commentContent: {
+    fontSize: 15,
+    color: "#333",
+    marginTop: 3,
+    marginBottom: 4,
+  },
+  // 댓글 작성일
+  commentDate: {
+    fontSize: 13,
+    color: "#666666",
+  },
+  // 댓글 옵션
+  commentOption: {
+    flexDirection: "row",
+    padding: 4,
+    borderRadius: 10,
+    backgroundColor: "#e1e1e170",
+  },
+  // 대댓글 아이콘
+  commnetReply: {
+    fontSize: 14,
+    color: "#66666675",
+    paddingHorizontal: 13,
+    borderRightWidth: 1,
+    borderRightColor: "#6666665e",
+  },
+  // 댓글 삭제 아이콘
+  commnetDelete: {
+    fontSize: 14,
+    color: "#66666675",
+    paddingHorizontal: 13,
+    borderRightWidth: 1,
+    borderRightColor: "#6666665e",
+  },
+  // 댓글 신고 아이콘
+  commnetReport: {
+    fontSize: 13,
+    color: "#66666675",
+    paddingHorizontal: 15,
+  },
+  // 삭제된 댓글
+  commentDeleted: {
+    paddingVertical: 13,
+    color: "#666666",
+  },
+  // 대댓글 컨테이너
+  replyContainer: {
+    marginTop: 8,
+    paddingHorizontal: 2,
+  },
+  // 대댓글 1개 컨테이너
+  reply: {
+    backgroundColor: "#e1e1e170",
+    marginBottom: 10,
+    borderRadius: 10,
+    padding: 6,
+  },
+
+  // 댓글 작성
+  writeComment: {
+    flexDirection: "row",
+    backgroundColor: "white",
+    width: "100%",
+    paddingBottom: 70,
+  },
+  inputBox: {
+    flexDirection: "row",
     borderWidth: 1,
     borderColor: "#fff",
     borderRadius: 15,
-    backgroundColor: "#ffa451",
-    width: 90,
-    height: 35,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  buttonText: {
-    fontSize: 17,
-    fontWeight: "700",
-    color: "#fff",
-  },
-  // 카메라 아이콘
-  camera: {
-    marginHorizontal: 10,
+    backgroundColor: "#d8d8d853",
     marginTop: 3,
-    fontSize: 33,
-    color: "#686868",
-  },
-  // 헤더
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    marginBottom: 7,
+    marginHorizontal: 10,
     paddingHorizontal: 10,
-    marginBottom: 15,
-  },
-  headerText: {
-    textAlign: "center",
+    alignItems: "center",
     flex: 1,
-    paddingRight: 25,
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#333333",
+  },
+  commentInput: {
+    flex: 1,
+    paddingHorizontal: 10,
+    paddingBottom: 1.5,
+    minHeight: 45,
+    fontSize: 14,
+  },
+  anonymousCheck: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  checkboxLabel: {
+    color: "#848484",
+    marginBottom: 3,
+    marginLeft: 4,
+  },
+  submitButton: {
+    marginRight: 3,
   },
 });
