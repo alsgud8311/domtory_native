@@ -17,8 +17,7 @@ export const AuthProvider = ({ children }) => {
     refreshToken: null,
     pushToken: null,
     authenticated: false,
-    email: null,
-    nickname: null,
+    username: null,
   });
 
   useEffect(() => {
@@ -26,8 +25,7 @@ export const AuthProvider = ({ children }) => {
       const accessToken = await SecureStore.getItemAsync("ACCESS_TOKEN");
       const refreshToken = await SecureStore.getItemAsync("REFRESH_TOKEN");
       const pushToken = await SecureStore.getItemAsync("PUSH_TOKEN");
-      const nickname = await SecureStore.getItemAsync("NICKNAME");
-      const email = await SecureStore.getItemAsync("EMAIL");
+      const username = await SecureStore.getItemAsync("USERNAME");
 
       if (accessToken) {
         apiBe.defaults.headers.common[
@@ -38,8 +36,7 @@ export const AuthProvider = ({ children }) => {
           refreshToken: refreshToken,
           pushToken: pushToken,
           authenticated: true,
-          nickname: nickname,
-          email: email,
+          username: username,
         });
       }
     };
@@ -61,8 +58,8 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const signin = async (email, password) => {
-    const signinData = { email: email, password: password };
+  const signin = async (username, password) => {
+    const signinData = { username: username, password: password };
 
     try {
       const { data } = await apiBe.post("/member/signin/", signinData);
@@ -97,14 +94,12 @@ export const AuthProvider = ({ children }) => {
         accessToken: data.accessToken,
         refreshToken: data.refreshToken,
         authenticated: true,
-        nickname: data.member.nickname,
-        email: data.member.email,
+        username: data.member.username,
       }));
 
       await SecureStore.setItemAsync("ACCESS_TOKEN", data.accessToken);
       await SecureStore.setItemAsync("REFRESH_TOKEN", data.refreshToken);
-      await SecureStore.setItemAsync("NICKNAME", data.member.nickname);
-      await SecureStore.setItemAsync("EMAIL", data.member.email);
+      await SecureStore.setItemAsync("USERNAME", data.member.username);
       return { success: true, data: data };
     } catch (error) {
       return { success: false, data: error.response.data };
@@ -114,14 +109,13 @@ export const AuthProvider = ({ children }) => {
   const signout = async () => {
     try {
       const pushToken = await SecureStore.getItemAsync("PUSH_TOKEN");
-      // await apiBe.post("/push/token/invalid/", {
-      //   pushToken: pushToken,
-      // });
+      await apiBe.post("/push/token/invalid/", {
+        pushToken: pushToken,
+      });
       await SecureStore.deleteItemAsync("ACCESS_TOKEN");
       await SecureStore.deleteItemAsync("REFRESH_TOKEN");
       await SecureStore.deleteItemAsync("PUSH_TOKEN");
-      await SecureStore.deleteItemAsync("NICKNAME");
-      await SecureStore.deleteItemAsync("EMAIL");
+      await SecureStore.deleteItemAsync("USERNAME");
       apiBe.defaults.headers.common["Authorization"] = "";
 
       setAuthState({
@@ -129,8 +123,7 @@ export const AuthProvider = ({ children }) => {
         refreshToken: null,
         pushToken: null,
         authenticated: false,
-        email: null,
-        nickname: null,
+        username: null,
       });
       Alert.alert("로그아웃 되었습니다.", "다음에 또 만나요!");
       return { success: true };
@@ -160,32 +153,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const refresh = async () => {
-    try {
-      const token = await SecureStore.getItemAsync("REFRESH_TOKEN");
-
-      const { data } = await apiBe.post("/member/signin/", {
-        refreshToken: token,
-      });
-
-      await SecureStore.setItemAsync("REFRESH_TOKEN", data.refreshToken);
-      apiBe.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${data.refreshToken}`;
-      return { success: true };
-    } catch (error) {
-      console.log("refresh failed", error);
-      return { success: false };
-    }
-  };
-
   const value = {
     onRegister: signUp,
     onLogin: signin,
     onLogout: signout,
     onPasswordChange: changePassword,
     onWithdrawal: withdrawal,
-    onrefresh: refresh,
     authState: authState,
   };
 
