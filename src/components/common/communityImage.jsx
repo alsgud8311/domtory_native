@@ -15,38 +15,6 @@ export const getPhotoPermission = async () => {
     }
 };
 
-// export const pickImage = async () => {
-//     console.log("이미지 선택");
-//     let result = await ImagePicker.launchImageLibraryAsync({
-//         mediaTypes: ImagePicker.MediaTypeOptions.All,
-//         quality: 1,
-//         allowsMultipleSelection: true,
-//     });
-
-//     if (!result.canceled && result.assets) {
-//         const formData = new FormData();
-
-//         console.log(result.assets)
-
-//         result.assets.forEach((asset, index) => {
-//             const uri = asset.uri;
-//             const fileName = asset.uri.split('/').pop();
-//             const fileType = asset.mimeType;
-//             formData.append("images", {
-//                 uri: Platform.OS === "android" ? uri : uri.replace("file://", ""),
-//                 type: fileType,
-//                 name: fileName,
-//             });
-//         });
-//         console.log(formData);
-
-//         return formData;
-//     }
-
-//     return null;
-// };
-
-//이미지 선택
 export const pickImage = async () => {
     console.log("이미지 선택");
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -55,10 +23,9 @@ export const pickImage = async () => {
         allowsMultipleSelection: true,
     });
 
-    console.log(result.assets);
-    if (!result.canceled) {
+    if (!result.canceled && result.assets) {
         return result.assets;
     }
 
-    return ImageData;
+    return null;
 };

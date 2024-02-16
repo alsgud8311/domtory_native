@@ -30,7 +30,7 @@ export default function NewPost({ isVisible, onClose, boardId, onPostSubmit }) {
             return;
         }
         setImage(imageData);
-        //\\console.log(image);
+        //console.log(image);
     };
 
     const [isTitleFocused, setIsTitleFocused] = useState(false);
@@ -64,26 +64,31 @@ export default function NewPost({ isVisible, onClose, boardId, onPostSubmit }) {
 
     const handleSubmit = async () => {
         const formData = new FormData();
-    
-        // 제목과 내용을 FormData에 추가
-        formData.append("title", title);
-        formData.append("content", content);
-    
-        // 이미지 리스트 처리
-        image.forEach((img, index) => {
-            formData.append("images", {
-                uri: img.uri,
-                type: img.mimeType,
-                name: img.fileName || `image_${index}.jpg`,
+        
+        // 사진, 제목, 내용을 FormData에 추가
+        if (!(image === null)) {
+            image.forEach((img, index) => {
+                formData.append("images", {
+                    uri: img.uri,
+                    type: img.mimeType,
+                    name: img.uri.split('/').pop()
+                });
             });
-        });
-    
+        };
+        formData.append("title", title);
+        formData.append("body", content);
+
+        console.log(formData);
         try {
             const result = await writePost(boardId, formData);
-    
+
             if (result.success) {
                 console.log('게시글이 성공적으로 작성되었습니다.');
-                // 상태 초기화 및 성공 처리
+                setTitle('');
+                setContent('');
+                setImage(null);
+                onClose();
+                onPostSubmit();
             } else {
                 console.error('게시글 작성에 실패했습니다:', result.data);
                 Alert.alert('오류', '게시글 작성에 실패했습니다. 다시 시도해주세요.');
