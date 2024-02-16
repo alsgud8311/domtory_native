@@ -10,49 +10,78 @@ import {
     Keyboard,
     Image,
 } from "react-native";
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faComment } from '@fortawesome/free-solid-svg-icons';
+import { AntDesign } from "@expo/vector-icons";
 import { getSearhedData } from "../../server/search";
 
 
-const renderItem = ({ item }) => {
 
-    const Boardname = {
-        1 : "자유 게시판",
-        2 : "중고거래 게시판",
-        3 : "취준생 게시판",
-        4 : "번개 게시판",
-        5 : "분실물 게시판",
-        6 : "자율회 공지사항"
-    }
 
-    return (
-        <TouchableOpacity >
-            <View style={styles.item}>
-                <View style={{ flexDirection: 'column', marginBottom: 5 }}>
-                    <View>
-                        <Text style={styles.board}>{Boardname[item.board]}</Text>
-                        <Text style={styles.title}>{item.title}</Text>
-                        <Text style={styles.content}>{item.body}</Text>
+export default function Search({ route, navigation }) {
+
+    const renderItem = ({ item }) => {
+
+        const Boardname = {
+            1: "자유 게시판",
+            2: "중고거래 게시판",
+            3: "취준생 게시판",
+            4: "번개 게시판",
+            5: "분실물 게시판",
+            6: "자율회 공지사항"
+        }
+
+        const navigateToDetailScreen = () => {
+            let screenName;
+            switch (item.board) {
+                case 1:
+                    screenName = "자유 게시판";
+                    break;
+                case 2:
+                    screenName = "중고거래게시판";
+                    break;
+                case 3:
+                    screenName = "취준생게시판";
+                    break;
+                case 4:
+                    screenName = "번개모임게시판";
+                    break;
+                case 5:
+                    screenName = "분실물게시판";
+                    break;
+                default:
+                    screenName = "일치하는 게시판 없음";
+            }
+
+            if (screenName !== "일치하는 게시판 없음") {
+                navigation.navigate(screenName, { postId: item.id });
+            } else {
+                // 게시판이 일치하지 않는 경우의 처리 로직
+            }
+        }
+
+        return (
+            <TouchableOpacity onPress={navigateToDetailScreen}>
+                <View style={styles.item}>
+                    <View style={{ flexDirection: 'column', marginBottom: 5 }}>
+                        <View>
+                            <Text style={styles.board}>{Boardname[item.board]}</Text>
+                            <Text style={styles.title}>{item.title}</Text>
+                            <Text style={styles.content}>{item.body}</Text>
+                        </View>
+                        <View style={{ flexDirection: 'row', marginTop: 7, height: 15 }}>
+                            <Text style={styles.user}>{item.member}</Text>
+                            <Text style={styles.date}>{item.created_at}</Text>
+                        </View>
                     </View>
-                    <View style={{ flexDirection: 'row', marginTop: 7, height: 15 }}>
-                        <Text style={styles.user}>{item.member}</Text>
-                        <Text style={styles.date}>{item.created_at}</Text>
-                    </View>
+                    {item.thumbnail_url && <Image source={{ uri: item.thumbnail_url }} style={styles.image} />}
                 </View>
-                {item.thumbnail_url && <Image source={{ uri: item.thumbnail_url }} style={styles.image} />}
-            </View>
-        </TouchableOpacity>
-    )
-};
-
-
-export default function Search({route}) {
+            </TouchableOpacity>
+        )
+    };
 
     const { board } = route.params;
 
     const Boardname = {
-        "전체": 0,
+        "전체 게시판": 0,
         "자유 게시판": 1,
         "중고거래 게시판": 2,
         "취준생 게시판": 3,
@@ -67,7 +96,7 @@ export default function Search({route}) {
         setInputText(text)
         const list = text.split(' ');
         // console.log(list)
-        setInputList(list);  
+        setInputList(list);
     };
 
     const hideKeyboard = () => {
@@ -102,11 +131,20 @@ export default function Search({route}) {
                     <Text style={styles.canceltext}>취소</Text>
                 </TouchableOpacity>
             </View>
-            <FlatList
-                data={data}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id}
-            />
+            {data ? (
+                <FlatList
+                    data={data}
+                    renderItem={renderItem}
+                    keyExtractor={(item) => item.id}
+                />) : (
+                <View style={styles.empty}>
+                    <AntDesign
+                        name="search1"
+                        size={30}
+                        color="gray"
+                    />
+                    <Text style={styles.emptyText}>{board}의 글을 검색해보세요</Text>
+                </View>)}
         </View>
     )
         ;
@@ -185,5 +223,18 @@ const styles = StyleSheet.create({
         height: 60,
         borderRadius: 5
     },
+    empty: {
+        width: "100%",
+        height: "100%",
+        backgroundColor: "#f0f0f0",
+        alignItems: "center",
+        paddingTop: 150,
+    },
+    emptyText: {
+        fontSize: 16,
+        textAlign: "center",
+        color: "gray",
+        paddingTop: 10,
+    }
 });
 
