@@ -1,12 +1,9 @@
 import { AxiosResponse } from "axios";
 import { apiBe } from ".";
 
-export const getSearhedData = async () => {
-    const requestBody = {
-        word_list: ["test"]
-    };
+export const getSearhedData = async (inputList, board) => {
 
-    const { data } = await apiBe.post(`/board/post/search/0/`, requestBody);
+    const { data } = await apiBe.post(`/board/post/search/${board}/`, {word_list: inputList});
 
     return data;
 };

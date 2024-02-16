@@ -47,12 +47,27 @@ const renderItem = ({ item }) => {
 };
 
 
-export default function Search() {
+export default function Search({route}) {
 
-    const [inputText, setInputText] = useState('');
+    const { board } = route.params;
+
+    const Boardname = {
+        "전체": 0,
+        "자유 게시판": 1,
+        "중고거래 게시판": 2,
+        "취준생 게시판": 3,
+        "번개 게시판": 4,
+        "분실물 게시판": 5,
+    }
+
+    const [inputText, setInputText] = useState('')
+    const [inputList, setInputList] = useState([])
 
     const handleInputChange = (text) => {
-        setInputText(text);
+        setInputText(text)
+        const list = text.split(' ');
+        // console.log(list)
+        setInputList(list);  
     };
 
     const hideKeyboard = () => {
@@ -64,7 +79,7 @@ export default function Search() {
 
     const handleSearch = async () => {
         try {
-            const searchData = await getSearhedData();
+            const searchData = await getSearhedData(inputList, Boardname[board]);
             setData(searchData);
             console.log(searchData);
         } catch (error) {
