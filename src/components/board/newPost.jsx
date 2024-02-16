@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Modal, View, Text, Image, StyleSheet, TextInput, TouchableOpacity, SafeAreaView, Alert, Keyboard, TouchableWithoutFeedback } from "react-native";
 import { AntDesign, Entypo } from '@expo/vector-icons';
 import { pickImage, getPhotoPermission } from '../../components/common/communityImage';
-import { writePost } from '../../server/board'
+import { writePost } from '../../server/board';
+import { writeCouncilPost } from '../../server/notice';
 
-export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, council }) {
+export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, council, onSuccess }) {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('')
     const [image, setImage] = useState([]);
@@ -64,37 +65,51 @@ export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, cou
 
     const handleSubmit = async () => {
         const formData = new FormData();
-        
+    
         // 사진, 제목, 내용을 FormData에 추가
-        if (!(image === null)) {
-            image.forEach((img, index) => {
+        if (image) {
+            image.forEach((img) => {
                 formData.append("images", {
                     uri: img.uri,
                     type: img.mimeType,
                     name: img.uri.split('/').pop()
                 });
             });
-        };
+        }
         formData.append("title", title);
         formData.append("body", content);
-
-        console.log(formData);
+    
+        let result;
         try {
-            const result = await writePost(boardId, formData);
-
-            if (result.success) {
-                console.log('게시글이 성공적으로 작성되었습니다.');
-                setTitle('');
-                setContent('');
-                setImage(null);
-                onClose();
-                onPostSubmit();
+            if (council === 'true') {
+                result = await writeCouncilPost(formData);
+                if (result.success) {
+                    console.log('자율회 게시글이 성공적으로 작성되었습니다.');
+                    setTitle('');
+                    setContent('');
+                    setImage(null);
+                    onClose();
+                    onSuccess();
+                } else {
+                    console.error('자율회 게시글 작성에 실패했습니다:', result.data);
+                    Alert.alert('오류', '자율회 게시글 작성에 실패했습니다. 다시 시도해주세요.');
+                }
             } else {
-                console.error('게시글 작성에 실패했습니다:', result.data);
-                Alert.alert('오류', '게시글 작성에 실패했습니다. 다시 시도해주세요.');
+                result = await writePost(boardId, formData);
+                if (result.success) {
+                    console.log('게시글이 성공적으로 작성되었습니다.');
+                    setTitle('');
+                    setContent('');
+                    setImage(null);
+                    onClose();
+                    onPostSubmit();
+                } else {
+                    console.error('게시글 작성에 실패했습니다:', result.data);
+                    Alert.alert('오류', '게시글 작성에 실패했습니다. 다시 시도해주세요.');
+                }
             }
         } catch (error) {
-            console.error('Error submitting post:', error);
+            console.error('게시글 전송 중 오류가 발생했습니다:', error);
             Alert.alert('오류', '게시글 전송 중 오류가 발생했습니다.');
         }
     };
