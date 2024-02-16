@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, View, Text, Image, StyleSheet, TextInput, TouchableOpacity, SafeAreaView, Alert, Keyboard, TouchableWithoutFeedback } from "react-native";
 import { AntDesign, Entypo } from '@expo/vector-icons';
-import { pickImage, getPhotoPermission } from '../../components/common/communityImage';
+import { pickImage, getPhotoPermission } from '../../components/common/imagepicker';
 import { writePost } from '../../server/board'
 
 export default function NewPost({ isVisible, onClose, boardId, onPostSubmit }) {
