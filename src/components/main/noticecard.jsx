@@ -5,12 +5,25 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
+import { getNoticePageData } from "../../server/cbhsnotice";
 
 export default function NoticeCard({ navigation }) {
   const [noticeData, setNoticeData] = useState(null);
-
+  useEffect(() => {
+    const getData = async () => {
+      const { success, data } = await getNoticePageData("1");
+      if (success) {
+        slicedData = data.postList.slice(0, 5);
+        setNoticeData(slicedData);
+      } else {
+        setNoticeData([{ title: "정보를 가져오지 못했습니다." }]);
+      }
+    };
+    getData();
+  }, []);
   return (
     <ScrollView style={styles.container}>
       <View style={styles.description}>
@@ -24,11 +37,24 @@ export default function NoticeCard({ navigation }) {
         </TouchableOpacity>
       </View>
       <View style={styles.card}>
-        <View>
-          <Text style={styles.postText}>공지사항 글 1</Text>
-          <Text style={styles.postText}>공지사항 글 2</Text>
-          <Text style={styles.postText}>공지사항 글 3</Text>
-        </View>
+        {noticeData ? (
+          noticeData.map((notice, index) => (
+            <TouchableOpacity key={index}>
+              <Text>{notice.date}</Text>
+              <Text style={styles.postText}>{notice.title}</Text>
+            </TouchableOpacity>
+          ))
+        ) : (
+          <View
+            style={{
+              width: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <ActivityIndicator size="large" color="orange" />
+          </View>
+        )}
       </View>
     </ScrollView>
   );
@@ -67,6 +93,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    gap: 10,
   },
   postText: {
     fontSize: 16,

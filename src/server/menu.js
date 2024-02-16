@@ -27,6 +27,7 @@ export const getDateMenuData = async () => {
 
   let menuList;
   try {
+    console.log(dateForApi, dayDivForApi);
     const response = await apiBe.get(`/menu/${dateForApi}/${dayDivForApi}/`);
     const menuData = response.data;
     if (menuData) {

@@ -8,11 +8,11 @@ export default function Profile() {
 
   return (
     <View style={styles.container}>
-      <Image source={logo} style={{ width: 100, height: 100 }} />
+      <Image source={logo} style={{ width: 120, height: 120 }} />
       <View style={{ gap: 10 }}>
-        <Text style={{ fontSize: 30 }}>{authState.member.nickname}</Text>
+        {/* <Text style={{ fontSize: 30 }}>{authState.nickname}</Text> */}
         <Text style={{ fontSize: 17, color: "gray" }}>
-          {authState.member.email}
+          {authState.username}
         </Text>
       </View>
     </View>
@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
     flexDirection: "row",
     alignItems: "center",
-    gap: 20,
+    justifyContent: "center",
+    gap: 40,
   },
 });

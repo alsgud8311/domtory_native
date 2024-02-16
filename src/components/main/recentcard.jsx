@@ -5,44 +5,74 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
+import { getLatestPosts } from "../../server/board";
+import { Octicons } from "@expo/vector-icons";
 
-export default function RecentPostCard() {
+export default function RecentPostCard({ navigation }) {
   const [recentPostData, setRecentPostData] = useState(null);
+  const boardList = {
+    1: "자유게시판",
+    2: "중고거래 게시판",
+    3: "취준생 게시판",
+    4: "번개 게시판",
+    5: "분실물 게시판",
+  };
+
+  useEffect(() => {
+    const getData = async () => {
+      const { success, data } = await getLatestPosts("0");
+      if (success) {
+        setRecentPostData(data);
+      } else {
+        console.log(data);
+      }
+    };
+    getData();
+  }, []);
 
   return (
     <View style={styles.container}>
       <View style={styles.description}>
         <Text style={styles.descriptionText}>새로 올라온 글</Text>
       </View>
-      <View style={styles.card}>
-        <View>
-          <View style={styles.postWrapper}>
-            <Text style={styles.postText}>닉네임</Text>
-            <Text style={styles.postText}>자유게시판</Text>
+      {recentPostData ? (
+        recentPostData.map((data, index) => (
+          <TouchableOpacity
+            key={index}
+            style={styles.card}
+            onPress={() => navigation.navigate("글 보기", { postId: data.id })}
+          >
+            <View>
+              <View style={styles.postWrapper}>
+                <Text style={styles.postText}>익명</Text>
+                <Text style={styles.postText}>{boardList[data.board]}</Text>
+              </View>
+              <Text style={styles.postText}>{data.title}</Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  paddingTop: 10,
+                  paddingBottom: 5,
+                  gap: 5,
+                }}
+              >
+                <Text>{data.comment_cnt}</Text>
+                <Octicons name="comment" style={styles.commentIcon} />
+              </View>
+            </View>
+          </TouchableOpacity>
+        ))
+      ) : (
+        <TouchableOpacity style={styles.card}>
+          <View>
+            <Text style={styles.postText}>정보를 가져오는데 실패했습니다.</Text>
           </View>
-          <Text style={styles.postText}>새로 올라온 글 1</Text>
-        </View>
-      </View>
-      <View style={styles.card}>
-        <View>
-          <View style={styles.postWrapper}>
-            <Text style={styles.postText}>닉네임</Text>
-            <Text style={styles.postText}>자유게시판</Text>
-          </View>
-          <Text style={styles.postText}>새로 올라온 글 2</Text>
-        </View>
-      </View>
-      <View style={styles.card}>
-        <View>
-          <View style={styles.postWrapper}>
-            <Text style={styles.postText}>닉네임</Text>
-            <Text style={styles.postText}>자유게시판</Text>
-          </View>
-          <Text style={styles.postText}>새로 올라온 글 3</Text>
-        </View>
-      </View>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
@@ -51,7 +81,7 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     backgroundColor: "#fff",
-    marginBottom: 10,
+    marginBottom: 50,
   },
   description: {
     flexDirection: "row",
@@ -84,7 +114,7 @@ const styles = StyleSheet.create({
   },
   postText: {
     fontSize: 16,
-    paddingVertical: 5,
+    paddingTop: 10,
   },
   postWrapper: {
     flexDirection: "row",

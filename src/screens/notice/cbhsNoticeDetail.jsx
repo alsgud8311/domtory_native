@@ -9,17 +9,26 @@ import {
 } from "react-native";
 import { getNoticeIdData } from "../../server/cbhsnotice";
 
-const CbhsNoticeDetail = () => {
+const CbhsNoticeDetail = ({ route }) => {
+  const { postId } = route.params;
+  const { category } = route.params;
 
   const [noticeData, setNoticeData] = useState(null);
 
   useEffect(() => {
     (async () => {
-      const data = await getNoticeIdData(94); // 비동기 함수를 기다림
+      const data = await getNoticeIdData(postId); // 비동기 함수를 기다림
       setNoticeData(data); // 데이터 설정
       console.log(data);
     })();
   }, []);
+
+  
+  const Noticename = {
+    'council': '자율회',
+    'cbhs': '충북학사',
+  };
+
 
   if (!noticeData) {
     return (
@@ -32,7 +41,7 @@ const CbhsNoticeDetail = () => {
     <ScrollView style={styles.container}>
       <Text style={styles.title}>{noticeData.title}</Text>
       <View style={styles.info}>
-        <Text style={styles.cbhs}>충북학사</Text>
+        <Text style={styles.cbhs}>{Noticename[category]}</Text>
         <Text style={styles.date}>{noticeData.date}</Text>
       </View>
       {noticeData.images &&
