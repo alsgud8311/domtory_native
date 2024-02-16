@@ -21,6 +21,7 @@ import { stackscreenOptions } from "../../constants/screenoptions";
 import { Image } from "react-native";
 import domtoryText from "../../assets/domtory_text.png";
 import { AntDesign } from "@expo/vector-icons";
+import PostDetail from "../../components/board/postDetail";
 
 function Logo() {
   return (
@@ -73,6 +74,7 @@ const HomeStack = ({ navigation }) => {
       <Stack.Screen name="분실물 글 보기" component={LostAndFoundDetail} /> */}
       <Stack.Screen name="설정" component={Setting} />
       <Stack.Screen name="검색" component={Search} />
+      <Stack.Screen name="글 보기" component={PostDetail} />
     </Stack.Navigator>
   );
 };

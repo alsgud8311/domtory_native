@@ -15,7 +15,7 @@ export default function MypageCard({ navigation }) {
   const onPressLogout = () => {
     Alert.alert("로그아웃 하시나요?", "", [
       { text: "아니요", style: "cancel" },
-      { text: "넹", onPress: () => logout(authState.pushToken) },
+      { text: "넹", onPress: logout },
     ]);
   };
 
