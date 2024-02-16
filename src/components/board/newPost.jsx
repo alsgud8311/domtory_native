@@ -4,7 +4,7 @@ import { AntDesign, Entypo } from '@expo/vector-icons';
 import { pickImage, getPhotoPermission } from '../../components/common/communityImage';
 import { writePost } from '../../server/board'
 
-export default function NewPost({ isVisible, onClose, boardId, onPostSubmit }) {
+export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, council }) {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('')
     const [image, setImage] = useState([]);
