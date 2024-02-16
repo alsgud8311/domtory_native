@@ -12,7 +12,6 @@ export default function PostDetail({ data, reloadData, postId }) {
         return <View><Text>Loading...</Text></View>;
     }
 
-    // 각 이미지의 높이를 저장할 배열 상태
     const [imageHeights, setImageHeights] = useState([]);
     const screenWidth = Dimensions.get('window').width - 40;
     useEffect(() => {
