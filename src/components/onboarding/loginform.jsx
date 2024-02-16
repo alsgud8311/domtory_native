@@ -20,7 +20,7 @@ import { requestUserPermission } from "../../utils/firebase/firebaseSetting";
 import messaging from "@react-native-firebase/messaging";
 
 export default function LoginForm({ navigation }) {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState({ email: null, detail: "" });
   const { onLogin, onRegister } = useAuth();
@@ -30,21 +30,21 @@ export default function LoginForm({ navigation }) {
   useFocusEffect(
     useCallback(() => {
       // 스크린이 포커스 될 때 실행될 로직
-      setEmail("");
+      setUsername("");
       setPassword("");
     }, [])
   );
   useEffect(() => {
-    if (email.includes("@") && password.length > 5) {
+    if (username.includes("-") && password.length > 5) {
       setLoginValid(true);
     } else {
       setLoginValid(false);
     }
-  }, [email, password]);
+  }, [username, password]);
 
   const login = async () => {
     setIsLoading(true);
-    const { success, data } = await onLogin(email, password);
+    const { success, data } = await onLogin(username, password);
     if (success) {
       console.log("login success");
     } else {
@@ -82,12 +82,12 @@ export default function LoginForm({ navigation }) {
               placeholder="학사번호(- 포함)"
               placeholderColor="#c4c3cb"
               style={styles.loginFormTextInput}
-              onChangeText={(text) => setEmail(text)}
-              value={email}
+              onChangeText={(text) => setUsername(text)}
+              value={username}
               autoCapitalize="none"
             />
-            {loginError.email ? (
-              <Text style={{ color: "red" }}>{loginError.email}</Text>
+            {loginError.username ? (
+              <Text style={{ color: "red" }}>{loginError.username}</Text>
             ) : null}
             <View
               style={{
@@ -109,7 +109,7 @@ export default function LoginForm({ navigation }) {
               />
             </View>
             <View>
-              <Text>🔒초기 비밀번호는 생년월일 6자리입니다.🔒</Text>
+              <Text>🔒초기 비밀번호는 생년월일 8자리입니다.🔒</Text>
             </View>
           </View>
           {isLoading ? (
