@@ -10,26 +10,16 @@ import { useEffect, useRef, useState } from "react";
 import * as Notifications from "expo-notifications";
 import messaging from "@react-native-firebase/messaging";
 import React from "react";
+import { apiBe } from "../../server";
 // import * as SplashScreen from "expo-splash-screen";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
-    shouldPlaySound: false,
+    shouldPlaySound: true,
     shouldSetBadge: false,
   }),
 });
-
-const requestUserPermission = async () => {
-  const authStatus = await messaging().requestPermission();
-  const enabled =
-    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-    authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
-  if (enabled) {
-    console.log("Authorization status:", authStatus);
-  }
-};
 
 export default function Home({ navigation }) {
   const [pushToken, setPushToken] = useState("");
@@ -37,20 +27,8 @@ export default function Home({ navigation }) {
   const notificationListener = useRef();
   const responseListener = useRef();
 
+  //개별 알림이 사용가능한지 확인
   useEffect(() => {
-    if (requestUserPermission()) {
-      //기기별 fcm 토큰 받기
-      messaging()
-        .getToken()
-        .then((token) => {
-          console.log("token: ", token);
-        })
-        .catch((error) => {
-          console.log("cannot get token: ", error);
-        });
-    }
-
-    //개별 알림이 사용가능한지 확인
     messaging()
       .getInitialNotification()
       .then(async (remoteMessage) => {
@@ -74,7 +52,10 @@ export default function Home({ navigation }) {
     });
 
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
-      Alert.alert(JSON.stringify(remoteMessage.notification.body));
+      Alert.alert(
+        JSON.stringify(remoteMessage.notification.title),
+        JSON.stringify(remoteMessage.notification.body)
+      );
     });
 
     return unsubscribe;
@@ -99,5 +80,6 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#fff",
     padding: 20,
+    marginBottom: 70,
   },
 });
