@@ -34,7 +34,7 @@ export const Layout = () => {
     }
     setTimeout(async () => {
       await SplashScreen.hideAsync();
-    }, 3000);
+    }, 2000);
   }, [authState.authenticated]);
   return (
     <NavigationContainer>

@@ -43,8 +43,9 @@ export default function CouncilNoticeCard({ navigation }) {
         horizontal={true}
       >
         {noticeData ? (
-          noticeData.map((notice) => (
+          noticeData.map((notice, index) => (
             <TouchableOpacity
+              key={index}
               style={styles.card}
               onPress={() =>
                 navigation.navigate("글 보기", { postId: notice.id })
