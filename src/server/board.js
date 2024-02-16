@@ -1,14 +1,23 @@
 import { apiBe } from ".";
 
 //게시글 작성
-export const writePost = async (boardId, images, title, body) => {
-  const postData = {
-    images: images,
-    title: title,
-    body: body,
-  };
+export const writePost = async (boardId, formData) => {
   try {
-    const { data } = await apiBe.post(`/board/post/create/${boardId}/`, postData);
+    const reponse = await apiBe.post(`/board/post/create/${boardId}/`, formData, {
+      headers: {"content-type": "multipart/form-data"},
+    });
+    return { success: true };
+  } catch (error) {
+    return { success: false, data: error.response.data };
+  }
+};
+
+// 자율회 게시글 작성
+export const writeCouncilPost = async (boardId, formData) => {
+  try {
+    const reponse = await apiBe.post(`/board/post/create/${boardId}/`, formData, {
+      headers: {"content-type": "multipart/form-data"},
+    });
     return { success: true };
   } catch (error) {
     return { success: false, data: error.response.data };

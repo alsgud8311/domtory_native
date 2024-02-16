@@ -3,7 +3,9 @@ ios/
 android/
 .expo/
 .idea/
+.idea/workspace.xml
 %ProgramData%/
+%ProgramData%/_active.uusver
 
 package-lock.json
 google-services.json
