@@ -1,5 +1,5 @@
 import { Image, TouchableOpacity, View } from "react-native";
-import logo from "../../assets/adaptive-icon.png";
+import logo from "../../assets/domtory_icon.png";
 import domtoryText from "../../assets/domtory_text.png";
 import { AntDesign } from "@expo/vector-icons";
 
@@ -27,7 +27,12 @@ export default function Header({ navigation }) {
         <Image source={logo} style={{ width: 50, height: 50 }} />
         <Image source={domtoryText} style={{ width: 80, height: 30 }} />
         <TouchableOpacity style={{ paddingLeft: 20 }}>
-          <AntDesign name="search1" size={30} color="black" onPress={() => navigation.navigate("검색")}/>
+          <AntDesign
+            name="search1"
+            size={30}
+            color="black"
+            onPress={() => navigation.navigate("검색")}
+          />
         </TouchableOpacity>
       </View>
     </View>

@@ -12,12 +12,9 @@ const MainTab = () => {
   const screenOptions = {
     tabBarShowLabel: false,
     headerShown: false,
-    tabBarstyle: {
+    tabBarStyle: {
       position: "absolute",
-      bottom: 0,
-      right: 0,
-      left: 0,
-      height: 100,
+      height: 70,
       background: "#fff",
     },
   };
@@ -46,6 +43,7 @@ const MainTab = () => {
               <Text style={{ marginTop: 5, color: "gray" }}>홈</Text>
             </View>
           ),
+          unmountOnBlur: true,
         }}
       />
       <Tab.Screen
@@ -94,6 +92,7 @@ const MainTab = () => {
               <Text style={{ marginTop: 5, color: "gray" }}>내 정보</Text>
             </View>
           ),
+          unmountOnBlur: true,
         }}
       />
     </Tab.Navigator>

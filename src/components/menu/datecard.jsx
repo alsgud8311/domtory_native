@@ -15,10 +15,21 @@ export default function Menu() {
     const currentDate = new Date();
     const options = { month: '2-digit', day: '2-digit', weekday: 'short' };
 
-    const [selectedDate, setSelectedDate] = useState(new Date());
+    // 오늘 날짜로 초기화
+    const [selectedDate, setSelectedDate] = useState(currentDate.toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    }).replace(/\./g, ''));
 
+    // 날짜 선택할 때
     const handleDateSelection = (date) => {
-        setSelectedDate(date);
+        const koreanDate = date.toLocaleDateString('ko-KR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        }).replace(/\./g, '');
+        setSelectedDate(koreanDate);
     };
 
     return (

@@ -1,8 +1,9 @@
-import React from 'react';
-import Board from '../../../components/board/board'
+import React from "react";
+import Board from "../../../components/board/board";
+import PostDetail from "../../../components/board/postDetail";
 
-export default function General() {
+export default function General({navigation}) {
   return (
-    <Board/>
+    <Board boardId={1} navigation={navigation}/>
   );
 }

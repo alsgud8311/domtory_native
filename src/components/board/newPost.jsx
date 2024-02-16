@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity, SafeAreaView, Alert, Keyboard, TouchableWithoutFeedback } from "react-native";
-import { Feather, Entypo } from '@expo/vector-icons';
+import { Modal, View, Text, Image, StyleSheet, TextInput, TouchableOpacity, SafeAreaView, Alert, Keyboard, TouchableWithoutFeedback } from "react-native";
+import { AntDesign, Entypo } from '@expo/vector-icons';
+import { pickImage, getPhotoPermission } from '../../components/common/communityImage';
+import { writePost } from '../../server/board';
+import { writeCouncilPost } from '../../server/notice';
 
-export default function Board() {
+export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, council, onSuccess }) {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('')
+    const [image, setImage] = useState([]);
 
     const onChangeTitle = (inputTitle) => {
         setTitle(inputTitle);
@@ -12,6 +16,23 @@ export default function Board() {
     const onChangeContent = (inputContent) => {
         setContent(inputContent);
     }
+
+    const onPressPhoto = async () => {
+        const permission = await getPhotoPermission();
+        if (!permission) {
+            Alert.alert(
+                "사진을 업로드하기 위해서는 사진 접근 권한을 허용해야 합니다"
+            );
+            return;
+        }
+        const imageData = await pickImage();
+        if (!imageData) {
+            console.log("Image picking was failed");
+            return;
+        }
+        setImage(imageData);
+        //console.log(image);
+    };
 
     const [isTitleFocused, setIsTitleFocused] = useState(false);
     const [isContentFocused, setIsContentFocused] = useState(false);
@@ -23,43 +44,157 @@ export default function Board() {
         Keyboard.dismiss();
     };
 
-    return (
-        <SafeAreaView style={styles.safeArea}>
-            <TouchableWithoutFeedback onPress={dismissKeyboard}>
-                <View style={styles.container}>
-                    <TextInput
-                        style={isTitleFocused ? styles.inputFocused : styles.input}
-                        onFocus={() => setIsTitleFocused(true)}
-                        onBlur={() => setIsTitleFocused(false)}
-                        selectionColor='#ffa551dc'
-                        onChangeText={onChangeTitle}
-                        value={title}
-                        placeholder={'제목'}
-                        multiline={true}
-                    />
-                    <TextInput
-                        style={isContentFocused ? styles.focused : styles.inputContent}
-                        onFocus={() => setIsContentFocused(true)}
-                        onBlur={() => setIsContentFocused(false)}
-                        selectionColor='#ffa551dc'
-                        onChangeText={onChangeContent}
-                        value={content}
-                        placeholder={'내용'}
-                        multiline={true}
-                    />
-                    <View style={styles.buttonContainer}>
-                        <TouchableOpacity>
-                            <Entypo name="camera" style={styles.camera} />
-                        </TouchableOpacity>
-                        <TouchableOpacity disabled={isButtonDisabled} style={styles.button} onPress={() => Alert.alert('Button pressed')}>
-                            <Text style={styles.buttonText}>완료</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </TouchableWithoutFeedback>
-        </SafeAreaView>
+    const handleClose = () => {
+        Alert.alert(
+            "작성을 취소하시겠습니까?",
+            "",
+            [{
+                text: "네", onPress: () => {
+                    setTitle('');
+                    setContent('');
+                    setIsTitleFocused(false);
+                    setIsContentFocused(false);
+                    onClose();
+                },
+            },
+            { text: "아니오", style: "cancel", },
+            ],
+            { cancelable: false }
+        );
+    };
 
+    const handleSubmit = async () => {
+        const formData = new FormData();
+    
+        // 사진, 제목, 내용을 FormData에 추가
+        if (image) {
+            image.forEach((img) => {
+                formData.append("images", {
+                    uri: img.uri,
+                    type: img.mimeType,
+                    name: img.uri.split('/').pop()
+                });
+            });
+        }
+        formData.append("title", title);
+        formData.append("body", content);
+    
+        let result;
+        try {
+            if (council === 'true') {
+                result = await writeCouncilPost(formData);
+                if (result.success) {
+                    console.log('자율회 게시글이 성공적으로 작성되었습니다.');
+                    setTitle('');
+                    setContent('');
+                    setImage(null);
+                    onClose();
+                    onSuccess();
+                } else {
+                    console.error('자율회 게시글 작성에 실패했습니다:', result.data);
+                    Alert.alert('오류', '자율회 게시글 작성에 실패했습니다. 다시 시도해주세요.');
+                }
+            } else {
+                result = await writePost(boardId, formData);
+                if (result.success) {
+                    console.log('게시글이 성공적으로 작성되었습니다.');
+                    setTitle('');
+                    setContent('');
+                    setImage(null);
+                    onClose();
+                    onPostSubmit();
+                } else {
+                    console.error('게시글 작성에 실패했습니다:', result.data);
+                    Alert.alert('오류', '게시글 작성에 실패했습니다. 다시 시도해주세요.');
+                }
+            }
+        } catch (error) {
+            console.error('게시글 전송 중 오류가 발생했습니다:', error);
+            Alert.alert('오류', '게시글 전송 중 오류가 발생했습니다.');
+        }
+    };
+
+    return (
+        <Modal
+            animationType="slide"
+            transparent={false}
+            visible={isVisible}
+            onRequestClose={handleClose}
+        >
+            <SafeAreaView style={styles.safeArea}>
+                <TouchableWithoutFeedback onPress={dismissKeyboard}>
+                    <View style={styles.container}>
+                        <View style={styles.header}>
+                            <TouchableOpacity onPress={handleClose}>
+                                <AntDesign name="close" size={22} />
+                            </TouchableOpacity>
+                            <Text style={styles.headerText}>새 글 작성</Text>
+                        </View>
+                        {/* 제목 */}
+                        <TextInput
+                            style={isTitleFocused ? styles.titleFocused : styles.titleNotFocused}
+                            onFocus={() => setIsTitleFocused(true)}
+                            onBlur={() => setIsTitleFocused(false)}
+                            selectionColor='#ffa551dc'
+                            onChangeText={onChangeTitle}
+                            value={title}
+                            placeholder={'제목'}
+                            placeholderTextColor={"#959595"}
+                            multiline={true}
+                        />
+                        {/* 내용 */}
+                        <TextInput
+                            style={isContentFocused ? styles.focused : styles.inputContent}
+                            onFocus={() => setIsContentFocused(true)}
+                            onBlur={() => setIsContentFocused(false)}
+                            selectionColor='#ffa551dc'
+                            onChangeText={onChangeContent}
+                            value={content}
+                            placeholder={'내용'}
+                            placeholderTextColor={"#959595"}
+                            multiline={true}
+                        />
+                        {/* 카메라, 완료버튼 */}
+                        <View style={styles.buttonContainer}>
+                            <TouchableOpacity onPress={onPressPhoto}>
+                                <Entypo name="camera" style={styles.camera} />
+                            </TouchableOpacity>
+                            <TouchableOpacity disabled={isButtonDisabled} style={styles.button} onPress={handleSubmit}>
+                                <Text style={styles.buttonText}>완료</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                    </View>
+                </TouchableWithoutFeedback>
+            </SafeAreaView>
+        </Modal>
     );
+};
+
+// 공통 스타일
+const baseInput = {
+    margin: 10,
+    marginBottom: 6,
+    padding: 12,
+    paddingTop: 10,
+    borderWidth: 2.5,
+    borderRadius: 15,
+    minHeight: 42,
+    fontSize: 16,
+    borderColor: '#86868645'
+};
+
+const baseInputContent = {
+    margin: 10,
+    marginTop: 0,
+    padding: 12,
+    paddingTop: 14,
+    borderWidth: 2.5,
+    borderRadius: 20,
+    minHeight: 350,
+    fontSize: 16,
+    borderColor: '#86868645',
+    textAlignVertical: 'top'
 };
 
 const styles = StyleSheet.create({
@@ -71,52 +206,25 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 15,
     },
-    inputFocused: {
-        margin: 10,
-        marginBottom: 6,
-        padding: 13,
-        paddingTop: 10,
-        borderWidth: 2.5,
+    // 제목 작성시
+    titleFocused: {
+        ...baseInput,
         borderColor: '#ff910097',
-        borderRadius: 15,
-        minHeight: 42,
-        fontSize: 18,
     },
-    input: {
-        margin: 10,
-        marginBottom: 6,
-        padding: 13,
-        paddingTop: 10,
-        borderWidth: 2.5,
-        borderColor: '#86868645',
-        borderRadius: 15,
-        minHeight: 42,
-        fontSize: 18,
+    // 제목
+    titleNotFocused: {
+        ...baseInput,
     },
+    // 내용 작성시
     focused: {
-        margin: 10,
-        marginTop: 0,
-        padding: 13,
-        paddingTop: 15,
-        borderWidth: 2.5,
+        ...baseInputContent,
         borderColor: '#ff910097',
-        borderRadius: 20,
-        minHeight: 350,
-        fontSize: 16,
-        backgroundColor: "rgba(255, 255, 255, 0.041)",
     },
+    // 내용
     inputContent: {
-        margin: 10,
-        marginTop: 0,
-        padding: 13,
-        paddingTop: 15,
-        borderWidth: 2.5,
-        borderColor: '#86868645',
-        borderRadius: 20,
-        minHeight: 350,
-        fontSize: 16,
-        backgroundColor: "rgba(255, 255, 255, 0.041)",
+        ...baseInputContent,
     },
+    // 완료 버튼
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -134,14 +242,31 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     buttonText: {
-        fontSize: 18,
+        fontSize: 17,
         fontWeight: '700',
         color: '#fff'
     },
+    // 카메라 아이콘
     camera: {
         marginHorizontal: 10,
         marginTop: 3,
         fontSize: 33,
         color: '#686868'
-    }
+    },
+    // 헤더
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 10,
+        marginBottom: 15
+    },
+    headerText: {
+        textAlign: 'center',
+        flex: 1,
+        paddingRight: 25,
+        fontSize: 18,
+        fontWeight: '700',
+        color: '#333333'
+    },
 });

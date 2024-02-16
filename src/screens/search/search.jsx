@@ -55,7 +55,7 @@ export default function Search() {
 
     const handleSearch = async () => {
         try {
-            const searchData = await getSearhedData(0);
+            const searchData = await getSearhedData();
             setData(searchData);
             console.log(searchData);
         } catch (error) {
