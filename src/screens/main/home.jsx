@@ -80,5 +80,6 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#fff",
     padding: 20,
+    marginBottom: 70,
   },
 });

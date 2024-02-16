@@ -9,7 +9,8 @@ import Login from "./src/screens/login/login";
 import Signup from "./src/screens/login/signup";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useEffect } from "react";
-
+import * as SplashScreen from "expo-splash-screen";
+SplashScreen.preventAutoHideAsync();
 const Stack = createNativeStackNavigator();
 const screenOptions = {
   tabBarShowLabel: false,
@@ -31,6 +32,9 @@ export const Layout = () => {
     if (!authState.authenticated) {
       console.log("로그아웃 상태");
     }
+    setTimeout(async () => {
+      await SplashScreen.hideAsync();
+    }, 2000);
   }, [authState.authenticated]);
   return (
     <NavigationContainer>
@@ -40,7 +44,7 @@ export const Layout = () => {
         ) : (
           <>
             <Stack.Screen name="로그인" component={Login} />
-            <Stack.Screen
+            {/* <Stack.Screen
               name="회원가입"
               component={Signup}
               options={{
@@ -49,7 +53,7 @@ export const Layout = () => {
                 headerTintColor: "orange",
                 title: "",
               }}
-            />
+            /> */}
           </>
         )}
       </Stack.Navigator>

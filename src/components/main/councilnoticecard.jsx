@@ -7,9 +7,23 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
+import { getPostList } from "../../server/board";
 
 export default function CouncilNoticeCard({ navigation }) {
   const [noticeData, setNoticeData] = useState(null);
+
+  useEffect(() => {
+    const getData = async () => {
+      const { success, data } = await getPostList("6");
+      if (success) {
+        const slicedData = data.slice(0, 5);
+        setNoticeData(slicedData);
+      } else {
+        console.log(data);
+      }
+    };
+    getData();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -28,17 +42,23 @@ export default function CouncilNoticeCard({ navigation }) {
         style={styles.scrollContainer}
         horizontal={true}
       >
-        <View style={styles.card}>
-          <Text style={styles.postText}>
-            자유게시판 글 1qwriqwrjoiwqjrjqowirjiowqjroijqwiorjoqwrjiowjqrio
-          </Text>
-        </View>
-        <View style={styles.card}>
-          <Text style={styles.postText}>자유게시판 글 1</Text>
-        </View>
-        <View style={styles.card}>
-          <Text style={styles.postText}>자유게시판 글 1</Text>
-        </View>
+        {noticeData ? (
+          noticeData.map((notice, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.card}
+              onPress={() =>
+                navigation.navigate("글 보기", { postId: notice.id })
+              }
+            >
+              <Text style={styles.postText}>{notice.title}</Text>
+            </TouchableOpacity>
+          ))
+        ) : (
+          <View style={styles.card}>
+            <Text style={styles.postText}>정보를 가져오는데 실패했습니다.</Text>
+          </View>
+        )}
       </ScrollView>
     </View>
   );

@@ -17,8 +17,7 @@ export const AuthProvider = ({ children }) => {
     refreshToken: null,
     pushToken: null,
     authenticated: false,
-    email: null,
-    nickname: null,
+    username: null,
   });
 
   useEffect(() => {
@@ -26,8 +25,7 @@ export const AuthProvider = ({ children }) => {
       const accessToken = await SecureStore.getItemAsync("ACCESS_TOKEN");
       const refreshToken = await SecureStore.getItemAsync("REFRESH_TOKEN");
       const pushToken = await SecureStore.getItemAsync("PUSH_TOKEN");
-      const nickname = await SecureStore.getItemAsync("NICKNAME");
-      const email = await SecureStore.getItemAsync("EMAIL");
+      const username = await SecureStore.getItemAsync("USERNAME");
 
       if (accessToken) {
         apiBe.defaults.headers.common[
@@ -38,8 +36,7 @@ export const AuthProvider = ({ children }) => {
           refreshToken: refreshToken,
           pushToken: pushToken,
           authenticated: true,
-          nickname: nickname,
-          email: email,
+          username: username,
         });
       }
     };
@@ -48,19 +45,21 @@ export const AuthProvider = ({ children }) => {
 
   const signUp = async (formdata) => {
     try {
-      const response = await apiBe.post("/member/signup/", formdata);
+      const response = await apiBe.post("/member/signup/", formdata, {
+        headers: { "content-type": "multipart/form-data" },
+      });
       return { success: true };
     } catch (error) {
       if (error.response && error.response.data) {
         return { success: false, data: error.response.data };
       } else {
-        console.log(error);
+        console.error(error);
       }
     }
   };
 
-  const signin = async (email, password) => {
-    const signinData = { email: email, password: password };
+  const signin = async (username, password) => {
+    const signinData = { username: username, password: password };
 
     try {
       const { data } = await apiBe.post("/member/signin/", signinData);
@@ -95,29 +94,28 @@ export const AuthProvider = ({ children }) => {
         accessToken: data.accessToken,
         refreshToken: data.refreshToken,
         authenticated: true,
-        nickname: data.member.nickname,
-        email: data.member.email,
+        username: data.member.username,
       }));
 
       await SecureStore.setItemAsync("ACCESS_TOKEN", data.accessToken);
       await SecureStore.setItemAsync("REFRESH_TOKEN", data.refreshToken);
-      await SecureStore.setItemAsync("NICKNAME", data.member.nickname);
-      await SecureStore.setItemAsync("EMAIL", data.member.email);
+      await SecureStore.setItemAsync("USERNAME", data.member.username);
       return { success: true, data: data };
     } catch (error) {
       return { success: false, data: error.response.data };
     }
   };
 
-  const signout = async (pushToken) => {
+  const signout = async () => {
     try {
       const pushToken = await SecureStore.getItemAsync("PUSH_TOKEN");
-      await apiBe.post("/push/token/invalid/", { pushToken: pushToken });
+      await apiBe.post("/push/token/invalid/", {
+        pushToken: pushToken,
+      });
       await SecureStore.deleteItemAsync("ACCESS_TOKEN");
       await SecureStore.deleteItemAsync("REFRESH_TOKEN");
       await SecureStore.deleteItemAsync("PUSH_TOKEN");
-      await SecureStore.deleteItemAsync("NICKNAME");
-      await SecureStore.deleteItemAsync("EMAIL");
+      await SecureStore.deleteItemAsync("USERNAME");
       apiBe.defaults.headers.common["Authorization"] = "";
 
       setAuthState({
@@ -125,8 +123,7 @@ export const AuthProvider = ({ children }) => {
         refreshToken: null,
         pushToken: null,
         authenticated: false,
-        email: null,
-        nickname: null,
+        username: null,
       });
       Alert.alert("로그아웃 되었습니다.", "다음에 또 만나요!");
       return { success: true };

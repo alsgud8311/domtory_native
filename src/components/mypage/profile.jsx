@@ -10,8 +10,10 @@ export default function Profile() {
     <View style={styles.container}>
       <Image source={logo} style={{ width: 120, height: 120 }} />
       <View style={{ gap: 10 }}>
-        <Text style={{ fontSize: 30 }}>{authState.nickname}</Text>
-        <Text style={{ fontSize: 17, color: "gray" }}>{authState.email}</Text>
+        {/* <Text style={{ fontSize: 30 }}>{authState.nickname}</Text> */}
+        <Text style={{ fontSize: 17, color: "gray" }}>
+          {authState.username}
+        </Text>
       </View>
     </View>
   );

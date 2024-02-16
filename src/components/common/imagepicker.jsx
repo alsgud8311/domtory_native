@@ -29,7 +29,12 @@ export const pickImage = async () => {
   });
 
   if (!result.canceled) {
-    return result.assets[0];
+    console.log(result);
+    const fileName = result.assets[0].uri.split("/").pop();
+    const fileType = result.assets[0].mimeType;
+    const uri = result.assets[0].uri;
+    console.log(fileName, fileType, uri);
+    return { fileName: fileName, fileType: fileType, uri: uri };
   }
 
   return ImageData;
