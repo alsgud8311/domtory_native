@@ -16,24 +16,33 @@ import { getSearhedData } from "../../server/search";
 
 
 const renderItem = ({ item }) => {
+
+    const Boardname = {
+        1 : "자유 게시판",
+        2 : "중고거래 게시판",
+        3 : "취준생 게시판",
+        4 : "번개 게시판",
+        5 : "분실물 게시판",
+        6 : "자율회 공지사항"
+    }
+
     return (
-        <View style={styles.postbox}>
-            <View>
-                <Text style={styles.board}>자유게시판</Text>
-                <Text style={styles.name}>익명 | {item.created_at}</Text>
-                <Text style={styles.title}>{item.title}</Text>
-                <View style={styles.comment}>
-                    <View style={styles.commenticon}>
-                        <FontAwesomeIcon size={15} color="#ffcc99" paddingTop='10' icon={faComment} />
+        <TouchableOpacity >
+            <View style={styles.item}>
+                <View style={{ flexDirection: 'column', marginBottom: 5 }}>
+                    <View>
+                        <Text style={styles.board}>{Boardname[item.board]}</Text>
+                        <Text style={styles.title}>{item.title}</Text>
+                        <Text style={styles.content}>{item.body}</Text>
                     </View>
-                    <Text>3</Text>
+                    <View style={{ flexDirection: 'row', marginTop: 7, height: 15 }}>
+                        <Text style={styles.user}>{item.member}</Text>
+                        <Text style={styles.date}>{item.created_at}</Text>
+                    </View>
                 </View>
+                {item.thumbnail_url && <Image source={{ uri: item.thumbnail_url }} style={styles.image} />}
             </View>
-            <Image
-                source={{uri: item.thumbnail_url}} // Replace with the path to your image
-                style={styles.image}
-            />
-        </View>
+        </TouchableOpacity>
     )
 };
 
@@ -64,7 +73,6 @@ export default function Search() {
     };
 
 
-
     return (
         <View style={styles.container}>
             <View style={styles.searchcontainer}>
@@ -73,7 +81,7 @@ export default function Search() {
                     placeholder="검색어를 입력하세요."
                     onChangeText={handleInputChange}
                     value={inputText}
-                    onSubmitEditing={() => handleSearch("lostandfound")}
+                    onSubmitEditing={() => handleSearch()}
                 />
                 <TouchableOpacity onPress={hideKeyboard}>
                     <Text style={styles.canceltext}>취소</Text>
@@ -117,37 +125,50 @@ const styles = StyleSheet.create({
         marginTop: 20,
         marginHorizontal: 10,
     },
-    postbox: {
-        borderBottomColor: "#f0f0f0",
-        borderStyle: "solid",
-        borderBottomWidth: 1,
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        flexDirection: "row",
-        justifyContent: "space-between",
+    item: {
+        backgroundColor: "#ffffff",
+        borderRadius: 5,
+        padding: 15,
+        paddingBottom: 10,
+        marginVertical: 6,
+        marginHorizontal: 10,
+        shadowColor: "#5a5a5a",
+        shadowOffset: { width: 1, height: 1 },
+        shadowOpacity: 0.13,
+        shadowRadius: 8,
+        elevation: 2,
+        flexDirection: 'row',
+        justifyContent: 'space-between'
     },
     board: {
-        color: "orange",
-    },
-    name: {
         fontSize: 13,
-        paddingTop: 5,
+        color: "orange",
+        paddingBottom: 5,
+    },
+    date: {
+        fontSize: 11,
+        color: '#5a5a5a'
+    },
+    user: {
+        fontSize: 12,
+        marginRight: 5,
+        paddingRight: 5,
+        color: '#5a5a5a',
+        borderRightWidth: 1,
+        borderRightColor: '#5a5a5abf'
     },
     title: {
-        fontSize: 15,
-        paddingTop: 3,
+        fontSize: 14,
+        fontWeight: '700',
+        marginBottom: 2.5
     },
-    comment: {
-        flexDirection: "row",
-        paddingTop: 5,
-    },
-    commenticon: {
-        paddingTop: 1,
-        paddingRight: 4,
+    content: {
+        fontSize: 14,
     },
     image: {
-        width: 100,
-        height: "100%",
-        borderRadius: 5,
-    }
+        width: 60,
+        height: 60,
+        borderRadius: 5
+    },
 });
+
