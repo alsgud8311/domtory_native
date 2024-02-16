@@ -15,6 +15,18 @@ export const writePost = async (boardId, images, title, body) => {
   }
 };
 
+// export const writePost = async (boardId, formData) => {
+//   try {
+//     const { data } = await apiBe.post(`/board/post/create/${boardId}/`, formData, {
+//       headers: {
+//       },
+//     });
+//     return { success: true };
+//   } catch (error) {
+//     return { success: false, data: error.response.data };
+//   }
+// };
+
 //게시글 상세 정보 가져오기
 export const getPostDetail = async (boardId) => {
   try {
