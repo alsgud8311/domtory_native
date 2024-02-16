@@ -11,7 +11,6 @@ import { getNoticeIdData } from "../../server/cbhsnotice";
 
 const CbhsNoticeDetail = ({ route }) => {
   const { postId } = route.params;
-  const { category } = route.params;
 
   const [noticeData, setNoticeData] = useState(null);
 
@@ -23,12 +22,6 @@ const CbhsNoticeDetail = ({ route }) => {
     })();
   }, []);
 
-  
-  const Noticename = {
-    'council': '자율회',
-    'cbhs': '충북학사',
-  };
-
 
   if (!noticeData) {
     return (
@@ -38,21 +31,23 @@ const CbhsNoticeDetail = ({ route }) => {
     );
   }
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>{noticeData.title}</Text>
-      <View style={styles.info}>
-        <Text style={styles.cbhs}>{Noticename[category]}</Text>
-        <Text style={styles.date}>{noticeData.date}</Text>
-      </View>
-      {noticeData.images &&
-        <Image
-          source={{ uri: noticeData.images }}
-          style={styles.image}
-          resizeMode="contain"
-        />
-      }
-      <Text style={styles.content}>{noticeData.content}</Text>
-    </ScrollView>
+    <View style={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Text style={styles.title}>{noticeData.title}</Text>
+        <View style={styles.info}>
+          <Text style={styles.cbhs}>충북학사</Text>
+          <Text style={styles.date}>{noticeData.date}</Text>
+        </View>
+        {noticeData.images &&
+          <Image
+            source={{ uri: noticeData.images }}
+            style={styles.image}
+            resizeMode="contain"
+          />
+        }
+        <Text style={styles.content}>{noticeData.content}</Text>
+      </ScrollView>
+    </View>
   )
 };
 
@@ -64,6 +59,8 @@ const styles = StyleSheet.create({
     minHeight: "100%",
     backgroundColor: "#fff",
     padding: 20,
+    overflow: "scroll",
+
   },
   title: {
     fontSize: 18,
@@ -80,20 +77,21 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   cbhs: {
-    fontSize: 12,    
+    fontSize: 12,
   },
   date: {
-    fontSize: 12,    
+    fontSize: 12,
   },
   content: {
     fontSize: 14,
     paddingVertical: 10,
-    paddingHorizontal: 5,
+    paddingTop: 15,
+    paddingBottom: 80,
   },
   image: {
     width: "100%", // 이미지 너비
     aspectRatio: 13 / 16,
-    marginTop: 20,
+    marginTop: 10,
     marginBottom: 10,
   }
 

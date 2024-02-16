@@ -1,4 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Modal } from "react-native";
 import CommunityShortCuts from "./shortcuts/communityShortcuts";
 //게시판
 import General from "./general/general";
@@ -20,9 +22,7 @@ import Mycomment from "./mypost/mycomment";
 import Header from "../../components/common/header";
 import { stackScreenOptionsWithTitle, stackscreenOptions } from "../../constants/screenoptions";
 
-
-
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, Entypo } from "@expo/vector-icons";
 
 
 const CommunityStack = ({ navigation }) => {
@@ -46,7 +46,10 @@ const CommunityStack = ({ navigation }) => {
       <Stack.Screen name="내가 쓴 글" component={MyPosting} />
       <Stack.Screen name="내가 쓴 댓글" component={Mycomment} />
       <Stack.Screen name="공지사항" component={CbhsNotice} />
-      <Stack.Screen name="자유 게시판" component={GeneralDetail} />
+      <Stack.Screen name="자유 게시판" component={GeneralDetail} 
+      options={{headerRight: () => {
+        return (<Entypo name="dots-three-vertical" size={20} color="black"  />);
+      },}}/>
       <Stack.Screen
         name="자유게시판"
         component={General}
@@ -63,7 +66,10 @@ const CommunityStack = ({ navigation }) => {
           },
         }}
       />
-      <Stack.Screen name="취준생게시판" component={JobseekerDetail} />
+      <Stack.Screen name="취준생게시판" component={JobseekerDetail} 
+      options={{headerRight: () => {
+            return (<Entypo name="dots-three-vertical" size={20} color="black" />);
+          },}}/>
       <Stack.Screen
         name="취준생 게시판"
         component={Jobseeker}
@@ -80,7 +86,10 @@ const CommunityStack = ({ navigation }) => {
           },
         }}
       />
-      <Stack.Screen name="번개모임게시판" component={ImpromptuDetail} />
+      <Stack.Screen name="번개모임게시판" component={ImpromptuDetail} 
+      options={{headerRight: () => {
+        return (<Entypo name="dots-three-vertical" size={20} color="black" />);
+      },}}/>
       <Stack.Screen
         name="번개모임 게시판"
         component={Impromptu}
@@ -97,7 +106,10 @@ const CommunityStack = ({ navigation }) => {
           },
         }}
       />
-      <Stack.Screen name="중고거래게시판" component={FleeMarketDetail} />
+      <Stack.Screen name="중고거래게시판" component={FleeMarketDetail} 
+      options={{headerRight: () => {
+        return (<Entypo name="dots-three-vertical" size={20} color="black" />);
+      },}}/>
       <Stack.Screen
         name="중고거래 게시판"
         component={FleeMarket}
@@ -114,7 +126,10 @@ const CommunityStack = ({ navigation }) => {
           },
         }}
       />
-      <Stack.Screen name="분실물게시판" component={LostAndFoundDetail} />
+      <Stack.Screen name="분실물게시판" component={LostAndFoundDetail} 
+      options={{headerRight: () => {
+        return (<Entypo name="dots-three-vertical" size={20} color="black" />);
+      },}}/>
       <Stack.Screen
         name="분실물 게시판"
         component={LostAndFound}
@@ -136,3 +151,69 @@ const CommunityStack = ({ navigation }) => {
 };
 
 export default CommunityStack;
+
+// // 모달 상태 관리
+// const [modalVisible, setModalVisible] = useState(false);
+
+// // 모달 띄우는 함수
+// const openModal = () => {
+//   setModalVisible(true);
+// };
+
+// // 모달 닫는 함수
+// const closeModal = () => {
+//   setModalVisible(false);
+// };
+
+// {/* 모달 컴포넌트 추가 */}
+// <Modal
+// animationType="slide"
+// transparent={true}
+// visible={modalVisible}
+// onRequestClose={closeModal}
+// >
+// <View style={styles.modalView}>
+//   <TouchableOpacity
+//     style={styles.modalOption}
+//     onPress={() => {
+//       // 수정 로직
+//       closeModal();
+//     }}
+//   >
+//     <Text>게시글 수정</Text>
+//   </TouchableOpacity>
+//   <TouchableOpacity
+//     style={styles.modalOption}
+//     onPress={() => {
+//       // 신고 로직
+//       closeModal();
+//     }}
+//   >
+//     <Text>게시글 신고</Text>
+//   </TouchableOpacity>
+// </View>
+// </Modal>
+
+// const styles = StyleSheet.create({
+//   // 모달 스타일
+//   modalView: {
+//     margin: 20,
+//     backgroundColor: "white",
+//     borderRadius: 20,
+//     padding: 35,
+//     alignItems: "center",
+//     shadowColor: "#000",
+//     shadowOffset: {
+//       width: 0,
+//       height: 2
+//     },
+//     shadowOpacity: 0.25,
+//     shadowRadius: 4,
+//     elevation: 5
+//   },
+//   // 모달 옵션 스타일
+//   modalOption: {
+//     padding: 10,
+//     borderBottomWidth: 1,
+//   }
+// })

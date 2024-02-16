@@ -5,162 +5,68 @@ import Pagination from '../../components/notice/pagination';
 import { AntDesign } from '@expo/vector-icons';
 import axios from 'axios';
 import NewPost from '../board/newPost';
-import { useNavigation } from '@react-navigation/native';
-
+import { getCouncilNotice } from '../../server/notice';
 
 const API_URL = "http://api.domtory.site/notice/";
 
-export default function Noticebox({ navigation }) {
-    const councilData = [
-        {
-            "id": 1,
-            "post_id": "227926",
-            "title": "충북학사 동서울관 이동신청자에 대한 공지",
-            "date": "2019-12-31",
-            "content": "충북학사 서서울관에 입사하여 n재사중인 학생 중에서동서울관으로이동 신청한 학생들에",
-            "images": ""
-        },
-        {
-            "id": 2,
-            "post_id": "227927",
-            "title": "충북학사 동서울관 이동신청자에 대한 두 번째 공지",
-            "date": "2019-12-31",
-            "content": "두 번째 공지사항 내용...",
-            "images": ""
-        },
-        {
-            "id": 3,
-            "post_id": "227928",
-            "title": "충북학사 동서울관 이동신청자에 대한 세 번째 공지",
-            "date": "2019-12-31",
-            "content": "세 번째 공지사항 내용...",
-            "images": ""
-        },
-        {
-            "id": 4,
-            "post_id": "227926",
-            "title": "충북학사 동서울관 이동신청자에 대한 공지",
-            "date": "2019-12-31",
-            "content": "충북학사 서서울관에 입사하여 n재사중인 학생 중에서동서울관으로이동 신청한 학생들에",
-            "images": ""
-        },
-        {
-            "id": 5,
-            "post_id": "227927",
-            "title": "충북학사 동서울관 이동신청자에 대한 두 번째 공지",
-            "date": "2019-12-31",
-            "content": "두 번째 공지사항 내용...",
-            "images": ""
-        },
-        {
-            "id": 6,
-            "post_id": "227928",
-            "title": "충북학사 동서울관 이동신청자에 대한 세 번째 공지",
-            "date": "2019-12-31",
-            "content": "세 번째 공지사항 내용...",
-            "images": ""
-        },
-        {
-            "id": 7,
-            "post_id": "227926",
-            "title": "충북학사 동서울관 이동신청자에 대한 공지",
-            "date": "2019-12-31",
-            "content": "충북학사 서서울관에 입사하여 n재사중인 학생 중에서동서울관으로이동 신청한 학생들에",
-            "images": ""
-        },
-        {
-            "id": 8,
-            "post_id": "227927",
-            "title": "충북학사 동서울관 이동신청자에 대한 두 번째 공지",
-            "date": "2019-12-31",
-            "content": "두 번째 공지사항 내용...",
-            "images": ""
-        },
-        {
-            "id": 9,
-            "post_id": "227928",
-            "title": "충북학사 동서울관 이동신청자에 대한 세 번째 공지",
-            "date": "2019-12-31",
-            "content": "세 번째 공지사항 내용...",
-            "images": ""
-        },
-        {
-            "id": 10,
-            "post_id": "227926",
-            "title": "충북학사 동서울관 이동신청자에 대한 공지",
-            "date": "2019-12-31",
-            "content": "충북학사 서서울관에 입사하여 n재사중인 학생 중에서동서울관으로이동 신청한 학생들에",
-            "images": ""
-        },
-    ]
+export default function Noticebox( { navigation }) {
+    const [councilData, setCouncilData] = useState([]);
     const [cbhsData, setCbhsData] = useState([]);
     const [data, setData] = useState('');
     const [category, setCategory] = useState('cbhs');
 
-    useEffect(() => {
-        if (category === 'cbhs') {
-            setData(cbhsData);
-            setCurrentPage(1);
-        }
-    }, [cbhsData, category]);
-
-    // 카테고리 변경 함수
+    // 카테고리 변경
     const onCategoryChange = (newCategory) => {
         setCategory(newCategory);
-        setData(newCategory === 'cbhs' ? cbhsData : councilData);
-        setCurrentPage(1);
     };
-
-    // // 페이지네이션
-    // const PAGE_SIZE = 10; // 페이지당 표시할 아이템의 수
-    // const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 상태
-    // const [loading, setLoading] = useState(false); // 데이터 로딩 상태
-
-    // //총 페이지 수 계산
-    // const totalPages = Math.ceil(data.length / PAGE_SIZE);
-
-    // // 현재 페이지에 따라 표시할 데이터의 부분 집합 계산
-    // const pageData = data.slice(
-    //     (currentPage - 1) * PAGE_SIZE,
-    //     currentPage * PAGE_SIZE
-    // );
-
-    // // 페이지 변경 함수
-    // const onPageChange = (newPage) => {
-    //     setCurrentPage(newPage);
-    // };
+    useEffect(() => {
+        fetchPosts(1);
+    }, [category]);
 
     const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(0);
+    const [cbhsTotalPages, setCbhsTotalPages] = useState(0);
+    const [councilTotalPages, setCouncilTotalPages] = useState(0);
     const [loading, setLoading] = useState(false);
 
+    // 페이지 데이터를 불러오는 함수
+    const fetchPosts = async (page) => {
+        setLoading(true);
+        try {
+            let response;
+            if (category === 'council') {
+                const councilNoticeResult = await getCouncilNotice();
+                if (councilNoticeResult.success) {
+                    setCouncilData(councilNoticeResult.data);
+                    setData(councilNoticeResult.data);
+                    setCouncilTotalPages(councilNoticeResult.data.count);
+                    setCurrentPage(councilNoticeResult.data.curPage);
+                } else {
+                    console.error(councilNoticeResult.data);
+                }
+            } else {
+                let apiUrl = `${API_URL}?page=${page}`;
+                response = await axios.get(apiUrl);
+                setCbhsData(response.data.postList);
+                setData(response.data.postList);
+                setCbhsTotalPages(response.data.pageCnt);
+                setCurrentPage(response.data.curPage);
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
     useEffect(() => {
         fetchPosts(currentPage);
     }, []);
-
-    // 페이지 데이터를 불러오는 함수
-    const fetchPosts = (page) => {
-        setLoading(true);
-        axios.get(`${API_URL}?page=${page}`)
-            .then((response) => {
-                setCbhsData(response.data.postList);
-                setData(cbhsData);
-                setCurrentPage(response.data.curPage);
-                setTotalPages(response.data.pageCnt);
-            })
-            .catch((error) => {
-                console.error(error);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-    };
 
     // 페이지 변경 함수
     const onPageChange = (newPage) => {
         fetchPosts(newPage);
     };
 
+    // 자율회 공지사항 글쓰기
     const [isModalVisible, setModalVisible] = useState(false);
 
     const handleOpenNewPost = () => {
@@ -171,8 +77,19 @@ export default function Noticebox({ navigation }) {
         setModalVisible(false);
     };
 
-    const navigateToDetailPage = (postId, category) => {
-        navigation.navigate("공지사항 글 보기", { postId: postId, category: category})    };
+    // 자율회 공지사항 글쓰기 후 성공적으로 글이 작성되면 호출될 함수
+    const handlePostSuccess = () => {
+        fetchPosts(1); // 첫 페이지로 돌아가며 새로운 목록을 가져옵니다
+    };
+
+    const navigateToDetailPage = (postId) => {
+        if (category === 'council') {
+            navigation.navigate("자율회 공지사항 글 보기", {postId})
+        } else {
+            navigation.navigate("학사내 공지사항 글 보기", {postId})
+
+        }
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -192,7 +109,12 @@ export default function Noticebox({ navigation }) {
                 )}
             </View>
 
-            <NewPost isVisible={isModalVisible} onClose={handleCloseNewPost} />
+            <NewPost
+                isVisible={isModalVisible}
+                onClose={handleCloseNewPost}
+                onSuccess={handlePostSuccess}
+                council='true'
+            />
 
             <FlatList
                 data={data}
@@ -212,7 +134,7 @@ export default function Noticebox({ navigation }) {
             />
 
             <Pagination
-                totalPages={totalPages}
+                totalPages={cbhsTotalPages}
                 currentPage={currentPage}
                 onPageChange={onPageChange}
             />
