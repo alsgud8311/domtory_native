@@ -60,17 +60,17 @@ const HomeStack = ({ navigation }) => {
         options={{
           headerRight: () => {
             return <AntDesign name="search1" size={30} color="black" onPress={() => navigation.navigate("검색")}/>}
-          ,}} /> */}
-      {/* <Stack.Screen name="자유게시판 글 보기" component={GeneralDetail} /> */}
-      {/* <Stack.Screen name="중고거래 게시판" component={FleeMarket} />
-      <Stack.Screen name="중고거래 글 보기" component={FleeMarketDetail} /> */}
-      {/* <Stack.Screen name="번개모임 게시판" component={Impromptu} />
-      <Stack.Screen name="번개모임 글 보기" component={ImpromptuDetail} />
+          ,}} />
+      <Stack.Screen name="자유 게시판" component={GeneralDetail} />
+      <Stack.Screen name="중고거래 게시판" component={FleeMarket} />
+      <Stack.Screen name="중고거래게시판" component={FleeMarketDetail} />
+      <Stack.Screen name="번개모임 게시판" component={Impromptu} />
+      <Stack.Screen name="번개모임게시판" component={ImpromptuDetail} />
       <Stack.Screen name="취준생 게시판" component={Jobseeker} />
-      <Stack.Screen name="취준생 글 보기" component={JobseekerDetail} />
+      <Stack.Screen name="취준생게시판" component={JobseekerDetail} />
       <Stack.Screen name="분실물 게시판" component={LostAndFound} />
-      <Stack.Screen name="분실물 글 보기" component={LostAndFoundDetail} /> */}
-      <Stack.Screen name="설정" component={Setting} />
+      <Stack.Screen name="분실물게시판" component={LostAndFoundDetail} />
+      {/* <Stack.Screen name="설정" component={Setting} /> */}
       <Stack.Screen name="검색" component={Search} />
       <Stack.Screen
         name="자유 게시판"
