@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -8,17 +8,20 @@ import {
   FlatList,
   Keyboard,
   Image,
+  Alert, // 알림창을 사용하기 위해 추가
 } from "react-native";
 import { AntDesign, Octicons, MaterialIcons } from "@expo/vector-icons";
 import { getSearhedData } from "../../server/search";
 
 export default function Searchbox({ route, navigation }) {
+  const textInputRef = useRef(null);
+
   const renderItem = ({ item, board }) => {
     const Boardname = {
       1: "자유 게시판",
       2: "중고거래 게시판",
       3: "취준생 게시판",
-      4: "번개 게시판",
+      4: "번개모임 게시판",
       5: "분실물 게시판",
       6: "자율회 공지사항",
     };
@@ -61,13 +64,12 @@ export default function Searchbox({ route, navigation }) {
                 <Text style={styles.board}>{Boardname[item.board]}</Text>
               )}
               <Text style={styles.title}>{item.title}</Text>
-              <Text style={styles.content}>{item.body}</Text>
+              <Text style={styles.content}>{item.content}</Text>
             </View>
             <View style={{ flexDirection: "row", marginTop: 7, height: 15 }}>
-              <Octicons style={styles.commenticon} name="comment" />
-              <Text style={styles.comment}>{item.comment_cnt} |</Text>
-              <Text style={styles.user}>{item.member} |</Text>
               <Text style={styles.date}>{item.created_at}</Text>
+              <Octicons style={styles.commenticon} name="comment" />
+              <Text style={styles.comment}>{item.comment_cnt}</Text>
             </View>
           </View>
           {item.thumbnail_url && (
@@ -85,7 +87,7 @@ export default function Searchbox({ route, navigation }) {
     자유게시판: 1,
     "중고거래 게시판": 2,
     "취준생 게시판": 3,
-    "번개 게시판": 4,
+    "번개모임 게시판": 4,
     "분실물 게시판": 5,
   };
 
@@ -108,6 +110,11 @@ export default function Searchbox({ route, navigation }) {
   const [data, setData] = useState(null);
 
   const handleSearch = async () => {
+    if (inputText.trim() === "") {
+      Alert.alert("알림", "검색어를 입력해주세요."); // 검색어를 입력하지 않은 경우 알림창 띄우기
+      return;
+    }
+
     try {
       const searchData = await getSearhedData(inputList, Boardname[board]);
       setData(searchData);
@@ -117,22 +124,35 @@ export default function Searchbox({ route, navigation }) {
     }
   };
 
+  useEffect(() => {
+    if (inputText.trim() === "") {
+      textInputRef.current.focus();
+    }
+  }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.searchcontainer}>
-        <TextInput
-          spellCheck={false}
-          autoCorrect={false}
-          style={styles.searchbox}
-          placeholder="검색어를 입력하세요."
-          onChangeText={handleInputChange}
-          value={inputText}
-          onSubmitEditing={() => handleSearch()}
-        />
+        <View style={styles.inputContainer}>
+          <TextInput
+            ref={textInputRef}
+            style={styles.searchbox}
+            placeholder="검색어를 입력하세요."
+            onChangeText={handleInputChange}
+            value={inputText}
+            onSubmitEditing={() => handleSearch()}
+          />
+          <View style={styles.searchbtn}>
+            <TouchableOpacity onPress={() => handleSearch()}>
+              <AntDesign name="search1" size={20} color="gray" />
+            </TouchableOpacity>
+          </View>
+        </View>
         <TouchableOpacity onPress={hideKeyboard}>
           <Text style={styles.canceltext}>취소</Text>
         </TouchableOpacity>
       </View>
+
       <View>
         {data ? (
           <FlatList
@@ -160,8 +180,10 @@ export default function Searchbox({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
+    height: "100%",
     backgroundColor: "#fff",
     marginBottom: 10,
+    paddingBottom: 50,
   },
   searchcontainer: {
     flexDirection: "row",
@@ -169,21 +191,34 @@ const styles = StyleSheet.create({
     borderBottomColor: "#f0f0f0",
     borderStyle: "solid",
     borderBottomWidth: 1,
+    paddingHorizontal: 10,
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   searchbox: {
     height: 40,
     backgroundColor: "#f0f0f0",
-    borderRadius: 10,
+    borderBottomLeftRadius: 10,
+    borderTopLeftRadius: 10,
     width: "80%",
-    margin: 10,
-    padding: 5,
+    paddingLeft: 10,
+  },
+  searchbtn: {
+    backgroundColor: "#f0f0f0",
+    height: 40,
+    paddingRight: 10,
+    paddingTop: 10,
+    paddingLeft: 10,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
   },
   canceltext: {
     fontSize: 15,
     width: 40,
     height: 40,
     marginTop: 20,
-    marginHorizontal: 10,
   },
   item: {
     backgroundColor: "#ffffff",
@@ -219,6 +254,10 @@ const styles = StyleSheet.create({
   date: {
     fontSize: 12,
     color: "#5a5a5a",
+    marginRight: 6,
+    paddingRight: 5,
+    borderRightWidth: 1,
+    borderRightColor: "#5a5a5abf",
   },
   user: {
     fontSize: 12,
