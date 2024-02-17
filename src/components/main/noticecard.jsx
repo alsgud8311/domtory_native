@@ -13,7 +13,6 @@ import { useFocusEffect } from "@react-navigation/native";
 
 export default function NoticeCard({ navigation }) {
   const [noticeData, setNoticeData] = useState(null);
-
   useFocusEffect(
     useCallback(() => {
       const getData = async () => {
@@ -51,9 +50,8 @@ export default function NoticeCard({ navigation }) {
             <TouchableOpacity
               key={index}
               onPress={() => navigateToDetailPage(notice.id)}
-              style={index !== noticeData.length - 1 ? styles.postItem : null} // Apply borderBottom only to non-last items
             >
-              <Text style={styles.postDate}>{notice.date}</Text>
+              <Text>{notice.date}</Text>
               <Text style={styles.postText}>{notice.title}</Text>
             </TouchableOpacity>
           ))
@@ -102,9 +100,7 @@ const styles = StyleSheet.create({
     borderColor: "orange",
     borderStyle: "solid",
     borderWidth: 1,
-    paddingHorizontal: 15,
-    paddingTop: 15,
-    paddingBottom: 7,
+    padding: 15,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.25,
@@ -112,16 +108,8 @@ const styles = StyleSheet.create({
     elevation: 5,
     gap: 10,
   },
-  postItem: {
-    borderBottomWidth: 0.5,
-    borderColor: "orange",
-  },
   postText: {
     fontSize: 16,
-    paddingTop: 5,
-    paddingBottom: 10,
-  },
-  postDate: {
-    fontSize: 13,
+    paddingVertical: 5,
   },
 });
