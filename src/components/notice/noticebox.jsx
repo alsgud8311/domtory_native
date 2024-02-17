@@ -7,11 +7,7 @@ import axios from 'axios';
 import NewPost from '../board/newPost';
 import { getCouncilNotice } from '../../server/notice';
 
-const API_URL = "http://api.domtory.site/notice/";
-
 export default function Noticebox() {
-    const [councilData, setCouncilData] = useState([]);
-    const [cbhsData, setCbhsData] = useState([]);
     const [data, setData] = useState('');
     const [category, setCategory] = useState('cbhs');
 
@@ -36,17 +32,17 @@ export default function Noticebox() {
             if (category === 'council') {
                 const councilNoticeResult = await getCouncilNotice();
                 if (councilNoticeResult.success) {
-                    setCouncilData(councilNoticeResult.data);
-                    setData(councilNoticeResult.data);
-                    setCouncilTotalPages(councilNoticeResult.data.count);
+                    //setCouncilData(councilNoticeResult.data.postList);
+                    setData(councilNoticeResult.data.postList);
+                    setCouncilTotalPages(councilNoticeResult.data.pageCnt);
                     setCurrentPage(councilNoticeResult.data.curPage);
                 } else {
-                    console.error(councilNoticeResult.data);
+                    console.error(error);
                 }
             } else {
-                let apiUrl = `${API_URL}?page=${page}`;
+                let apiUrl = `https://api.domtory.site/notice/?page=${page}`;
                 response = await axios.get(apiUrl);
-                setCbhsData(response.data.postList);
+                //setCbhsData(response.data.postList);
                 setData(response.data.postList);
                 setCbhsTotalPages(response.data.pageCnt);
                 setCurrentPage(response.data.curPage);
@@ -60,6 +56,8 @@ export default function Noticebox() {
     useEffect(() => {
         fetchPosts(currentPage);
     }, []);
+
+    console.log(data);
 
     // 페이지 변경 함수
     const onPageChange = (newPage) => {
@@ -79,7 +77,7 @@ export default function Noticebox() {
 
     // 자율회 공지사항 글쓰기 후 성공적으로 글이 작성되면 호출될 함수
     const handlePostSuccess = () => {
-        fetchPosts(1); // 첫 페이지로 돌아가며 새로운 목록을 가져옵니다
+        fetchPosts(1);
     };
 
     return (
@@ -118,7 +116,7 @@ export default function Noticebox() {
                         </ListItem.Content>
                     </ListItem>
                 )}
-                keyExtractor={(item, index) => index.toString()}
+                keyExtractor={(item, index) => item.id.toString()}
                 ListFooterComponent={loading ? <ActivityIndicator /> : null}
             />
 
