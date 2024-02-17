@@ -144,12 +144,12 @@ export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, cou
 
         try {
             const result = await updatePost(post.id, formData);
-            if (result.success) {
+            if (result && result.success) {
                 console.log('게시글이 성공적으로 수정되었습니다.', result);
                 onClose();
                 onPostSubmit();
             } else {
-                console.error('게시글 작성에 실패했습니다:', result);
+                console.error('게시글 작성에 실패했습니다:', result ? result.data : 'Unknown error');
                 Alert.alert('오류', '게시글 작성에 실패했습니다. 다시 시도해주세요.');
             }
         } catch (error) {
