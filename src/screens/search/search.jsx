@@ -82,7 +82,7 @@ export default function Search({ route, navigation }) {
 
     const Boardname = {
         "전체 게시판": 0,
-        "자유 게시판": 1,
+        "자유게시판": 1,
         "중고거래 게시판": 2,
         "취준생 게시판": 3,
         "번개 게시판": 4,
@@ -118,7 +118,7 @@ export default function Search({ route, navigation }) {
 
 
     return (
-        <View style={styles.container}>
+        <View style={styles.container} >
             <View style={styles.searchcontainer}>
                 <TextInput
                     style={styles.searchbox}
