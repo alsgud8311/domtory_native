@@ -54,7 +54,9 @@ export default function CommunityCard({ navigation }) {
                 onPress={() =>
                   navigation.navigate("자유 게시판", { postId: post.id })
                 }
+                style={index !== communityData.length - 1 ? styles.postItem : null} // Apply borderBottom only to non-last items
               >
+                <Text style={styles.postDate}>{post.created_at}</Text>
                 <Text style={styles.postText}>{post.title}</Text>
               </TouchableOpacity>
             ))}
@@ -104,15 +106,26 @@ const styles = StyleSheet.create({
     borderColor: "orange",
     borderStyle: "solid",
     borderWidth: 1,
-    padding: 15,
+    paddingHorizontal: 15,
+    paddingTop: 5,
+    paddingBottom: 7,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
   },
+  postItem: {
+    borderBottomWidth: 0.5,
+    borderColor: "orange",
+  },
   postText: {
     fontSize: 16,
-    paddingVertical: 5,
+    paddingTop: 5,
+    paddingBottom: 5,
   },
+  postDate: {
+    fontSize: 13,
+    paddingTop: 10,
+  }
 });
