@@ -18,7 +18,7 @@ import { getSearhedData } from "../../server/search";
 
 export default function Search({ route, navigation }) {
 
-    const renderItem = ({ item }) => {
+    const renderItem = ({ item, board }) => {
 
         const Boardname = {
             1: "자유 게시판",
@@ -63,7 +63,8 @@ export default function Search({ route, navigation }) {
                 <View style={styles.item}>
                     <View style={{ flexDirection: 'column', marginBottom: 5 }}>
                         <View>
-                            <Text style={styles.board}>{Boardname[item.board]}</Text>
+                            {board == "전체 게시판" &&
+                            <Text style={styles.board}>{Boardname[item.board]}</Text>}
                             <Text style={styles.title}>{item.title}</Text>
                             <Text style={styles.content}>{item.body}</Text>
                         </View>
@@ -134,7 +135,7 @@ export default function Search({ route, navigation }) {
             {data ? (
                 <FlatList
                     data={data}
-                    renderItem={renderItem}
+                    renderItem={({ item }) => renderItem({ item, board })}
                     keyExtractor={(item) => item.id}
                 />) : (
                 <View style={styles.empty}>
