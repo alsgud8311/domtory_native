@@ -7,6 +7,17 @@ import { Octicons, FontAwesome, Feather } from '@expo/vector-icons';
 import domtory from '../../assets/icon.png';
 import { postComment, deleteComment, postReply, deleteReply, updatePost, report } from '../../server/board'
 
+
+export const handleReport = async (type, id) => {
+    const result = await report(type, id);
+    if (result.success) {
+        Alert.alert('신고 완료', '해당 게시글/댓글 신고를 완료했습니다.');
+    } else {
+        console.error('신고 실패:', result.data);
+        Alert.alert('오류', '신고에 실패했습니다. 다시 시도해주세요.');
+    }
+};
+
 export default function PostDetail({ data, reloadData, postId }) {
     if (!data) {
         return <View><Text>Loading...</Text></View>;
@@ -31,7 +42,6 @@ export default function PostDetail({ data, reloadData, postId }) {
     }, [data]);
 
     // 댓글
-    //const [anonymous, setAnonymous] = useState(false);
     const [comment, setComment] = useState('');
     const [currentReplyingTo, setCurrentReplyingTo] = useState(null);
 
@@ -278,15 +288,6 @@ export default function PostDetail({ data, reloadData, postId }) {
             {/* 댓글 작성 */}
             <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.writeComment}>
                 <View style={styles.inputBox}>
-                    {/* 익명 체크박스
-                    <TouchableOpacity style={styles.anonymousCheck} onPress={() => setAnonymous(!anonymous)}>
-                        {anonymous ? (
-                            <FontAwesome name="check-square-o" size={17} color='#ffa451' />
-                        ) : (
-                            <FontAwesome name="square-o" size={17} color='#848484' />
-                        )}
-                        <Text style={[styles.checkboxLabel, anonymous && { color: '#ffa451' }]}>익명</Text>
-                    </TouchableOpacity> */}
                     <TextInput
                         placeholder={currentReplyingTo ? "대댓글을 입력하세요" : "댓글을 입력하세요"}
                         placeholderTextColor={'#848484'}
