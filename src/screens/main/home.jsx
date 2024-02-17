@@ -20,19 +20,19 @@ import React from "react";
 import { apiBe } from "../../server";
 // import * as SplashScreen from "expo-splash-screen";
 
-// Notifications.setNotificationHandler({
-//   handleNotification: async () => ({
-//     shouldShowAlert: true,
-//     shouldPlaySound: true,
-//     shouldSetBadge: false,
-//   }),
-// });
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
 
 export default function Home({ navigation }) {
   const notificationListener = useRef();
   const responseListener = useRef();
 
-  // 개별 알림이 사용가능한지 확인
+  //개별 알림이 사용가능한지 확인
   useEffect(() => {
     messaging()
       .getInitialNotification()
