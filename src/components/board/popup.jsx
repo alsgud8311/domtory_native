@@ -1,6 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useRoute } from '@react-navigation/native';
-import { TouchableOpacity, View, Modal, StyleSheet, Text, Animated, Easing, TouchableWithoutFeedback, Alert } from "react-native";
+import { useRoute } from "@react-navigation/native";
+import {
+  TouchableOpacity,
+  View,
+  Modal,
+  StyleSheet,
+  Text,
+  Animated,
+  Easing,
+  TouchableWithoutFeedback,
+  Alert,
+} from "react-native";
 import { Entypo } from "@expo/vector-icons";
 import { handleReport } from "../board/postDetail";
 import { getPostDetail } from "../../server/board";
@@ -8,37 +18,37 @@ import NewPost from './newPost';
 import { useAuth } from "../../store/AuthContext";
 
 const PopupMenu = () => {
-    const [data, setData] = useState({});
-    const route = useRoute();
-    const { postId } = route.params;
+  const [data, setData] = useState({});
+  const route = useRoute();
+  const { postId } = route.params;
 
-    const [isModalVisible, setModalVisible] = useState(false);
-    const [refreshFlag, setRefreshFlag] = useState(false);
-    
-    const handleOpenNewPost = () => {
-        setModalVisible(true);
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [refreshFlag, setRefreshFlag] = useState(false);
+
+  const handleOpenNewPost = () => {
+    setModalVisible(true);
+  };
+
+  const handleCloseNewPost = () => {
+    setModalVisible(false);
+  };
+
+  const handleNewPostSubmit = () => {
+    setRefreshFlag(!refreshFlag);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await getPostDetail(postId);
+        setData(result.data);
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      }
     };
 
-    const handleCloseNewPost = () => {
-        setModalVisible(false);
-    };
-
-    const handleNewPostSubmit = () => {
-        setRefreshFlag(!refreshFlag);
-    };
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const result = await getPostDetail(postId);
-                setData(result.data);
-            } catch (error) {
-                console.error("Failed to fetch data:", error);
-            }
-        };
-
-        fetchData();
-    }, [postId]);
+    fetchData();
+  }, [postId]);
 
     const [visible, setVisible] = useState(false);
     const scale = useRef(new Animated.Value(0)).current;
@@ -124,29 +134,29 @@ const PopupMenu = () => {
 }
 
 const styles = StyleSheet.create({
-    popup: {
-        borderRadius: 5,
-        borderColor: '#fff',
-        borderWidth: 1,
-        backgroundColor: '#fff',
-        paddingHorizontal: 5,
-        position: 'absolute',
-        top: 45,
-        right: 20,
-        // iOS용 그림자 스타일
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        // Android용 그림자 스타일
-        elevation: 5,
+  popup: {
+    borderRadius: 5,
+    borderColor: "#fff",
+    borderWidth: 1,
+    backgroundColor: "#fff",
+    paddingHorizontal: 5,
+    position: "absolute",
+    top: 45,
+    right: 20,
+    // iOS용 그림자 스타일
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
     },
-    title: {
-        fontSize: 14,
-    }
-})
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    // Android용 그림자 스타일
+    elevation: 5,
+  },
+  title: {
+    fontSize: 14,
+  },
+});
 
 export default PopupMenu;

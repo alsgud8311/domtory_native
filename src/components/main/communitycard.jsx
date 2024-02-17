@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,26 +9,29 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { getLatestPosts } from "../../server/board";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function CommunityCard({ navigation }) {
   const [communityData, setCommunityData] = useState(null);
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const { success, data } = await getLatestPosts("1");
-        if (success) {
-          setCommunityData(data);
-        } else {
+  useFocusEffect(
+    React.useCallback(() => {
+      const getData = async () => {
+        try {
+          const { success, data } = await getLatestPosts("1");
+          if (success) {
+            setCommunityData(data);
+          } else {
+            setCommunityData([{ title: "정보를 가져오는데 실패했습니다." }]);
+          }
+        } catch (error) {
           setCommunityData([{ title: "정보를 가져오는데 실패했습니다." }]);
         }
-      } catch (error) {
-        setCommunityData([{ title: "정보를 가져오는데 실패했습니다." }]);
-      }
-    };
-    console.log(communityData);
-    getData();
-  }, []);
+      };
+      console.log(communityData);
+      getData();
+    }, [])
+  );
 
   return (
     <View style={styles.container}>
@@ -49,9 +52,13 @@ export default function CommunityCard({ navigation }) {
               <TouchableOpacity
                 key={index}
                 onPress={() =>
-                  navigation.navigate("글 보기", { postId: post.id })
+                  navigation.navigate("자유 게시판", { postId: post.id })
                 }
+                style={
+                  index !== communityData.length - 1 ? styles.postItem : null
+                } // Apply borderBottom only to non-last items
               >
+                <Text style={styles.postDate}>{post.created_at}</Text>
                 <Text style={styles.postText}>{post.title}</Text>
               </TouchableOpacity>
             ))}
@@ -99,15 +106,25 @@ const styles = StyleSheet.create({
     borderColor: "orange",
     borderStyle: "solid",
     borderWidth: 1,
-    padding: 15,
+    paddingHorizontal: 15,
+    paddingTop: 5,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
   },
+  postItem: {
+    borderBottomWidth: 0.5,
+    borderColor: "orange",
+  },
   postText: {
     fontSize: 16,
-    paddingVertical: 5,
+    paddingTop: 5,
+    paddingBottom: 15,
+  },
+  postDate: {
+    fontSize: 13,
+    paddingTop: 10,
   },
 });

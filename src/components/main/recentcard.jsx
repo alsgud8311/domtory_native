@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -6,32 +6,37 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  Image,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { getLatestPosts } from "../../server/board";
 import { Octicons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
+import domtory from "../../assets/domtory_icon.png";
 
 export default function RecentPostCard({ navigation }) {
   const [recentPostData, setRecentPostData] = useState(null);
   const boardList = {
-    1: "자유게시판",
-    2: "중고거래 게시판",
-    3: "취준생 게시판",
-    4: "번개 게시판",
-    5: "분실물 게시판",
+    1: "자유 게시판",
+    2: "중고거래게시판",
+    3: "취준생게시판",
+    4: "번개모임게시판",
+    5: "분실물게시판",
   };
 
-  useEffect(() => {
-    const getData = async () => {
-      const { success, data } = await getLatestPosts("0");
-      if (success) {
-        setRecentPostData(data);
-      } else {
-        console.log(data);
-      }
-    };
-    getData();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const getData = async () => {
+        const { success, data } = await getLatestPosts("0");
+        if (success) {
+          setRecentPostData(data);
+        } else {
+          console.log(data);
+        }
+      };
+      getData();
+    }, [])
+  );
 
   return (
     <View style={styles.container}>
@@ -43,20 +48,24 @@ export default function RecentPostCard({ navigation }) {
           <TouchableOpacity
             key={index}
             style={styles.card}
-            onPress={() => navigation.navigate("글 보기", { postId: data.id })}
+            onPress={() =>
+              navigation.navigate(boardList[data.board], { postId: data.id })
+            }
           >
             <View>
               <View style={styles.postWrapper}>
-                <Text style={styles.postText}>익명</Text>
-                <Text style={styles.postText}>{boardList[data.board]}</Text>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Image source={domtory} style={{ width: 30, height: 30 }} />
+                  <Text style={styles.postText}>익명의 도토리</Text>
+                </View>
+                <Text style={{ paddingLeft: 5 }}>{boardList[data.board]}</Text>
               </View>
-              <Text style={styles.postText}>{data.title}</Text>
+              <Text style={{ padding: 10 }}>{data.title}</Text>
               <View
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  paddingTop: 10,
-                  paddingBottom: 5,
+                  padding: 10,
                   gap: 5,
                 }}
               >
@@ -84,6 +93,7 @@ const styles = StyleSheet.create({
     marginBottom: 50,
   },
   description: {
+    alignItems: "center",
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
@@ -97,6 +107,7 @@ const styles = StyleSheet.create({
   },
   moreButton: {
     flexDirection: "row",
+    alignItems: "center",
   },
   card: {
     backgroundColor: "#ffffff",
@@ -114,10 +125,11 @@ const styles = StyleSheet.create({
   },
   postText: {
     fontSize: 16,
-    paddingTop: 10,
+    paddingLeft: 5,
   },
   postWrapper: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
   },
 });

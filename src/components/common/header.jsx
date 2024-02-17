@@ -31,7 +31,9 @@ export default function Header({ navigation }) {
             name="search1"
             size={30}
             color="black"
-            onPress={() => navigation.navigate("검색")}
+            onPress={() =>
+              navigation.navigate("전체검색", { board: "전체 게시판" })
+            }
           />
         </TouchableOpacity>
       </View>

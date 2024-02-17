@@ -1,21 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, View, Text, Image, StyleSheet, TextInput, TouchableOpacity, SafeAreaView, Alert, Keyboard, TouchableWithoutFeedback } from "react-native";
-import { AntDesign, Entypo } from '@expo/vector-icons';
-import { pickImage, getPhotoPermission } from '../../components/common/communityImage';
-import { writePost, updatePost } from '../../server/board';
-import { writeCouncilPost } from '../../server/notice';
+import React, { useState, useEffect } from "react";
+import {
+    Modal,
+    View,
+    Text,
+    Image,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
+    SafeAreaView,
+    Alert,
+    Keyboard,
+    TouchableWithoutFeedback,
+    ScrollView,
+} from "react-native";
+import { AntDesign, Entypo } from "@expo/vector-icons";
+import {
+    pickImage,
+    getPhotoPermission,
+} from "../../components/common/communityImage";
+import { writePost, updatePost } from "../../server/board";
+import { writeCouncilPost } from "../../server/notice";
 
-export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, council, onSuccess, post }) {
-    const [title, setTitle] = useState('');
-    const [content, setContent] = useState('')
+export default function NewPost({
+    isVisible,
+    onClose,
+    boardId,
+    onPostSubmit,
+    council,
+    onSuccess,
+    post,
+}) {
+    const [title, setTitle] = useState("");
+    const [content, setContent] = useState("");
     const [image, setImage] = useState([]);
 
     const onChangeTitle = (inputTitle) => {
         setTitle(inputTitle);
-    }
+    };
     const onChangeContent = (inputContent) => {
         setContent(inputContent);
-    }
+    };
 
     const onPressPhoto = async () => {
         const permission = await getPhotoPermission();
@@ -70,7 +94,7 @@ export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, cou
                 formData.append("images", {
                     uri: img.uri,
                     type: img.mimeType,
-                    name: img.uri.split('/').pop()
+                    name: img.uri.split("/").pop(),
                 });
             });
         }
@@ -111,11 +135,14 @@ export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, cou
 
             // 스택 추적 로깅
             if (error.stack) {
-                console.error('Stack trace:', error.stack);
+                console.error("Stack trace:", error.stack);
             }
 
             // 오류 메시지를 Alert로 표시
-            Alert.alert('오류', error.message || "게시글 전송 중 오류가 발생했습니다.");
+            Alert.alert(
+                "오류",
+                error.message || "게시글 전송 중 오류가 발생했습니다."
+            );
         }
     };
 
@@ -137,7 +164,7 @@ export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, cou
                 formData.append("images", {
                     uri: img.uri,
                     type: img.mimeType,
-                    name: img.uri
+                    name: img.uri,
                 });
             });
         }
@@ -176,18 +203,18 @@ export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, cou
 
     const handleRemoveImage = (imgId, indexToRemove) => {
         Alert.alert(
-            '이미지 삭제',
-            '해당 이미지를 삭제하시겠습니까?',
+            "이미지 삭제",
+            "해당 이미지를 삭제하시겠습니까?",
             [
-                { text: '취소', style: 'cancel' },
+                { text: "취소", style: "cancel" },
                 {
-                    text: '예',
+                    text: "예",
                     onPress: () => {
                         setDeletedImages((prev) => [...prev, imgId]);
                         setImage((currentImages) =>
                             currentImages.filter((_, index) => index !== indexToRemove)
                         );
-                    }
+                    },
                 },
             ],
             { cancelable: false }
@@ -207,17 +234,21 @@ export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, cou
                             <TouchableOpacity onPress={handleClose}>
                                 <AntDesign name="close" size={22} />
                             </TouchableOpacity>
-                            <Text style={styles.headerText}>{post ? '게시글 수정' : '새 글 작성'}</Text>
+                            <Text style={styles.headerText}>
+                                {post ? "게시글 수정" : "새 글 작성"}
+                            </Text>
                         </View>
                         {/* 제목 */}
                         <TextInput
-                            style={isTitleFocused ? styles.titleFocused : styles.titleNotFocused}
+                            style={
+                                isTitleFocused ? styles.titleFocused : styles.titleNotFocused
+                            }
                             onFocus={() => setIsTitleFocused(true)}
                             onBlur={() => setIsTitleFocused(false)}
-                            selectionColor='#ffa551dc'
+                            selectionColor="#ffa551dc"
                             onChangeText={onChangeTitle}
                             value={title}
-                            placeholder={'제목'}
+                            placeholder={"제목"}
                             placeholderTextColor={"#959595"}
                             multiline={true}
                         />
@@ -226,10 +257,10 @@ export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, cou
                             style={isContentFocused ? styles.focused : styles.inputContent}
                             onFocus={() => setIsContentFocused(true)}
                             onBlur={() => setIsContentFocused(false)}
-                            selectionColor='#ffa551dc'
+                            selectionColor="#ffa551dc"
                             onChangeText={onChangeContent}
                             value={content}
-                            placeholder={'내용'}
+                            placeholder={"내용"}
                             placeholderTextColor={"#959595"}
                             multiline={true}
                         />
@@ -239,27 +270,41 @@ export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, cou
                                 <Entypo name="camera" style={styles.camera} />
                             </TouchableOpacity>
 
-                            <TouchableOpacity disabled={isButtonDisabled} style={styles.button} onPress={post ? handleUpdateSubmit : handleSubmit}>
+                            <TouchableOpacity
+                                disabled={isButtonDisabled}
+                                style={styles.button}
+                                onPress={post ? handleUpdateSubmit : handleSubmit}
+                            >
                                 <Text style={styles.buttonText}>완료</Text>
                             </TouchableOpacity>
                         </View>
-                        {image.length > 0 && image.map((img, index) => (
-                            <View key={index} style={styles.imagePreviewContainer}>
-                                <Image
-                                    source={{ uri: post ? img.image_url : img.uri }}
-                                    style={styles.imagePreview}
-                                />
-                                <TouchableOpacity onPress={() => handleRemoveImage(img.id, index)}>
-                                    <AntDesign name="closecircleo" size={17} color="gray" />
-                                </TouchableOpacity>
-                            </View>
-                        ))}
+                        {image.length > 0 && (
+                            <ScrollView
+                                horizontal={true}
+                                showsHorizontalScrollIndicator={false}
+                                style={styles.imagePreviewContainer}
+                            >
+                                {image.map((img, index) => (
+                                    <View key={index} style={styles.imagePreviewWrapper}>
+                                        <Image
+                                            source={{ uri: post ? img.image_url : img.uri }}
+                                            style={styles.imagePreview}
+                                        />
+                                        <TouchableOpacity
+                                            onPress={() => handleRemoveImage(img.id, index)}
+                                        >
+                                            <AntDesign name="closecircleo" size={17} color="gray" />
+                                        </TouchableOpacity>
+                                    </View>
+                                ))}
+                            </ScrollView>
+                        )}
                     </View>
                 </TouchableWithoutFeedback>
             </SafeAreaView>
         </Modal>
     );
-};
+}
 
 // 공통 스타일
 const baseInput = {
@@ -271,7 +316,7 @@ const baseInput = {
     borderRadius: 15,
     minHeight: 42,
     fontSize: 16,
-    borderColor: '#86868645'
+    borderColor: "#86868645",
 };
 
 const baseInputContent = {
@@ -283,8 +328,8 @@ const baseInputContent = {
     borderRadius: 20,
     minHeight: 350,
     fontSize: 16,
-    borderColor: '#86868645',
-    textAlignVertical: 'top'
+    borderColor: "#86868645",
+    textAlignVertical: "top",
 };
 
 const styles = StyleSheet.create({
@@ -299,7 +344,7 @@ const styles = StyleSheet.create({
     // 제목 작성시
     titleFocused: {
         ...baseInput,
-        borderColor: '#ff910097',
+        borderColor: "#ff910097",
     },
     // 제목
     titleNotFocused: {
@@ -308,7 +353,7 @@ const styles = StyleSheet.create({
     // 내용 작성시
     focused: {
         ...baseInputContent,
-        borderColor: '#ff910097',
+        borderColor: "#ff910097",
     },
     // 내용
     inputContent: {
@@ -316,57 +361,63 @@ const styles = StyleSheet.create({
     },
     // 완료 버튼
     buttonContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+        flexDirection: "row",
+        justifyContent: "space-between",
         paddingHorizontal: 10,
         paddingVertical: 10,
     },
     button: {
         borderWidth: 1,
-        borderColor: '#fff',
+        borderColor: "#fff",
         borderRadius: 15,
-        backgroundColor: '#ffa451',
+        backgroundColor: "#ffa451",
         width: 90,
         height: 35,
-        justifyContent: 'center',
-        alignItems: 'center'
+        justifyContent: "center",
+        alignItems: "center",
     },
     buttonText: {
         fontSize: 17,
-        fontWeight: '700',
-        color: '#fff'
+        fontWeight: "700",
+        color: "#fff",
     },
     // 카메라 아이콘
     camera: {
         marginHorizontal: 10,
         marginTop: 3,
         fontSize: 33,
-        color: '#686868'
+        color: "#686868",
     },
     imagePreviewContainer: {
         marginRight: 10,
-        flexDirection: 'row'
+        flexDirection: "row",
+        gap: 10,
+    },
+    imagePreviewWrapper: {
+        marginRight: 10,
+        flexDirection: "row",
     },
     imagePreview: {
+        flexDirection: "row",
         width: 70,
         height: 70,
         borderRadius: 10,
-        marginTop: 5
+        marginTop: 5,
     },
     // 헤더
     header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
         paddingHorizontal: 10,
-        marginBottom: 15
+        marginBottom: 15,
     },
     headerText: {
-        textAlign: 'center',
+        textAlign: "center",
         flex: 1,
         paddingRight: 25,
         fontSize: 18,
-        fontWeight: '700',
-        color: '#333333'
+        fontWeight: "700",
+        color: "#333333",
     },
 });

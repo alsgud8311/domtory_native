@@ -7,9 +7,9 @@ export default function MyPostCard({ navigation }) {
     <View style={styles.container}>
       <View style={{ marginBottom: 5 }}>
         <Text style={styles.boardTitle}>내 정보 관리</Text>
-        <Text style={styles.boardsubTitle}>
+        {/* <Text style={styles.boardsubTitle}>
           내가 쓴 댓글과 글을 확인할 수 있어요
-        </Text>
+        </Text> */}
       </View>
       <TouchableOpacity
         style={styles.shortcutButton}
@@ -44,13 +44,16 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   sortcutText: {
-    fontSize: 20,
+    fontSize: 17,
   },
   boardTitle: {
-    fontSize: 18,
+    fontSize: 16,
     marginBottom: 5,
+    color: "orange",
+    fontWeight: "700",
   },
   boardsubTitle: {
-    fontSize: 15,
+    fontSize: 14,
+    color: "orange",
   },
 });
