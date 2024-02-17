@@ -7,16 +7,16 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import { getPostList } from "../../server/board";
+import { getCouncilNoticeList, getPostList } from "../../server/board";
 
 export default function CouncilNoticeCard({ navigation }) {
   const [noticeData, setNoticeData] = useState(null);
 
   useEffect(() => {
     const getData = async () => {
-      const { success, data } = await getPostList("6");
+      const { success, data } = await getCouncilNoticeList("1");
       if (success) {
-        const slicedData = data.slice(0, 5);
+        const slicedData = data.postList.slice(0, 5);
         setNoticeData(slicedData);
       } else {
         console.log(data);
