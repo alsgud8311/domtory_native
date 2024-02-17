@@ -50,7 +50,7 @@ const CommunityStack = ({ navigation }) => {
       <Stack.Screen name="내가 쓴 글" component={MyPosting} />
       <Stack.Screen name="내가 쓴 댓글" component={Mycomment} />
       <Stack.Screen name="공지사항" component={CbhsNotice} />
-      <Stack.Screen name="학사내 공지사항 글 보기" component={CbhsNoticeDetail} />
+      <Stack.Screen name="학사내 공지사항" component={CbhsNoticeDetail} />
       <Stack.Screen name="자유 게시판" component={GeneralDetail}
         options={{
           headerRight: () => {

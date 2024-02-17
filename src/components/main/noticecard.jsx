@@ -26,7 +26,7 @@ export default function NoticeCard({ navigation }) {
   }, []);
 
   const navigateToDetailPage = (postId) => {
-    navigation.navigate("학사내 공지사항 글 보기", { postId });
+    navigation.navigate("학사내 공지사항", { postId });
   };
 
   return (
