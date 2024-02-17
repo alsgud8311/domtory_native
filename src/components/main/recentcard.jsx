@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -10,6 +10,7 @@ import {
 import { AntDesign } from "@expo/vector-icons";
 import { getLatestPosts } from "../../server/board";
 import { Octicons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function RecentPostCard({ navigation }) {
   const [recentPostData, setRecentPostData] = useState(null);
@@ -21,17 +22,19 @@ export default function RecentPostCard({ navigation }) {
     5: "분실물게시판",
   };
 
-  useEffect(() => {
-    const getData = async () => {
-      const { success, data } = await getLatestPosts("0");
-      if (success) {
-        setRecentPostData(data);
-      } else {
-        console.log(data);
-      }
-    };
-    getData();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const getData = async () => {
+        const { success, data } = await getLatestPosts("0");
+        if (success) {
+          setRecentPostData(data);
+        } else {
+          console.log(data);
+        }
+      };
+      getData();
+    }, [])
+  );
 
   return (
     <View style={styles.container}>

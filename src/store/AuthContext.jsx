@@ -18,6 +18,7 @@ export const AuthProvider = ({ children }) => {
     pushToken: null,
     authenticated: false,
     username: null,
+    name: null,
   });
 
   useEffect(() => {
@@ -26,6 +27,7 @@ export const AuthProvider = ({ children }) => {
       const refreshToken = await SecureStore.getItemAsync("REFRESH_TOKEN");
       const pushToken = await SecureStore.getItemAsync("PUSH_TOKEN");
       const username = await SecureStore.getItemAsync("USERNAME");
+      const name = await SecureStore.getItemAsync("NAME");
 
       if (accessToken) {
         apiBe.defaults.headers.common[
@@ -37,6 +39,7 @@ export const AuthProvider = ({ children }) => {
           pushToken: pushToken,
           authenticated: true,
           username: username,
+          name: name,
         });
       }
     };
@@ -95,11 +98,13 @@ export const AuthProvider = ({ children }) => {
         refreshToken: data.refreshToken,
         authenticated: true,
         username: data.member.username,
+        name: data.member.name,
       }));
 
       await SecureStore.setItemAsync("ACCESS_TOKEN", data.accessToken);
       await SecureStore.setItemAsync("REFRESH_TOKEN", data.refreshToken);
       await SecureStore.setItemAsync("USERNAME", data.member.username);
+      await SecureStore.setItemAsync("NAME", data.member.username);
       return { success: true, data: data };
     } catch (error) {
       return { success: false, data: error.response.data };
@@ -116,6 +121,7 @@ export const AuthProvider = ({ children }) => {
       await SecureStore.deleteItemAsync("REFRESH_TOKEN");
       await SecureStore.deleteItemAsync("PUSH_TOKEN");
       await SecureStore.deleteItemAsync("USERNAME");
+      await SecureStore.deleteItemAsync("NAME");
       apiBe.defaults.headers.common["Authorization"] = "";
 
       setAuthState({
