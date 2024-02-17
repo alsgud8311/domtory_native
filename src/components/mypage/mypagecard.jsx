@@ -60,7 +60,7 @@ export default function MypageCard({ navigation }) {
           <Text style={styles.cardText}>비밀번호 변경</Text>
         </TouchableOpacity>
       </View>
-      <View>
+      <View style={{ borderBottomWidth: 1, borderColor: "gray" }}>
         <TouchableOpacity style={styles.card} onPress={onPressLogout}>
           <AntDesign name="unlock" size={24} color="black" />
           <Text style={styles.cardText}>로그아웃</Text>

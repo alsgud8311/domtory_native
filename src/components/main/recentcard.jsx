@@ -6,11 +6,13 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  Image,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { getLatestPosts } from "../../server/board";
 import { Octicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
+import domtory from "../../assets/domtory_icon.png";
 
 export default function RecentPostCard({ navigation }) {
   const [recentPostData, setRecentPostData] = useState(null);
@@ -52,16 +54,18 @@ export default function RecentPostCard({ navigation }) {
           >
             <View>
               <View style={styles.postWrapper}>
-                <Text style={styles.postText}>익명</Text>
-                <Text style={styles.postText}>{boardList[data.board]}</Text>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Image source={domtory} style={{ width: 30, height: 30 }} />
+                  <Text style={styles.postText}>익명의 도토리</Text>
+                </View>
+                <Text style={{ paddingLeft: 5 }}>{boardList[data.board]}</Text>
               </View>
-              <Text style={styles.postText}>{data.title}</Text>
+              <Text style={{ padding: 10 }}>{data.title}</Text>
               <View
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  paddingTop: 10,
-                  paddingBottom: 5,
+                  padding: 10,
                   gap: 5,
                 }}
               >
@@ -89,6 +93,7 @@ const styles = StyleSheet.create({
     marginBottom: 50,
   },
   description: {
+    alignItems: "center",
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
@@ -102,6 +107,7 @@ const styles = StyleSheet.create({
   },
   moreButton: {
     flexDirection: "row",
+    alignItems: "center",
   },
   card: {
     backgroundColor: "#ffffff",
@@ -119,10 +125,11 @@ const styles = StyleSheet.create({
   },
   postText: {
     fontSize: 16,
-    paddingTop: 10,
+    paddingLeft: 5,
   },
   postWrapper: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
   },
 });
