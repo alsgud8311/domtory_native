@@ -68,7 +68,7 @@ export default function Searchbox({ route, navigation }) {
                         <View style={{ flexDirection: 'row', marginTop: 7, height: 15 }}>
                             <Octicons style={styles.commenticon} name="comment" />
                             <Text style={styles.comment}>{item.comment_cnt}   |</Text>
-                            <Text style={styles.user}>{item.member}  |</Text>
+                            <Text style={styles.user}>익명  |</Text>
                             <Text style={styles.date}>{item.created_at}</Text>
                         </View>
                     </View>
@@ -168,6 +168,7 @@ const styles = StyleSheet.create({
         width: "100%",
         backgroundColor: "#fff",
         marginBottom: 10,
+        paddingBottom: 50,
     },
     searchcontainer: {
         flexDirection: "row",

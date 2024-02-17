@@ -10,7 +10,7 @@ export default function Profile() {
     <View style={styles.container}>
       <Image source={logo} style={{ width: 120, height: 120 }} />
       <View style={{ gap: 10 }}>
-        <Text style={{ fontSize: 30 }}>{authState.name.substr(1)} 도토리</Text>
+        {/* <Text style={{ fontSize: 30 }}>{authState.name.substr(1)} 도토리</Text> */}
         <Text style={{ fontSize: 17, color: "gray" }}>
           {authState.username}
         </Text>
