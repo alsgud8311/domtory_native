@@ -6,11 +6,10 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Image
+  Image,
 } from "react-native";
 
 const CouncilNoticeDetail = ({ route }) => {
-
   const [noticeData, setNoticeData] = useState(null);
   const { postId } = route.params;
 
@@ -37,19 +36,18 @@ const CouncilNoticeDetail = ({ route }) => {
           <Text style={styles.cbhs}>자율회</Text>
           <Text style={styles.date}>{noticeData.created_at}</Text>
         </View>
-        {noticeData.images &&
+        {noticeData.images && (
           <Image
             source={{ uri: noticeData.post_image }}
             style={styles.post_image}
             resizeMode="contain"
           />
-        }
+        )}
         <Text style={styles.content}>{noticeData.body}</Text>
       </ScrollView>
     </View>
-  )
+  );
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -61,7 +59,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     borderBottomColor: "orange",
-    borderBottomStyle: "solid",
     borderBottomWidth: 1,
     paddingVertical: 20,
     paddingHorizontal: 5,
@@ -88,9 +85,7 @@ const styles = StyleSheet.create({
     aspectRatio: 13 / 16,
     marginTop: 20,
     marginBottom: 10,
-  }
-
+  },
 });
-
 
 export default CouncilNoticeDetail;
