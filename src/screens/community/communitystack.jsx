@@ -15,6 +15,8 @@ import LostAndFound from "./lostandfound/lostandfound";
 import LostAndFoundDetail from "./lostandfound/lostandfoundDetail";
 //공지사항
 import CbhsNotice from "../notice/cbhsNotice";
+import CbhsNoticeDetail from "../notice/cbhsNoticeDetail";
+
 //내가 쓴 글, 댓글
 import MyPosting from "./mypost/mypost";
 import Mycomment from "./mypost/mycomment";
@@ -48,6 +50,7 @@ const CommunityStack = ({ navigation }) => {
       <Stack.Screen name="내가 쓴 글" component={MyPosting} />
       <Stack.Screen name="내가 쓴 댓글" component={Mycomment} />
       <Stack.Screen name="공지사항" component={CbhsNotice} />
+      <Stack.Screen name="학사내 공지사항 글 보기" component={CbhsNoticeDetail} />
       <Stack.Screen name="자유 게시판" component={GeneralDetail}
         options={{
           headerRight: () => {
