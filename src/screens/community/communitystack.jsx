@@ -27,6 +27,7 @@ import Header from "../../components/common/header";
 import { stackScreenOptionsWithTitle, stackscreenOptions } from "../../constants/screenoptions";
 
 import { AntDesign, Entypo } from "@expo/vector-icons";
+import Popup from "../../components/board/popup";
 
 
 const CommunityStack = ({ navigation }) => {
@@ -50,13 +51,10 @@ const CommunityStack = ({ navigation }) => {
       <Stack.Screen name="내가 쓴 글" component={MyPosting} />
       <Stack.Screen name="내가 쓴 댓글" component={Mycomment} />
       <Stack.Screen name="공지사항" component={CbhsNotice} />
-      <Stack.Screen name="학사내 공지사항" component={CbhsNoticeDetail} />
-      <Stack.Screen name="자유 게시판" component={GeneralDetail}
-        options={{
-          headerRight: () => {
-            return (<Entypo name="dots-three-vertical" size={20} color="black" />);
-          },
-        }} />
+      <Stack.Screen name="자유 게시판" component={GeneralDetail} 
+      options={{headerRight: () => {
+        return (<Popup />);
+      },}}/>
       <Stack.Screen
         name="자유게시판"
         component={General}
@@ -73,12 +71,10 @@ const CommunityStack = ({ navigation }) => {
           },
         }}
       />
-      <Stack.Screen name="취준생게시판" component={JobseekerDetail}
-        options={{
-          headerRight: () => {
-            return (<Entypo name="dots-three-vertical" size={20} color="black" />);
-          },
-        }} />
+      <Stack.Screen name="취준생게시판" component={JobseekerDetail} 
+      options={{headerRight: () => {
+            return (<Popup />);
+          },}}/>
       <Stack.Screen
         name="취준생 게시판"
         component={Jobseeker}
@@ -95,12 +91,10 @@ const CommunityStack = ({ navigation }) => {
           },
         }}
       />
-      <Stack.Screen name="번개모임게시판" component={ImpromptuDetail}
-        options={{
-          headerRight: () => {
-            return (<Entypo name="dots-three-vertical" size={20} color="black" />);
-          },
-        }} />
+      <Stack.Screen name="번개모임게시판" component={ImpromptuDetail} 
+      options={{headerRight: () => {
+        return (<Popup />);
+      },}}/>
       <Stack.Screen
         name="번개모임 게시판"
         component={Impromptu}
@@ -117,12 +111,10 @@ const CommunityStack = ({ navigation }) => {
           },
         }}
       />
-      <Stack.Screen name="중고거래게시판" component={FleeMarketDetail}
-        options={{
-          headerRight: () => {
-            return (<Entypo name="dots-three-vertical" size={20} color="black" />);
-          },
-        }} />
+      <Stack.Screen name="중고거래게시판" component={FleeMarketDetail} 
+      options={{headerRight: () => {
+        return (<Popup />);
+      },}}/>
       <Stack.Screen
         name="중고거래 게시판"
         component={FleeMarket}
@@ -139,12 +131,10 @@ const CommunityStack = ({ navigation }) => {
           },
         }}
       />
-      <Stack.Screen name="분실물게시판" component={LostAndFoundDetail}
-        options={{
-          headerRight: () => {
-            return (<Entypo name="dots-three-vertical" size={20} color="black" />);
-          },
-        }} />
+      <Stack.Screen name="분실물게시판" component={LostAndFoundDetail} 
+      options={{headerRight: () => {
+        return (<Popup />);
+      },}}/>
       <Stack.Screen
         name="분실물 게시판"
         component={LostAndFound}

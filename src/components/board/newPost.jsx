@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Modal, View, Text, Image, StyleSheet, TextInput, TouchableOpacity, SafeAreaView, Alert, Keyboard, TouchableWithoutFeedback } from "react-native";
 import { AntDesign, Entypo } from '@expo/vector-icons';
 import { pickImage, getPhotoPermission } from '../../components/common/communityImage';
-import { writePost } from '../../server/board';
+import { writePost, updatePost } from '../../server/board';
 import { writeCouncilPost } from '../../server/notice';
 
-export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, council, onSuccess }) {
+export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, council, onSuccess, post }) {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('')
     const [image, setImage] = useState([]);
@@ -31,13 +31,10 @@ export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, cou
             return;
         }
         setImage(imageData);
-        //console.log(image);
     };
 
     const [isTitleFocused, setIsTitleFocused] = useState(false);
     const [isContentFocused, setIsContentFocused] = useState(false);
-
-    const isButtonDisabled = title.trim() === '' || content.trim() === '';
 
     // 키보드 내리는 함수
     const dismissKeyboard = () => {
@@ -65,7 +62,7 @@ export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, cou
 
     const handleSubmit = async () => {
         const formData = new FormData();
-    
+
         // 사진, 제목, 내용을 FormData에 추가
         if (image) {
             image.forEach((img) => {
@@ -78,7 +75,7 @@ export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, cou
         }
         formData.append("title", title);
         formData.append("body", content);
-    
+
         let result;
         try {
             if (council === 'true') {
@@ -91,29 +88,122 @@ export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, cou
                     onClose();
                     onSuccess();
                 } else {
-                    console.error('자율회 게시글 작성에 실패했습니다:', result.data);
+                    console.error('자율회 게시글 작성에 실패했습니다:', result);
                     Alert.alert('오류', '자율회 게시글 작성에 실패했습니다. 다시 시도해주세요.');
                 }
             } else {
                 result = await writePost(boardId, formData);
                 if (result.success) {
-                    console.log('게시글이 성공적으로 작성되었습니다.');
+                    console.log('게시글이 성공적으로 작성되었습니다.', result);
                     setTitle('');
                     setContent('');
                     setImage(null);
                     onClose();
                     onPostSubmit();
                 } else {
-                    console.error('게시글 작성에 실패했습니다:', result.data);
+                    console.error('게시글 작성에 실패했습니다:');
                     Alert.alert('오류', '게시글 작성에 실패했습니다. 다시 시도해주세요.');
                 }
             }
         } catch (error) {
             console.error('게시글 전송 중 오류가 발생했습니다:', error);
-            Alert.alert('오류', '게시글 전송 중 오류가 발생했습니다.');
+
+            // 스택 추적 로깅
+            if (error.stack) {
+                console.error('Stack trace:', error.stack);
+            }
+
+            // 오류 메시지를 Alert로 표시
+            Alert.alert('오류', error.message || "게시글 전송 중 오류가 발생했습니다.");
         }
     };
 
+    const handleUpdateSubmit = async () => {
+        const formData = new FormData();
+
+        // 제목과 내용 추가
+        formData.append("title", title);
+        formData.append("body", content);
+
+        // 삭제된 이미지 추가
+        if (deletedImages.length > 0) {
+            formData.append("deleted_images", JSON.stringify(deletedImages));
+        }
+
+        // 새로운 이미지 파일 추가
+        if (image) {
+            image.forEach((img) => {
+                formData.append("images", {
+                    uri: img.uri,
+                    type: img.mimeType,
+                    name: img.uri
+                });
+            });
+        }
+
+        try {
+            const result = await updatePost(post.id, formData);
+            if (result.success) {
+                console.log('게시글이 성공적으로 수정되었습니다.', result);
+                onClose();
+                onPostSubmit();
+            } else {
+                console.error('게시글 작성에 실패했습니다:', result);
+                Alert.alert('오류', '게시글 작성에 실패했습니다. 다시 시도해주세요.');
+            }
+        } catch (error) {
+            console.error('게시글 전송 중 오류가 발생했습니다:', error);
+        }
+    };
+
+    // 원본 제목과 내용을 저장할 상태 추가
+    const [originalTitle, setOriginalTitle] = useState('');
+    const [originalContent, setOriginalContent] = useState('');
+
+    useEffect(() => {
+        if (post) {
+            setTitle(post.title || '');
+            setContent(post.body || '');
+            setImage(post.post_image || []);
+
+            // 원본 제목과 내용 상태 업데이트
+            setOriginalTitle(post.title || '');
+            setOriginalContent(post.body || '');
+        } else {
+            setTitle('');
+            setContent('');
+            setOriginalTitle('');
+            setOriginalContent('');
+            setImage([]);
+        }
+    }, [post]);
+
+    // 완료 버튼 활성화 조건 변경
+    const isButtonDisabled = post
+        ? (title.trim() === originalTitle.trim() && content.trim() === originalContent.trim() && image.length === 0)
+        : (title.trim() === '' || content.trim() === '')
+
+    const [deletedImages, setDeletedImages] = useState([]);
+
+    const handleRemoveImage = (imgId, indexToRemove) => {
+        Alert.alert(
+            '이미지 삭제',
+            '해당 이미지를 삭제하시겠습니까?',
+            [
+                { text: '취소', style: 'cancel' },
+                {
+                    text: '예',
+                    onPress: () => {
+                        setDeletedImages((prev) => [...prev, imgId]);
+                        setImage((currentImages) =>
+                            currentImages.filter((_, index) => index !== indexToRemove)
+                        );
+                    }
+                },
+            ],
+            { cancelable: false }
+        );
+    };
     return (
         <Modal
             animationType="slide"
@@ -128,7 +218,7 @@ export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, cou
                             <TouchableOpacity onPress={handleClose}>
                                 <AntDesign name="close" size={22} />
                             </TouchableOpacity>
-                            <Text style={styles.headerText}>새 글 작성</Text>
+                            <Text style={styles.headerText}>{post ? '게시글 수정' : '새 글 작성'}</Text>
                         </View>
                         {/* 제목 */}
                         <TextInput
@@ -159,11 +249,22 @@ export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, cou
                             <TouchableOpacity onPress={onPressPhoto}>
                                 <Entypo name="camera" style={styles.camera} />
                             </TouchableOpacity>
-                            <TouchableOpacity disabled={isButtonDisabled} style={styles.button} onPress={handleSubmit}>
+
+                            <TouchableOpacity disabled={isButtonDisabled} style={styles.button} onPress={post ? handleUpdateSubmit : handleSubmit}>
                                 <Text style={styles.buttonText}>완료</Text>
                             </TouchableOpacity>
                         </View>
-
+                        {image.length > 0 && image.map((img, index) => (
+                            <View key={index} style={styles.imagePreviewContainer}>
+                                <Image
+                                    source={{ uri: post ? img.image_url : img.uri }}
+                                    style={styles.imagePreview}
+                                />
+                                <TouchableOpacity onPress={() => handleRemoveImage(img.id, index)}>
+                                    <AntDesign name="closecircleo" size={17} color="gray" />
+                                </TouchableOpacity>
+                            </View>
+                        ))}
                     </View>
                 </TouchableWithoutFeedback>
             </SafeAreaView>
@@ -252,6 +353,16 @@ const styles = StyleSheet.create({
         marginTop: 3,
         fontSize: 33,
         color: '#686868'
+    },
+    imagePreviewContainer: {
+        marginRight: 10,
+        flexDirection: 'row'
+    },
+    imagePreview: {
+        width: 70,
+        height: 70,
+        borderRadius: 10,
+        marginTop: 5
     },
     // 헤더
     header: {
