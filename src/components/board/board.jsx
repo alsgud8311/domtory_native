@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity, SafeAreaView } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import NewPost from './newPost';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, Octicons } from '@expo/vector-icons';
 import { getPostList } from '../../server/board';
 
 
@@ -62,8 +62,6 @@ export default function Board({ boardId, navigation }) {
 
             if (screenName !== "일치하는 게시판 없음") {
                 navigation.navigate(screenName, { postId: item.id });
-            } else {
-                // 게시판이 일치하지 않는 경우의 처리 로직
             }
         }
 
@@ -78,8 +76,9 @@ export default function Board({ boardId, navigation }) {
                         </View>
                         {/* 유저, 작성일 */}
                         <View style={{ flexDirection: 'row', marginTop: 7, height: 15 }}>
-                            <Text style={styles.user}>{item.member}</Text>
                             <Text style={styles.date}>{item.created_at}</Text>
+                            <Octicons name="comment" style={styles.commentIcon} />
+                            <Text style={styles.comment_cnt}>{item.comment_cnt}</Text>
                         </View>
                     </View>
                     {/* 사진 */}
@@ -131,15 +130,20 @@ const styles = StyleSheet.create({
     },
     date: {
         fontSize: 11,
-        color: '#5a5a5a'
-    },
-    user: {
-        fontSize: 12,
-        marginRight: 5,
-        paddingRight: 5,
         color: '#5a5a5a',
+        marginRight: 6,
+        paddingRight: 5,
         borderRightWidth: 1,
         borderRightColor: '#5a5a5abf'
+    },
+    commentIcon: {
+        fontSize: 15,
+        marginRight: 5,
+        color: '#666666'
+    },
+    comment_cnt: {
+        fontSize: 12,
+        color: '#5a5a5a',
     },
     title: {
         fontSize: 14,
