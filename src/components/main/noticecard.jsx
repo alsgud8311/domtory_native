@@ -24,6 +24,11 @@ export default function NoticeCard({ navigation }) {
     };
     getData();
   }, []);
+
+  const navigateToDetailPage = (postId) => {
+    navigation.navigate("학사내 공지사항 글 보기", { postId });
+  };
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.description}>
@@ -41,9 +46,7 @@ export default function NoticeCard({ navigation }) {
           noticeData.map((notice, index) => (
             <TouchableOpacity
               key={index}
-              onPress={() =>
-                navigation.navigate("학사내 공지사항", { postId: notice.id })
-              }
+              onPress={() => navigateToDetailPage(notice.id)}
             >
               <Text>{notice.date}</Text>
               <Text style={styles.postText}>{notice.title}</Text>
