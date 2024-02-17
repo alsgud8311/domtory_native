@@ -31,7 +31,6 @@ export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, cou
             return;
         }
         setImage(imageData);
-        //console.log(image);
     };
 
     const [isTitleFocused, setIsTitleFocused] = useState(false);
@@ -126,13 +125,12 @@ export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, cou
         formData.append("title", title);
         formData.append("body", content);
 
-        // 삭제된 이미지 ID 추가
-        // 예: 삭제된 이미지 ID가 [3, 6]인 경우
-        const deletedImages = [25]; // 삭제할 이미지 ID 배열
-        formData.append("deleted_images", JSON.stringify(deletedImages)); // JSON 문자열로 변환하여 추가
+        // 삭제된 이미지 추가
+        if (deletedImages.length > 0) {
+            formData.append("deleted_images", JSON.stringify(deletedImages));
+        }
 
         // 새로운 이미지 파일 추가
-        // 예: image 배열에 새 이미지 정보가 포함되어 있는 경우
         if (image) {
             image.forEach((img) => {
                 formData.append("images", {
@@ -144,7 +142,7 @@ export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, cou
         }
 
         try {
-            const result = await updatePost(post.id, formData); // 수정 API 호출 함수
+            const result = await updatePost(post.id, formData);
             if (result.success) {
                 console.log('게시글이 성공적으로 수정되었습니다.', result);
                 onClose();
@@ -172,7 +170,6 @@ export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, cou
             setOriginalTitle(post.title || '');
             setOriginalContent(post.body || '');
         } else {
-            // post 객체가 없는 경우, 모든 값을 빈 문자열로 초기화
             setTitle('');
             setContent('');
             setOriginalTitle('');
@@ -183,10 +180,12 @@ export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, cou
 
     // 완료 버튼 활성화 조건 변경
     const isButtonDisabled = post
-        ? (title.trim() === originalTitle.trim() && content.trim() === originalContent.trim() && image.length === 0) // 게시글 수정 시에는 제목, 내용 또는 이미지가 변경되었는지 확인
-        : (title.trim() === '' || content.trim() === ''); // 새 글 작성 시에는 제목과 내용이 비어 있지 않아야 함
+        ? (title.trim() === originalTitle.trim() && content.trim() === originalContent.trim() && image.length === 0)
+        : (title.trim() === '' || content.trim() === '')
 
-    const handleRemoveImage = (indexToRemove) => {
+    const [deletedImages, setDeletedImages] = useState([]);
+
+    const handleRemoveImage = (imgId, indexToRemove) => {
         Alert.alert(
             '이미지 삭제',
             '해당 이미지를 삭제하시겠습니까?',
@@ -195,6 +194,7 @@ export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, cou
                 {
                     text: '예',
                     onPress: () => {
+                        setDeletedImages((prev) => [...prev, imgId]);
                         setImage((currentImages) =>
                             currentImages.filter((_, index) => index !== indexToRemove)
                         );
@@ -256,14 +256,16 @@ export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, cou
                         </View>
                         {image.length > 0 && image.map((img, index) => (
                             <View key={index} style={styles.imagePreviewContainer}>
-                                <Image source={{ uri: img.uri }} style={styles.imagePreview} />
-                                <TouchableOpacity onPress={() => handleRemoveImage(index)}>
+                                <Image
+                                    source={{ uri: post ? img.image_url : img.uri }}
+                                    style={styles.imagePreview}
+                                />
+                                <TouchableOpacity onPress={() => handleRemoveImage(img.id, index)}>
                                     <AntDesign name="closecircleo" size={17} color="gray" />
                                 </TouchableOpacity>
                             </View>
                         ))}
                     </View>
-
                 </TouchableWithoutFeedback>
             </SafeAreaView>
         </Modal>
