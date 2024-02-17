@@ -31,7 +31,7 @@ export default function CouncilNoticeCard({ navigation }) {
         <Text style={styles.descriptionText}>자율회 공지사항</Text>
         <TouchableOpacity
           style={styles.moreButton}
-          onPress={() => navigation.navigate("자율회 공지사항")}
+          onPress={() => navigation.navigate("공지사항")}
         >
           <Text>더 보기</Text>
           <AntDesign name="right" size={15} />
@@ -48,7 +48,7 @@ export default function CouncilNoticeCard({ navigation }) {
               key={index}
               style={styles.card}
               onPress={() =>
-                navigation.navigate("글 보기", { postId: notice.id })
+                navigation.navigate("자율회 공지사항", { postId: notice.id })
               }
             >
               <Text style={styles.postText}>{notice.title}</Text>
