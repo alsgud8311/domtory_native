@@ -11,7 +11,7 @@ import * as Notifications from "expo-notifications";
 import messaging from "@react-native-firebase/messaging";
 import React from "react";
 import { apiBe } from "../../server";
-import * as SplashScreen from "expo-splash-screen";
+// import * as SplashScreen from "expo-splash-screen";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -27,7 +27,7 @@ export default function Home({ navigation }) {
   const notificationListener = useRef();
   const responseListener = useRef();
 
-  개별 알림이 사용가능한지 확인
+  // 개별 알림이 사용가능한지 확인
   useEffect(() => {
     messaging()
       .getInitialNotification()
