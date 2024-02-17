@@ -27,7 +27,7 @@ export default function Home({ navigation }) {
   const notificationListener = useRef();
   const responseListener = useRef();
 
-  개별 알림이 사용가능한지 확인
+  //개별 알림이 사용가능한지 확인
   useEffect(() => {
     messaging()
       .getInitialNotification()
