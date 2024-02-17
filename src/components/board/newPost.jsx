@@ -49,6 +49,7 @@ export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, cou
                 text: "네", onPress: () => {
                     setTitle('');
                     setContent('');
+                    setImage([]);
                     setIsTitleFocused(false);
                     setIsContentFocused(false);
                     onClose();
@@ -84,7 +85,7 @@ export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, cou
                     console.log('자율회 게시글이 성공적으로 작성되었습니다.');
                     setTitle('');
                     setContent('');
-                    setImage(null);
+                    setImage([]);
                     onClose();
                     onSuccess();
                 } else {
@@ -97,7 +98,7 @@ export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, cou
                     console.log('게시글이 성공적으로 작성되었습니다.', result);
                     setTitle('');
                     setContent('');
-                    setImage(null);
+                    setImage([]);
                     onClose();
                     onPostSubmit();
                 } else {
@@ -156,32 +157,20 @@ export default function NewPost({ isVisible, onClose, boardId, onPostSubmit, cou
         }
     };
 
-    // 원본 제목과 내용을 저장할 상태 추가
-    const [originalTitle, setOriginalTitle] = useState('');
-    const [originalContent, setOriginalContent] = useState('');
-
     useEffect(() => {
         if (post) {
-            setTitle(post.title || '');
-            setContent(post.body || '');
+            setTitle(post.title);
+            setContent(post.body);
             setImage(post.post_image || []);
-
-            // 원본 제목과 내용 상태 업데이트
-            setOriginalTitle(post.title || '');
-            setOriginalContent(post.body || '');
         } else {
             setTitle('');
             setContent('');
-            setOriginalTitle('');
-            setOriginalContent('');
             setImage([]);
         }
     }, [post]);
 
     // 완료 버튼 활성화 조건 변경
-    const isButtonDisabled = post
-        ? (title.trim() === originalTitle.trim() && content.trim() === originalContent.trim() && image.length === 0)
-        : (title.trim() === '' || content.trim() === '')
+    const isButtonDisabled = title === '' || content === '';
 
     const [deletedImages, setDeletedImages] = useState([]);
 
