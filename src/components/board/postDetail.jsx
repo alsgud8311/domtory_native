@@ -285,7 +285,7 @@ export default function PostDetail({ data, reloadData, postId }) {
             </ScrollView>
 
             {/* 댓글 작성 */}
-            <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.writeComment}>
+            <KeyboardAvoidingView style={styles.writeComment}>
                 <View style={styles.inputBox}>
                     <TextInput
                         placeholder={currentReplyingTo ? "대댓글을 입력하세요" : "댓글을 입력하세요"}
@@ -371,7 +371,6 @@ const styles = StyleSheet.create({
         borderBottomColor: '#e1e1e1',
         paddingBottom: 8,
         marginBottom: 8,
-        height: 30
     },
     // 댓글 작성자
     commentMember: {
