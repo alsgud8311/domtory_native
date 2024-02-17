@@ -20,7 +20,7 @@ import Header from "../../components/common/header";
 import { stackscreenOptions } from "../../constants/screenoptions";
 import { Image } from "react-native";
 import domtoryText from "../../assets/domtory_text.png";
-import { AntDesign } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
 import PostDetail from "../../components/board/postDetail";
 
 function Logo() {
@@ -74,7 +74,61 @@ const HomeStack = ({ navigation }) => {
       <Stack.Screen name="분실물 글 보기" component={LostAndFoundDetail} /> */}
       <Stack.Screen name="설정" component={Setting} />
       <Stack.Screen name="검색" component={Search} />
-      <Stack.Screen name="글 보기" component={PostDetail} />
+      <Stack.Screen
+        name="자유 게시판"
+        component={GeneralDetail}
+        options={{
+          headerRight: () => {
+            return (
+              <Entypo name="dots-three-vertical" size={20} color="black" />
+            );
+          },
+        }}
+      />
+      <Stack.Screen
+        name="취준생게시판"
+        component={JobseekerDetail}
+        options={{
+          headerRight: () => {
+            return (
+              <Entypo name="dots-three-vertical" size={20} color="black" />
+            );
+          },
+        }}
+      />
+      <Stack.Screen
+        name="번개모임게시판"
+        component={ImpromptuDetail}
+        options={{
+          headerRight: () => {
+            return (
+              <Entypo name="dots-three-vertical" size={20} color="black" />
+            );
+          },
+        }}
+      />
+      <Stack.Screen
+        name="중고거래게시판"
+        component={FleeMarketDetail}
+        options={{
+          headerRight: () => {
+            return (
+              <Entypo name="dots-three-vertical" size={20} color="black" />
+            );
+          },
+        }}
+      />
+      <Stack.Screen
+        name="분실물게시판"
+        component={LostAndFoundDetail}
+        options={{
+          headerRight: () => {
+            return (
+              <Entypo name="dots-three-vertical" size={20} color="black" />
+            );
+          },
+        }}
+      />
     </Stack.Navigator>
   );
 };

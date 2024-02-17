@@ -49,7 +49,7 @@ export default function CommunityCard({ navigation }) {
               <TouchableOpacity
                 key={index}
                 onPress={() =>
-                  navigation.navigate("글 보기", { postId: post.id })
+                  navigation.navigate("자유 게시판", { postId: post.id })
                 }
               >
                 <Text style={styles.postText}>{post.title}</Text>
