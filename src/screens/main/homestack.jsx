@@ -23,6 +23,7 @@ import { Image } from "react-native";
 import domtoryText from "../../assets/domtory_text.png";
 import { Entypo } from "@expo/vector-icons";
 import PostDetail from "../../components/board/postDetail";
+import PopupMenu from "../../components/board/popup";
 
 function Logo() {
   return (
@@ -78,9 +79,7 @@ const HomeStack = ({ navigation }) => {
         component={GeneralDetail}
         options={{
           headerRight: () => {
-            return (
-              <Entypo name="dots-three-vertical" size={20} color="black" />
-            );
+            return <PopupMenu />;
           },
         }}
       />
@@ -89,9 +88,7 @@ const HomeStack = ({ navigation }) => {
         component={JobseekerDetail}
         options={{
           headerRight: () => {
-            return (
-              <Entypo name="dots-three-vertical" size={20} color="black" />
-            );
+            return <PopupMenu />;
           },
         }}
       />
@@ -100,9 +97,7 @@ const HomeStack = ({ navigation }) => {
         component={ImpromptuDetail}
         options={{
           headerRight: () => {
-            return (
-              <Entypo name="dots-three-vertical" size={20} color="black" />
-            );
+            return <PopupMenu />;
           },
         }}
       />
@@ -111,9 +106,7 @@ const HomeStack = ({ navigation }) => {
         component={FleeMarketDetail}
         options={{
           headerRight: () => {
-            return (
-              <Entypo name="dots-three-vertical" size={20} color="black" />
-            );
+            return <PopupMenu />;
           },
         }}
       />
@@ -122,9 +115,7 @@ const HomeStack = ({ navigation }) => {
         component={LostAndFoundDetail}
         options={{
           headerRight: () => {
-            return (
-              <Entypo name="dots-three-vertical" size={20} color="black" />
-            );
+            return <PopupMenu />;
           },
         }}
       />
