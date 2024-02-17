@@ -1,12 +1,43 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRoute } from '@react-navigation/native';
 import { TouchableOpacity, View, Modal, StyleSheet, Text, Animated, Easing, TouchableWithoutFeedback, Alert } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 import { handleReport } from "../board/postDetail";
+import { getPostDetail } from "../../server/board";
+import NewPost from './newPost';
 
 const PopupMenu = () => {
+    const [data, setData] = useState({});
     const route = useRoute();
     const { postId } = route.params;
+
+    const [isModalVisible, setModalVisible] = useState(false);
+    const [refreshFlag, setRefreshFlag] = useState(false);
+    
+    const handleOpenNewPost = () => {
+        setModalVisible(true);
+    };
+
+    const handleCloseNewPost = () => {
+        setModalVisible(false);
+    };
+
+    const handleNewPostSubmit = () => {
+        setRefreshFlag(!refreshFlag);
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const result = await getPostDetail(postId);
+                setData(result.data);
+            } catch (error) {
+                console.error("Failed to fetch data:", error);
+            }
+        };
+
+        fetchData();
+    }, [postId]);
 
     const [visible, setVisible] = useState(false);
     const scale = useRef(new Animated.Value(0)).current;
@@ -22,7 +53,7 @@ const PopupMenu = () => {
                         style: 'cancel',
                     },
                     {
-                        text: '예', onPress: () => console.log('게시글 수정 시작')
+                        text: '예', onPress: () => handleOpenNewPost()
                     },
                 ],
                 { cancelable: false } // Android에서 백 버튼을 눌렀을 때 대화 상자가 닫히지 않도록 설정
@@ -69,7 +100,7 @@ const PopupMenu = () => {
                                     key={i}
                                     onPress={() => {
                                         op.action();
-                                        setVisible(false); // 옵션 선택 시 모달 닫기 추가
+                                        setVisible(false);
                                     }}
                                     style={{
                                         borderBottomWidth: i === options.length - 1 ? 0 : 1,
@@ -85,6 +116,7 @@ const PopupMenu = () => {
                     </View>
                 </TouchableWithoutFeedback>
             </Modal>
+            <NewPost isVisible={isModalVisible} onClose={handleCloseNewPost} onPostSubmit={handleNewPostSubmit} post={data}/>
         </>
     )
 }
