@@ -8,7 +8,7 @@ import RecentPostCard from "../../components/main/recentcard";
 import CouncilNoticeCard from "../../components/main/councilnoticecard";
 import { useEffect, useRef, useState } from "react";
 import * as Notifications from "expo-notifications";
-// import messaging from "@react-native-firebase/messaging";
+import messaging from "@react-native-firebase/messaging";
 import React from "react";
 import { apiBe } from "../../server";
 // import * as SplashScreen from "expo-splash-screen";
@@ -27,39 +27,39 @@ export default function Home({ navigation }) {
   const notificationListener = useRef();
   const responseListener = useRef();
 
-  //개별 알림이 사용가능한지 확인
-  // useEffect(() => {
-  //   messaging()
-  //     .getInitialNotification()
-  //     .then(async (remoteMessage) => {
-  //       if (remoteMessage) {
-  //         console.log(
-  //           "종료 상태에서 열렸을 때 알림 상태",
-  //           remoteMessage.notification
-  //         );
-  //       }
-  //     });
+  개별 알림이 사용가능한지 확인
+  useEffect(() => {
+    messaging()
+      .getInitialNotification()
+      .then(async (remoteMessage) => {
+        if (remoteMessage) {
+          console.log(
+            "종료 상태에서 열렸을 때 알림 상태",
+            remoteMessage.notification
+          );
+        }
+      });
 
-  //   messaging().onNotificationOpenedApp((remoteMessage) => {
-  //     console.log(
-  //       "백그라운드 상태에서 알림 열었을 때",
-  //       remoteMessage.notification
-  //     );
-  //   });
+    messaging().onNotificationOpenedApp((remoteMessage) => {
+      console.log(
+        "백그라운드 상태에서 알림 열었을 때",
+        remoteMessage.notification
+      );
+    });
 
-  //   messaging().setBackgroundMessageHandler(async (remoteMessage) => {
-  //     console.log("백그라운드 메세지 받기", remoteMessage);
-  //   });
+    messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+      console.log("백그라운드 메세지 받기", remoteMessage);
+    });
 
-  //   const unsubscribe = messaging().onMessage(async (remoteMessage) => {
-  //     Alert.alert(
-  //       JSON.stringify(remoteMessage.notification.title),
-  //       JSON.stringify(remoteMessage.notification.body)
-  //     );
-  //   });
+    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+      Alert.alert(
+        JSON.stringify(remoteMessage.notification.title),
+        JSON.stringify(remoteMessage.notification.body)
+      );
+    });
 
-  //   return unsubscribe;
-  // }, []);
+    return unsubscribe;
+  }, []);
 
   return (
     <View>
