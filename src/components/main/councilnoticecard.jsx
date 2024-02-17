@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,23 +7,26 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import { getPostList } from "../../server/board";
+import { getCouncilNoticeList, getPostList } from "../../server/board";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function CouncilNoticeCard({ navigation }) {
   const [noticeData, setNoticeData] = useState(null);
 
-  useEffect(() => {
-    const getData = async () => {
-      const { success, data } = await getPostList("6");
-      if (success) {
-        const slicedData = data.slice(0, 5);
-        setNoticeData(slicedData);
-      } else {
-        console.log(data);
-      }
-    };
-    getData();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const getData = async () => {
+        const { success, data } = await getCouncilNoticeList("1");
+        if (success) {
+          const slicedData = data.postList.slice(0, 5);
+          setNoticeData(slicedData);
+        } else {
+          console.log(data);
+        }
+      };
+      getData();
+    }, [])
+  );
 
   return (
     <View style={styles.container}>
@@ -31,7 +34,7 @@ export default function CouncilNoticeCard({ navigation }) {
         <Text style={styles.descriptionText}>자율회 공지사항</Text>
         <TouchableOpacity
           style={styles.moreButton}
-          onPress={() => navigation.navigate("자율회 공지사항")}
+          onPress={() => navigation.navigate("공지사항")}
         >
           <Text>더 보기</Text>
           <AntDesign name="right" size={15} />
@@ -48,7 +51,7 @@ export default function CouncilNoticeCard({ navigation }) {
               key={index}
               style={styles.card}
               onPress={() =>
-                navigation.navigate("글 보기", { postId: notice.id })
+                navigation.navigate("자율회 공지사항", { postId: notice.id })
               }
             >
               <Text style={styles.postText}>{notice.title}</Text>

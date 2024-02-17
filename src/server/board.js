@@ -3,9 +3,13 @@ import { apiBe } from ".";
 //게시글 작성
 export const writePost = async (boardId, formData) => {
   try {
-    const reponse = await apiBe.post(`/board/post/create/${boardId}/`, formData, {
-      headers: {"content-type": "multipart/form-data"},
-    });
+    const reponse = await apiBe.post(
+      `/board/post/create/${boardId}/`,
+      formData,
+      {
+        headers: { "content-type": "multipart/form-data" },
+      }
+    );
     return { success: true };
   } catch (error) {
     return { success: false, data: error.response.data };
@@ -70,6 +74,19 @@ export const getPostList = async (boardId) => {
   }
 };
 
+//특정 게시판 게시글 리스트 받기
+export const getCouncilNoticeList = async (pageId) => {
+  try {
+    const { data } = await apiBe.get(`/board/post/list/6/?page=${pageId}`);
+    if (data) {
+      return { success: true, data: data };
+    }
+    return { success: false, data: "정보를 가져오는 중에 오류가 발생했습니다" };
+  } catch (error) {
+    return { success: false, data: error.response.data };
+  }
+};
+
 //특정 게시판의 최근 5개 게시글 가져오기
 export const getLatestPosts = async (boardId) => {
   try {
@@ -109,7 +126,10 @@ export const postComment = async (postId, comment) => {
     body: comment,
   };
   try {
-    const { data } = await apiBe.post(`/board/comment/create/${postId}/`, commentData);
+    const { data } = await apiBe.post(
+      `/board/comment/create/${postId}/`,
+      commentData
+    );
     if (data) {
       return { success: true, data: data };
     }
@@ -138,7 +158,10 @@ export const postReply = async (commentId, reply) => {
     body: reply,
   };
   try {
-    const { data } = await apiBe.post(`/board/reply/create/${commentId}/`, replyData);
+    const { data } = await apiBe.post(
+      `/board/reply/create/${commentId}/`,
+      replyData
+    );
     if (data) {
       return { success: true, data: data };
     }

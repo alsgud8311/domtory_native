@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,28 +9,36 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { getNoticePageData } from "../../server/cbhsnotice";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function NoticeCard({ navigation }) {
   const [noticeData, setNoticeData] = useState(null);
-  useEffect(() => {
-    const getData = async () => {
-      const { success, data } = await getNoticePageData("1");
-      if (success) {
-        slicedData = data.postList.slice(0, 5);
-        setNoticeData(slicedData);
-      } else {
-        setNoticeData([{ title: "정보를 가져오지 못했습니다." }]);
-      }
-    };
-    getData();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const getData = async () => {
+        const { success, data } = await getNoticePageData("1");
+        if (success) {
+          slicedData = data.postList.slice(0, 5);
+          setNoticeData(slicedData);
+        } else {
+          setNoticeData([{ title: "정보를 가져오지 못했습니다." }]);
+        }
+      };
+      getData();
+    }, [])
+  );
+
+  const navigateToDetailPage = (postId) => {
+    navigation.navigate("학사내 공지사항", { postId });
+  };
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.description}>
         <Text style={styles.descriptionText}>학사 공지사항</Text>
         <TouchableOpacity
           style={styles.moreButton}
-          onPress={() => navigation.navigate("학사내 공지사항")}
+          onPress={() => navigation.navigate("공지사항")}
         >
           <Text>더 보기</Text>
           <AntDesign name="right" size={15} />
@@ -39,7 +47,10 @@ export default function NoticeCard({ navigation }) {
       <View style={styles.card}>
         {noticeData ? (
           noticeData.map((notice, index) => (
-            <TouchableOpacity key={index}>
+            <TouchableOpacity
+              key={index}
+              onPress={() => navigateToDetailPage(notice.id)}
+            >
               <Text>{notice.date}</Text>
               <Text style={styles.postText}>{notice.title}</Text>
             </TouchableOpacity>

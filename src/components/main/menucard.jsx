@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,20 +9,23 @@ import {
 import getMenuData from "../../utils/getDate";
 import { getDateMenuData } from "../../server/menu";
 import { ActivityIndicator } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function DailyMenuCard({ navigation }) {
   const [menuData, setMenuData] = useState(null);
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const data = await getDateMenuData(); // 비동기 함수를 기다림
-        setMenuData(data); // 데이터 설정
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getData();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const getData = async () => {
+        try {
+          const data = await getDateMenuData(); // 비동기 함수를 기다림
+          setMenuData(data); // 데이터 설정
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      getData();
+    }, [])
+  );
 
   return (
     <View style={styles.container}>

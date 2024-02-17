@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,26 +9,29 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { getLatestPosts } from "../../server/board";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function CommunityCard({ navigation }) {
   const [communityData, setCommunityData] = useState(null);
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const { success, data } = await getLatestPosts("1");
-        if (success) {
-          setCommunityData(data);
-        } else {
+  useFocusEffect(
+    React.useCallback(() => {
+      const getData = async () => {
+        try {
+          const { success, data } = await getLatestPosts("1");
+          if (success) {
+            setCommunityData(data);
+          } else {
+            setCommunityData([{ title: "정보를 가져오는데 실패했습니다." }]);
+          }
+        } catch (error) {
           setCommunityData([{ title: "정보를 가져오는데 실패했습니다." }]);
         }
-      } catch (error) {
-        setCommunityData([{ title: "정보를 가져오는데 실패했습니다." }]);
-      }
-    };
-    console.log(communityData);
-    getData();
-  }, []);
+      };
+      console.log(communityData);
+      getData();
+    }, [])
+  );
 
   return (
     <View style={styles.container}>
@@ -49,7 +52,7 @@ export default function CommunityCard({ navigation }) {
               <TouchableOpacity
                 key={index}
                 onPress={() =>
-                  navigation.navigate("글 보기", { postId: post.id })
+                  navigation.navigate("자유 게시판", { postId: post.id })
                 }
               >
                 <Text style={styles.postText}>{post.title}</Text>

@@ -15,9 +15,13 @@ import LostAndFound from "./lostandfound/lostandfound";
 import LostAndFoundDetail from "./lostandfound/lostandfoundDetail";
 //공지사항
 import CbhsNotice from "../notice/cbhsNotice";
+import CbhsNoticeDetail from "../notice/cbhsNoticeDetail";
+
 //내가 쓴 글, 댓글
 import MyPosting from "./mypost/mypost";
 import Mycomment from "./mypost/mycomment";
+
+import Search from "../search/search"
 
 import Header from "../../components/common/header";
 import { stackScreenOptionsWithTitle, stackscreenOptions } from "../../constants/screenoptions";
@@ -61,7 +65,7 @@ const CommunityStack = ({ navigation }) => {
                 name="search1"
                 size={30}
                 color="black"
-                onPress={() => navigation.navigate("검색")}
+                onPress={() => navigation.navigate("검색", { board: '자유게시판' })}
               />
             );
           },
@@ -81,7 +85,7 @@ const CommunityStack = ({ navigation }) => {
                 name="search1"
                 size={30}
                 color="black"
-                onPress={() => navigation.navigate("검색")}
+                onPress={() => navigation.navigate("검색", { board: '취준생 게시판' })}
               />
             );
           },
@@ -101,7 +105,7 @@ const CommunityStack = ({ navigation }) => {
                 name="search1"
                 size={30}
                 color="black"
-                onPress={() => navigation.navigate("검색")}
+                onPress={() => navigation.navigate("검색", { board: '번개모임 게시판' })}
               />
             );
           },
@@ -121,7 +125,7 @@ const CommunityStack = ({ navigation }) => {
                 name="search1"
                 size={30}
                 color="black"
-                onPress={() => navigation.navigate("검색")}
+                onPress={() => navigation.navigate("검색", { board: '중고거래 게시판' })}
               />
             );
           },
@@ -141,12 +145,13 @@ const CommunityStack = ({ navigation }) => {
                 name="search1"
                 size={30}
                 color="black"
-                onPress={() => navigation.navigate("검색")}
+                onPress={() => navigation.navigate("검색", { board: '분실물 게시판' })}
               />
             );
           },
         }}
       />
+      <Stack.Screen name="검색" component={Search} />
     </Stack.Navigator>
   );
 };

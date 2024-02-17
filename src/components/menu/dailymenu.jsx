@@ -63,10 +63,10 @@ export default function Menucard({ selectedDate }) {
                     <View>
                         <View style={styles.mealWrapper}>
                             <Text style={styles.timeText}>아침</Text>
-                            {breakData && breakData.map((item, index) => (
+                            {breakData ? breakData.map((item, index) => (
                                 <Text key={index} style={styles.mealText}>{item}</Text>
-                            ))}
-
+                            )):
+                            <Text style={styles.mealText}>식단 정보가 없습니다.</Text>}
                         </View>
                     </View>
                 </View>
@@ -76,9 +76,10 @@ export default function Menucard({ selectedDate }) {
                     <View>
                         <View style={styles.mealWrapper}>
                             <Text style={styles.timeText}>점심</Text>
-                            {lunchData && lunchData.map((item, index) => (
+                            {lunchData ? lunchData.map((item, index) => (
                                 <Text key={index} style={styles.mealText}>{item}</Text>
-                            ))}
+                            )):
+                            <Text style={styles.mealText}>식단 정보가 없습니다.</Text>}
                         </View>
                     </View>
                 </View>
@@ -88,9 +89,10 @@ export default function Menucard({ selectedDate }) {
                     <View>
                         <View style={styles.mealWrapper}>
                             <Text style={styles.timeText}>저녁</Text>
-                            {dinnerData && dinnerData.map((item, index) => (
+                            {dinnerData ? dinnerData.map((item, index) => (
                                 <Text key={index} style={styles.mealText}>{item}</Text>
-                            ))}
+                            )):
+                            <Text style={styles.mealText}>식단 정보가 없습니다.</Text>}
                         </View>
                     </View>
                 </View>

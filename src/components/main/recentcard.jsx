@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -10,28 +10,31 @@ import {
 import { AntDesign } from "@expo/vector-icons";
 import { getLatestPosts } from "../../server/board";
 import { Octicons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function RecentPostCard({ navigation }) {
   const [recentPostData, setRecentPostData] = useState(null);
   const boardList = {
-    1: "자유게시판",
-    2: "중고거래 게시판",
-    3: "취준생 게시판",
-    4: "번개 게시판",
-    5: "분실물 게시판",
+    1: "자유 게시판",
+    2: "중고거래게시판",
+    3: "취준생게시판",
+    4: "번개모임게시판",
+    5: "분실물게시판",
   };
 
-  useEffect(() => {
-    const getData = async () => {
-      const { success, data } = await getLatestPosts("0");
-      if (success) {
-        setRecentPostData(data);
-      } else {
-        console.log(data);
-      }
-    };
-    getData();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const getData = async () => {
+        const { success, data } = await getLatestPosts("0");
+        if (success) {
+          setRecentPostData(data);
+        } else {
+          console.log(data);
+        }
+      };
+      getData();
+    }, [])
+  );
 
   return (
     <View style={styles.container}>
@@ -43,7 +46,9 @@ export default function RecentPostCard({ navigation }) {
           <TouchableOpacity
             key={index}
             style={styles.card}
-            onPress={() => navigation.navigate("글 보기", { postId: data.id })}
+            onPress={() =>
+              navigation.navigate(boardList[data.board], { postId: data.id })
+            }
           >
             <View>
               <View style={styles.postWrapper}>
