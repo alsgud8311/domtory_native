@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,22 +8,25 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { getCouncilNoticeList, getPostList } from "../../server/board";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function CouncilNoticeCard({ navigation }) {
   const [noticeData, setNoticeData] = useState(null);
 
-  useEffect(() => {
-    const getData = async () => {
-      const { success, data } = await getCouncilNoticeList("1");
-      if (success) {
-        const slicedData = data.postList.slice(0, 5);
-        setNoticeData(slicedData);
-      } else {
-        console.log(data);
-      }
-    };
-    getData();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const getData = async () => {
+        const { success, data } = await getCouncilNoticeList("1");
+        if (success) {
+          const slicedData = data.postList.slice(0, 5);
+          setNoticeData(slicedData);
+        } else {
+          console.log(data);
+        }
+      };
+      getData();
+    }, [])
+  );
 
   return (
     <View style={styles.container}>

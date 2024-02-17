@@ -43,7 +43,6 @@ const MainTab = () => {
               <Text style={{ marginTop: 5, color: "gray" }}>홈</Text>
             </View>
           ),
-          unmountOnBlur: true,
         }}
       />
       <Tab.Screen

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,21 +9,24 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { getNoticePageData } from "../../server/cbhsnotice";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function NoticeCard({ navigation }) {
   const [noticeData, setNoticeData] = useState(null);
-  useEffect(() => {
-    const getData = async () => {
-      const { success, data } = await getNoticePageData("1");
-      if (success) {
-        slicedData = data.postList.slice(0, 5);
-        setNoticeData(slicedData);
-      } else {
-        setNoticeData([{ title: "정보를 가져오지 못했습니다." }]);
-      }
-    };
-    getData();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const getData = async () => {
+        const { success, data } = await getNoticePageData("1");
+        if (success) {
+          slicedData = data.postList.slice(0, 5);
+          setNoticeData(slicedData);
+        } else {
+          setNoticeData([{ title: "정보를 가져오지 못했습니다." }]);
+        }
+      };
+      getData();
+    }, [])
+  );
 
   const navigateToDetailPage = (postId) => {
     navigation.navigate("학사내 공지사항", { postId });
