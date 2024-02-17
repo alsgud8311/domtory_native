@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import {
     SafeAreaView, View, Text, Image, Dimensions, StyleSheet, ScrollView,
-    KeyboardAvoidingView, TextInput, Platform, TouchableOpacity, Alert
+    KeyboardAvoidingView, TextInput, Platform, TouchableOpacity, Alert, Button
 } from 'react-native';
-import { Octicons, FontAwesome, Feather } from '@expo/vector-icons';
+import { Octicons, Feather } from '@expo/vector-icons';
 import domtory from '../../assets/icon.png';
 import { postComment, deleteComment, postReply, deleteReply, updatePost, report } from '../../server/board'
-
 
 export const handleReport = async (type, id) => {
     const result = await report(type, id);
@@ -193,7 +192,7 @@ export default function PostDetail({ data, reloadData, postId }) {
                     <Image source={domtory} style={{ width: 45, height: 45, borderRadius: 10 }} />
                     <View style={{ flexDirection: 'column', marginLeft: 8 }}>
                         <Text style={styles.user}>
-                            {data.status === 'ACTIVE' ? data.member : '알 수 없음'}
+                            도토리
                         </Text>
                         <Text style={styles.date}>{data.created_at}</Text>
                     </View>
@@ -236,7 +235,7 @@ export default function PostDetail({ data, reloadData, postId }) {
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                     <View style={{ flexDirection: 'row' }}>
                                         <Image source={domtory} style={{ width: 23, height: 23, borderRadius: 3 }} />
-                                        <Text style={styles.commentMember}>{comment.member}</Text>
+                                        <Text style={styles.commentMember}>도토리</Text>
                                     </View>
                                     <View style={styles.commentOption}>
                                         <Octicons name="comment-discussion" style={styles.commnetReply} onPress={() => promptForReply(comment.id)} />
@@ -372,6 +371,7 @@ const styles = StyleSheet.create({
         borderBottomColor: '#e1e1e1',
         paddingBottom: 8,
         marginBottom: 8,
+        height: 30
     },
     // 댓글 작성자
     commentMember: {
