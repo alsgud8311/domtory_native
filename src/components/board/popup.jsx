@@ -5,6 +5,7 @@ import { Entypo } from "@expo/vector-icons";
 import { handleReport } from "../board/postDetail";
 import { getPostDetail } from "../../server/board";
 import NewPost from './newPost';
+import { useAuth } from "../../store/AuthContext";
 
 const PopupMenu = () => {
     const [data, setData] = useState({});
@@ -77,6 +78,7 @@ const PopupMenu = () => {
             ),
         },
     ];
+
     function resizeBox(to) {
         to === 1 && setVisible(true);
         Animated.timing(scale, {
