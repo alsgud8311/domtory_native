@@ -3,17 +3,14 @@ import {
     View,
     Text,
     StyleSheet,
-    ScrollView,
     TouchableOpacity,
     TextInput,
     FlatList,
     Keyboard,
     Image,
 } from "react-native";
-import { AntDesign, Octicons } from "@expo/vector-icons";
+import { AntDesign, Octicons, MaterialIcons } from "@expo/vector-icons";
 import { getSearhedData } from "../../server/search";
-
-
 
 
 export default function Searchbox({ route, navigation }) {
@@ -105,6 +102,7 @@ export default function Searchbox({ route, navigation }) {
     const hideKeyboard = () => {
         Keyboard.dismiss();
         setInputText('');
+        setData(null);
     };
 
     const [data, setData] = useState(null)
@@ -134,20 +132,32 @@ export default function Searchbox({ route, navigation }) {
                     <Text style={styles.canceltext}>취소</Text>
                 </TouchableOpacity>
             </View>
-            {data ? (
-                <FlatList
-                    data={data}
-                    renderItem={({ item }) => renderItem({ item, board })}
-                    keyExtractor={(item) => item.id}
-                />) : (
-                <View style={styles.empty}>
-                    <AntDesign
-                        name="search1"
-                        size={30}
-                        color="gray"
-                    />
-                    <Text style={styles.emptyText}>{board}의 글을 검색해보세요</Text>
-                </View>)}
+            <View>
+                {data ? (
+                    <FlatList
+                        data={data}
+                        renderItem={({ item }) => renderItem({ item, board })}
+                        keyExtractor={(item) => item.id}
+                    />) : (
+                    <View style={styles.empty}>
+                        <AntDesign
+                            name="search1"
+                            size={30}
+                            color="gray"
+                        />
+                        <Text style={styles.emptyText}>{board}의 글을 검색해보세요</Text>
+                    </View>)}
+                {data && data.length === 0 &&
+                    <View style={styles.empty}>
+                        <MaterialIcons
+                            name="search-off"
+                            size={30}
+                            color="gray"
+                        />
+                        <Text style={styles.emptyText}>검색 결과가 없습니다.</Text>
+                    </View>
+                }
+            </View>
         </View>
     )
         ;

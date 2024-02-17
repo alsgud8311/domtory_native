@@ -68,26 +68,26 @@ export const AuthProvider = ({ children }) => {
         "Authorization"
       ] = `Bearer ${data.accessToken}`;
 
-      const { AuthorizationSuccess } = await requestUserPermission();
-      if (AuthorizationSuccess) {
-        const token = await messaging().getToken();
-        setAuthState({ pushToken: token });
-        await SecureStore.setItemAsync("PUSH_TOKEN", token);
-        if (token) {
-          console.log("Push Token: ", token);
-          try {
-            const data = {
-              pushToken: token,
-            };
-            await apiBe.post("/push/token/", data);
-            console.log("Sending Push Token Success");
-          } catch (error) {
-            console.log("Sending Push Token error", error);
-          }
-        } else {
-          console.log("getToken Failed");
-        }
-      }
+      // const { AuthorizationSuccess } = await requestUserPermission();
+      // if (AuthorizationSuccess) {
+      //   const token = await messaging().getToken();
+      //   setAuthState({ pushToken: token });
+      //   await SecureStore.setItemAsync("PUSH_TOKEN", token);
+      //   if (token) {
+      //     console.log("Push Token: ", token);
+      //     try {
+      //       const data = {
+      //         pushToken: token,
+      //       };
+      //       await apiBe.post("/push/token/", data);
+      //       console.log("Sending Push Token Success");
+      //     } catch (error) {
+      //       console.log("Sending Push Token error", error);
+      //     }
+      //   } else {
+      //     console.log("getToken Failed");
+      //   }
+      // }
 
       setAuthState((prevState) => ({
         ...prevState,
