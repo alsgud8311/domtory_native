@@ -5,27 +5,23 @@ import Pagination from '../../components/notice/pagination';
 import { AntDesign } from '@expo/vector-icons';
 import axios from 'axios';
 import NewPost from '../board/newPost';
+import { getCouncilNotice } from '../../server/notice';
 
 const API_URL = "http://api.domtory.site/notice/";
 
-export default function Noticebox() {
+export default function Noticebox( { navigation }) {
     const [councilData, setCouncilData] = useState([]);
     const [cbhsData, setCbhsData] = useState([]);
     const [data, setData] = useState('');
     const [category, setCategory] = useState('cbhs');
 
-    useEffect(() => {
-        // 컴포넌트 마운트 시 또는 currentPage, category가 변경될 때마다 데이터 불러오기
-        fetchPosts(currentPage);
-    }, [currentPage, category]);
-
-    // 카테고리 변경 함수
+    // 카테고리 변경
     const onCategoryChange = (newCategory) => {
         setCategory(newCategory);
-        // 카테고리 변경 시 데이터를 즉시 불러옵니다.
-        // 첫 페이지부터 불러오도록 설정
-        fetchPosts(1);
     };
+    useEffect(() => {
+        fetchPosts(1);
+    }, [category]);
 
     const [currentPage, setCurrentPage] = useState(1);
     const [cbhsTotalPages, setCbhsTotalPages] = useState(0);
@@ -33,36 +29,34 @@ export default function Noticebox() {
     const [loading, setLoading] = useState(false);
 
     // 페이지 데이터를 불러오는 함수
-    const fetchPosts = (page) => {
+    const fetchPosts = async (page) => {
         setLoading(true);
-        let apiUrl = `${API_URL}?page=${page}`;
-        // 카테고리에 따라 API URL을 조정
-        if (category === 'council') {
-            apiUrl = 'http://api.domtory.site/board/post/list/6/';
-        }
-
-        axios.get(apiUrl)
-            .then((response) => {
-                // 카테고리에 따라 적절한 상태를 설정
-                if (category === 'cbhs') {
-                    setCbhsData(response.data.postList);
-                    setData(response.data.postList);
-                    setCbhsTotalPages(response.data.pageCnt);
-                } else if (category === 'council') {
-                    setCouncilData(response.data.postList);
-                    setData(response.data.postList);
-                    setCouncilTotalPages(response.data.pageCnt);
+        try {
+            let response;
+            if (category === 'council') {
+                const councilNoticeResult = await getCouncilNotice();
+                if (councilNoticeResult.success) {
+                    setCouncilData(councilNoticeResult.data);
+                    setData(councilNoticeResult.data);
+                    setCouncilTotalPages(councilNoticeResult.data.count);
+                    setCurrentPage(councilNoticeResult.data.curPage);
+                } else {
+                    console.error(councilNoticeResult.data);
                 }
+            } else {
+                let apiUrl = `${API_URL}?page=${page}`;
+                response = await axios.get(apiUrl);
+                setCbhsData(response.data.postList);
+                setData(response.data.postList);
+                setCbhsTotalPages(response.data.pageCnt);
                 setCurrentPage(response.data.curPage);
-            })
-            .catch((error) => {
-                console.error(error);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
     };
-
     useEffect(() => {
         fetchPosts(currentPage);
     }, []);
@@ -82,6 +76,20 @@ export default function Noticebox() {
     const handleCloseNewPost = () => {
         setModalVisible(false);
     };
+
+    // 자율회 공지사항 글쓰기 후 성공적으로 글이 작성되면 호출될 함수
+    const handlePostSuccess = () => {
+        fetchPosts(1); // 첫 페이지로 돌아가며 새로운 목록을 가져옵니다
+    };
+
+    const navigateToDetailPage = (postId) => {
+        if (category === 'council') {
+            navigation.navigate("자율회 공지사항 글 보기", {postId})
+        } else {
+            navigation.navigate("학사내 공지사항 글 보기", {postId})
+
+        }
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -104,19 +112,22 @@ export default function Noticebox() {
             <NewPost
                 isVisible={isModalVisible}
                 onClose={handleCloseNewPost}
-                council= 'true'
+                onSuccess={handlePostSuccess}
+                council='true'
             />
 
             <FlatList
                 data={data}
                 renderItem={({ item, index }) => (
-                    <ListItem bottomDivider>
-                        <ListItem.Content style={list.content} onPress={() => navigateToDetailPage(item.id)}>
-                            <ListItem.Subtitle style={list.number}>{item.id}</ListItem.Subtitle>
-                            <ListItem.Title style={list.title}>{item.title}</ListItem.Title>
-                            <ListItem.Subtitle style={list.date}>{item.date}</ListItem.Subtitle>
-                        </ListItem.Content>
-                    </ListItem>
+                    <TouchableOpacity onPress={() => navigateToDetailPage(item.id, category)}>
+                        <ListItem bottomDivider>
+                            <ListItem.Content style={list.content}>
+                                <ListItem.Subtitle style={list.number}>{item.id}</ListItem.Subtitle>
+                                <ListItem.Title style={list.title}>{item.title}</ListItem.Title>
+                                <ListItem.Subtitle style={list.date}>{item.date}</ListItem.Subtitle>
+                            </ListItem.Content>
+                        </ListItem>
+                    </TouchableOpacity>
                 )}
                 keyExtractor={(item, index) => index.toString()}
                 ListFooterComponent={loading ? <ActivityIndicator /> : null}

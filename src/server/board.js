@@ -12,18 +12,6 @@ export const writePost = async (boardId, formData) => {
   }
 };
 
-// 자율회 게시글 작성
-export const writeCouncilPost = async (boardId, formData) => {
-  try {
-    const reponse = await apiBe.post(`/board/post/create/${boardId}/`, formData, {
-      headers: {"content-type": "multipart/form-data"},
-    });
-    return { success: true };
-  } catch (error) {
-    return { success: false, data: error.response.data };
-  }
-};
-
 //게시글 상세 정보 가져오기
 export const getPostDetail = async (postId) => {
   try {
