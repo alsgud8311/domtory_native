@@ -39,7 +39,7 @@ const CbhsNoticeDetail = ({ route }) => {
         </View>
         {noticeData.images && (
           <Image
-            source={{ uri: `${noticeData.images}.jpg` }}
+            source={{ uri: noticeData.images }}
             style={styles.image}
             resizeMode="contain"
           />
