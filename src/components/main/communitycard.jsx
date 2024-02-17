@@ -54,7 +54,9 @@ export default function CommunityCard({ navigation }) {
                 onPress={() =>
                   navigation.navigate("자유 게시판", { postId: post.id })
                 }
-                style={index !== communityData.length - 1 ? styles.postItem : null} // Apply borderBottom only to non-last items
+                style={
+                  index !== communityData.length - 1 ? styles.postItem : null
+                } // Apply borderBottom only to non-last items
               >
                 <Text style={styles.postDate}>{post.created_at}</Text>
                 <Text style={styles.postText}>{post.title}</Text>
@@ -122,10 +124,10 @@ const styles = StyleSheet.create({
   postText: {
     fontSize: 16,
     paddingTop: 5,
-    paddingBottom: 5,
+    paddingBottom: 10,
   },
   postDate: {
     fontSize: 13,
     paddingTop: 10,
-  }
+  },
 });
