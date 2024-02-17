@@ -25,28 +25,22 @@ export const getPostDetail = async (postId) => {
   }
 };
 
-//게시글 수정
-export const updatePost = async (
-  postId,
-  title,
-  body,
-  deletedImages,
-  images
-) => {
-  const postData = {
-    title: title,
-    body: body,
-    deletedImages: deletedImages,
-    images: images,
-  };
+// 게시글 수정
+export const updatePost = async (postId, formData) => {
   try {
-    const { data } = await apiBe.put(`/board/post/update/${postId}/`, postData);
-    if (data) {
-      return { success: true };
-    }
-    return { success: false };
+    const response = await apiBe.put(`/board/post/update/${postId}/`, formData, {
+      headers: {
+        "content-type": "multipart/form-data",
+      },
+    });
+    return { success: true };
   } catch (error) {
-    return { success: false, data: error.response.data };
+    if (error.response) {
+      return { success: false, data: error.response.data };
+    } else {
+      console.error("Error:", error.message);
+      return { success: false, data: null };
+    }
   }
 };
 
