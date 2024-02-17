@@ -86,7 +86,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   description: {
-    alignItems: "center",
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
@@ -100,7 +99,6 @@ const styles = StyleSheet.create({
   },
   moreButton: {
     flexDirection: "row",
-    alignItems: "center",
   },
   card: {
     backgroundColor: "#ffffff",
@@ -110,7 +108,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingHorizontal: 15,
     paddingTop: 5,
-    paddingBottom: 7,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.25,
@@ -124,7 +121,7 @@ const styles = StyleSheet.create({
   postText: {
     fontSize: 16,
     paddingTop: 5,
-    paddingBottom: 10,
+    paddingBottom: 15,
   },
   postDate: {
     fontSize: 13,

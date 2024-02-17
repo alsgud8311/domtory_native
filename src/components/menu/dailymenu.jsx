@@ -106,7 +106,6 @@ const styles = StyleSheet.create({
         width: "100%",
         backgroundColor: "#fff",
         marginBottom: 10,
-        paddingBottom: 50,
     },
     day: {
         width: "100%",
