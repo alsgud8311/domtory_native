@@ -11,10 +11,10 @@ export default function ShortcutCard({ navigation }) {
     <>
       <View style={styles.noticeContainer}>
         <View style={{ marginBottom: 5 }}>
-          <Text style={styles.boardTitle}>공지사항</Text>
-          <Text style={styles.boardsubTitle}>
+          <Text style={styles.boardTitle}>자율회 및 학사 공지사항</Text>
+          {/* <Text style={styles.boardsubTitle}>
             자율회와 학사의 공지사항을 전해드려요
-          </Text>
+          </Text> */}
         </View>
         <TouchableOpacity
           style={styles.sortcutButton}
@@ -27,9 +27,9 @@ export default function ShortcutCard({ navigation }) {
       <View style={styles.container}>
         <View style={{ marginBottom: 5 }}>
           <Text style={styles.boardTitle}>커뮤니티</Text>
-          <Text style={styles.boardsubTitle}>
+          {/* <Text style={styles.boardsubTitle}>
             같은 학사생들과 이런저런 이야기를 나눌 수 있어요
-          </Text>
+          </Text> */}
         </View>
         <TouchableOpacity
           style={styles.sortcutButton}
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderTopColor: "gray",
     borderTopWidth: 1,
-    paddingBottom: 110
+    paddingBottom: 110,
   },
   sortcutButton: {
     flexDirection: "row",
@@ -95,13 +95,16 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   sortcutText: {
-    fontSize: 20,
+    fontSize: 17,
   },
   boardTitle: {
-    fontSize: 18,
+    fontSize: 16,
     marginBottom: 5,
+    fontWeight: "700",
+    color: "orange",
   },
   boardsubTitle: {
-    fontSize: 15,
+    color: "orange",
+    fontSize: 14,
   },
 });

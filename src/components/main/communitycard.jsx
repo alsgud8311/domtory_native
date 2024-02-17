@@ -84,6 +84,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   description: {
+    alignItems: "center",
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
@@ -97,6 +98,7 @@ const styles = StyleSheet.create({
   },
   moreButton: {
     flexDirection: "row",
+    alignItems: "center",
   },
   card: {
     backgroundColor: "#ffffff",
