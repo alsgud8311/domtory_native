@@ -54,6 +54,7 @@ const HomeStack = ({ navigation }) => {
       <Stack.Screen name="공지사항" component={CbhsNotice} />
       <Stack.Screen name="학사내 공지사항" component={CbhsNoticeDetail} />
       <Stack.Screen name="자율회 공지사항" component={CouncilNoticeDetail} />
+      <Stack.Screen name="전체검색" component={Search} />
 
       {/* <Stack.Screen name="자유게시판"
         component={General}
