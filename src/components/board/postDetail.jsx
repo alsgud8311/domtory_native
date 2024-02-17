@@ -23,6 +23,7 @@ import {
   updatePost,
   report,
 } from "../../server/board";
+import ImageModal from "react-native-image-modal";
 
 export default function PostDetail({ data, reloadData, postId }) {
   if (!data) {
@@ -230,8 +231,10 @@ export default function PostDetail({ data, reloadData, postId }) {
           data.post_image.map((img, index) => {
             if (!img.is_deleted) {
               return (
-                <Image
-                  key={img.id}
+                <ImageModal
+                  key={index}
+                  swipeToDismiss={true}
+                  resizeMode="contain"
                   source={{ uri: img.image_url }}
                   style={{
                     width: screenWidth,
