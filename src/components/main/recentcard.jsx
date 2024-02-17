@@ -54,7 +54,7 @@ export default function RecentPostCard({ navigation }) {
           >
             <View>
               <View style={styles.postWrapper}>
-                <View style={{ flexDirection: "row" }}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Image source={domtory} style={{ width: 30, height: 30 }} />
                   <Text style={styles.postText}>익명의 도토리</Text>
                 </View>
@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
     marginBottom: 50,
   },
   description: {
+    alignItems: "center",
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
@@ -106,6 +107,7 @@ const styles = StyleSheet.create({
   },
   moreButton: {
     flexDirection: "row",
+    alignItems: "center",
   },
   card: {
     backgroundColor: "#ffffff",
@@ -123,11 +125,11 @@ const styles = StyleSheet.create({
   },
   postText: {
     fontSize: 16,
-    paddingTop: 10,
     paddingLeft: 5,
   },
   postWrapper: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
   },
 });

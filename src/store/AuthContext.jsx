@@ -19,6 +19,7 @@ export const AuthProvider = ({ children }) => {
     authenticated: false,
     username: null,
     name: null,
+    id: null,
   });
 
   useEffect(() => {
@@ -28,6 +29,7 @@ export const AuthProvider = ({ children }) => {
       const pushToken = await SecureStore.getItemAsync("PUSH_TOKEN");
       const username = await SecureStore.getItemAsync("USERNAME");
       const name = await SecureStore.getItemAsync("NAME");
+      const id = await SecureStore.getItemAsync("ID");
 
       if (accessToken) {
         apiBe.defaults.headers.common[
@@ -40,6 +42,7 @@ export const AuthProvider = ({ children }) => {
           authenticated: true,
           username: username,
           name: name,
+          id: id,
         });
       }
     };
@@ -99,12 +102,14 @@ export const AuthProvider = ({ children }) => {
         authenticated: true,
         username: data.member.username,
         name: data.member.name,
+        id: data.member.id,
       }));
 
       await SecureStore.setItemAsync("ACCESS_TOKEN", data.accessToken);
       await SecureStore.setItemAsync("REFRESH_TOKEN", data.refreshToken);
       await SecureStore.setItemAsync("USERNAME", data.member.username);
       await SecureStore.setItemAsync("NAME", data.member.username);
+      await SecureStore.setItemAsync("ID", data.member.username);
       return { success: true, data: data };
     } catch (error) {
       return { success: false, data: error.response.data };
@@ -122,6 +127,7 @@ export const AuthProvider = ({ children }) => {
       await SecureStore.deleteItemAsync("PUSH_TOKEN");
       await SecureStore.deleteItemAsync("USERNAME");
       await SecureStore.deleteItemAsync("NAME");
+      await SecureStore.deleteItemAsync("ID");
       apiBe.defaults.headers.common["Authorization"] = "";
 
       setAuthState({
@@ -130,6 +136,7 @@ export const AuthProvider = ({ children }) => {
         pushToken: null,
         authenticated: false,
         username: null,
+        id: null,
       });
       Alert.alert("로그아웃 되었습니다.", "다음에 또 만나요!");
       return { success: true };
