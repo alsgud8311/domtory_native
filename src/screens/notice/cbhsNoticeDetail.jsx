@@ -5,7 +5,7 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Image
+  Image,
 } from "react-native";
 import { getNoticeIdData } from "../../server/cbhsnotice";
 
@@ -22,7 +22,6 @@ const CbhsNoticeDetail = ({ route }) => {
     })();
   }, []);
 
-
   if (!noticeData) {
     return (
       <View style={styles.container}>
@@ -38,17 +37,17 @@ const CbhsNoticeDetail = ({ route }) => {
           <Text style={styles.cbhs}>충북학사</Text>
           <Text style={styles.date}>{noticeData.date}</Text>
         </View>
-        {noticeData.images &&
+        {noticeData.images && (
           <Image
-            source={{ uri: noticeData.images }}
+            source={{ uri: `${noticeData.images}.jpg` }}
             style={styles.image}
             resizeMode="contain"
           />
-        }
+        )}
         <Text style={styles.content}>{noticeData.content}</Text>
       </ScrollView>
     </View>
-  )
+  );
 };
 
 export default CbhsNoticeDetail;
@@ -60,7 +59,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 20,
     overflow: "scroll",
-
   },
   title: {
     fontSize: 18,
@@ -93,6 +91,5 @@ const styles = StyleSheet.create({
     aspectRatio: 13 / 16,
     marginTop: 10,
     marginBottom: 10,
-  }
-
+  },
 });

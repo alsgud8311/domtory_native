@@ -9,6 +9,7 @@ import {
   Alert,
 } from "react-native";
 import announcement from "../../assets/announcement.png";
+import { openBrowserAsync } from "expo-web-browser";
 import tools from "../../assets/tools.png";
 import dorm from "../../assets/dorm.png";
 import night from "../../assets/night.png";
@@ -24,7 +25,7 @@ export default function Shortcuts({ navigation }) {
         <TouchableOpacity
           style={styles.buttonWrapper}
           //버튼을 누르면 각 해당하는 페이지를 외부 브라우저(사파리 등)에서 열 수 있게 해줌
-          onPress={() => Linking.openURL("http://www.cbhs2.kr/main")}
+          onPress={() => openBrowserAsync("http://www.cbhs2.kr/main")}
         >
           <Image style={styles.buttons} source={dorm} />
           <Text>충북학사</Text>
@@ -32,7 +33,7 @@ export default function Shortcuts({ navigation }) {
         <TouchableOpacity
           style={styles.buttonWrapper}
           onPress={() =>
-            Linking.openURL(
+            openBrowserAsync(
               "http://1.246.219.13:8080/cbhs/indexstdds.html?var1=M000004116"
             )
           }
@@ -51,7 +52,7 @@ export default function Shortcuts({ navigation }) {
         <TouchableOpacity
           style={styles.buttonWrapper}
           onPress={() =>
-            Linking.openURL(
+            openBrowserAsync(
               "http://1.246.219.13:8080/cbhs/indexstdds.html?var1=M000004115"
             )
           }
@@ -61,7 +62,7 @@ export default function Shortcuts({ navigation }) {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.buttonWrapper}
-          onPress={() => Linking.openURL("http://www.cbhs2.kr/0000038")}
+          onPress={() => openBrowserAsync("http://www.cbhs2.kr/0000038")}
         >
           <Image style={styles.buttons} source={books} />
           <Text>도서관</Text>

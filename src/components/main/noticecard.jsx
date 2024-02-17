@@ -24,11 +24,10 @@ export default function NoticeCard({ navigation }) {
     };
     getData();
   }, []);
-  
 
   const navigateToDetailPage = (postId) => {
-        navigation.navigate("학사내 공지사항 글 보기", {postId})
-    }
+    navigation.navigate("학사내 공지사항 글 보기", { postId });
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -36,7 +35,7 @@ export default function NoticeCard({ navigation }) {
         <Text style={styles.descriptionText}>학사 공지사항</Text>
         <TouchableOpacity
           style={styles.moreButton}
-          onPress={() => navigation.navigate("학사내 공지사항")}
+          onPress={() => navigation.navigate("공지사항")}
         >
           <Text>더 보기</Text>
           <AntDesign name="right" size={15} />
@@ -45,7 +44,10 @@ export default function NoticeCard({ navigation }) {
       <View style={styles.card}>
         {noticeData ? (
           noticeData.map((notice, index) => (
-            <TouchableOpacity key={index} onPress={() => navigateToDetailPage(notice.id)}>
+            <TouchableOpacity
+              key={index}
+              onPress={() => navigateToDetailPage(notice.id)}
+            >
               <Text>{notice.date}</Text>
               <Text style={styles.postText}>{notice.title}</Text>
             </TouchableOpacity>

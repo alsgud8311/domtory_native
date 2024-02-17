@@ -1,12 +1,19 @@
 import { StatusBar } from "expo-status-bar";
-import { ScrollView, StyleSheet, Text, View, Alert } from "react-native";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  Alert,
+  RefreshControl,
+} from "react-native";
 import DailyMenuCard from "../../components/main/menucard";
 import Shortcuts from "../../components/main/shortcuts";
 import CommunityCard from "../../components/main/communitycard";
 import NoticeCard from "../../components/main/noticecard";
 import RecentPostCard from "../../components/main/recentcard";
 import CouncilNoticeCard from "../../components/main/councilnoticecard";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import * as Notifications from "expo-notifications";
 import messaging from "@react-native-firebase/messaging";
 import React from "react";
@@ -22,8 +29,6 @@ Notifications.setNotificationHandler({
 });
 
 export default function Home({ navigation }) {
-  const [pushToken, setPushToken] = useState("");
-  const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
 
