@@ -354,7 +354,8 @@ const styles = StyleSheet.create({
         paddingBottom: 5,
         borderBottomWidth: 1,
         borderBottomColor: '#e1e1e1',
-        marginBottom: 13
+        marginBottom: 13,
+        marginTop: 15,
     },
     commentIcon: {
         fontSize: 17,
