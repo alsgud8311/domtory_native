@@ -10,7 +10,7 @@ import {
     Keyboard,
     Image,
 } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, Octicons } from "@expo/vector-icons";
 import { getSearhedData } from "../../server/search";
 
 
@@ -64,12 +64,14 @@ export default function Search({ route, navigation }) {
                     <View style={{ flexDirection: 'column', marginBottom: 5 }}>
                         <View>
                             {board == "전체 게시판" &&
-                            <Text style={styles.board}>{Boardname[item.board]}</Text>}
+                                <Text style={styles.board}>{Boardname[item.board]}</Text>}
                             <Text style={styles.title}>{item.title}</Text>
                             <Text style={styles.content}>{item.body}</Text>
                         </View>
                         <View style={{ flexDirection: 'row', marginTop: 7, height: 15 }}>
-                            <Text style={styles.user}>{item.member}</Text>
+                            <Octicons style={styles.commenticon} name="comment" />
+                            <Text style={styles.comment}>{item.comment_cnt}   |</Text>
+                            <Text style={styles.user}>{item.member}  |</Text>
                             <Text style={styles.date}>{item.created_at}</Text>
                         </View>
                     </View>
@@ -199,8 +201,19 @@ const styles = StyleSheet.create({
         color: "orange",
         paddingBottom: 5,
     },
-    date: {
+    commenticon: {
         fontSize: 11,
+        color: '#5a5a5a',
+        marginRight: 3,
+        paddingTop: 3,
+    },
+    comment: {
+        fontSize: 12,
+        color: '#5a5a5a',
+        marginRight: 5,
+    },
+    date: {
+        fontSize: 12,
         color: '#5a5a5a'
     },
     user: {
@@ -208,8 +221,6 @@ const styles = StyleSheet.create({
         marginRight: 5,
         paddingRight: 5,
         color: '#5a5a5a',
-        borderRightWidth: 1,
-        borderRightColor: '#5a5a5abf'
     },
     title: {
         fontSize: 14,
