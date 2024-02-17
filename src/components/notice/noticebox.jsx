@@ -9,7 +9,7 @@ import { getCouncilNotice } from '../../server/notice';
 
 const API_URL = "http://api.domtory.site/notice/";
 
-export default function Noticebox() {
+export default function Noticebox( { navigation }) {
     const [councilData, setCouncilData] = useState([]);
     const [cbhsData, setCbhsData] = useState([]);
     const [data, setData] = useState('');
@@ -82,6 +82,15 @@ export default function Noticebox() {
         fetchPosts(1); // 첫 페이지로 돌아가며 새로운 목록을 가져옵니다
     };
 
+    const navigateToDetailPage = (postId) => {
+        if (category === 'council') {
+            navigation.navigate("자율회 공지사항 글 보기", {postId})
+        } else {
+            navigation.navigate("학사내 공지사항 글 보기", {postId})
+
+        }
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={select.select}>
@@ -110,13 +119,15 @@ export default function Noticebox() {
             <FlatList
                 data={data}
                 renderItem={({ item, index }) => (
-                    <ListItem bottomDivider>
-                        <ListItem.Content style={list.content} onPress={() => navigateToDetailPage(item.id)}>
-                            <ListItem.Subtitle style={list.number}>{item.id}</ListItem.Subtitle>
-                            <ListItem.Title style={list.title}>{item.title}</ListItem.Title>
-                            <ListItem.Subtitle style={list.date}>{item.date}</ListItem.Subtitle>
-                        </ListItem.Content>
-                    </ListItem>
+                    <TouchableOpacity onPress={() => navigateToDetailPage(item.id, category)}>
+                        <ListItem bottomDivider>
+                            <ListItem.Content style={list.content}>
+                                <ListItem.Subtitle style={list.number}>{item.id}</ListItem.Subtitle>
+                                <ListItem.Title style={list.title}>{item.title}</ListItem.Title>
+                                <ListItem.Subtitle style={list.date}>{item.date}</ListItem.Subtitle>
+                            </ListItem.Content>
+                        </ListItem>
+                    </TouchableOpacity>
                 )}
                 keyExtractor={(item, index) => index.toString()}
                 ListFooterComponent={loading ? <ActivityIndicator /> : null}
