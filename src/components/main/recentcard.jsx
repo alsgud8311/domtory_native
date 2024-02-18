@@ -52,25 +52,43 @@ export default function RecentPostCard({ navigation }) {
               navigation.navigate(boardList[data.board], { postId: data.id })
             }
           >
-            <View>
-              <View style={styles.postWrapper}>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Image source={domtory} style={{ width: 30, height: 30 }} />
-                  <Text style={styles.postText}>익명의 도토리</Text>
-                </View>
-                <Text style={{ paddingLeft: 5 }}>{boardList[data.board]}</Text>
-              </View>
-              <Text style={{ padding: 10 }}>{data.title}</Text>
+            <View
+              style={{
+                alignItems: "center",
+                flexDirection: "row",
+                width: "100%",
+                justifyContent: "space-between",
+                gap: 10,
+              }}
+            >
+              <Text
+                style={{
+                  paddingLeft: 5,
+                  fontSize: 15,
+                  borderRightColor: "orange",
+                  borderRightWidth: 5,
+                }}
+              >
+                {boardList[data.board]}
+              </Text>
               <View
                 style={{
                   flexDirection: "row",
-                  alignItems: "center",
-                  padding: 10,
-                  gap: 5,
+                  flex: 1,
+                  justifyContent: "space-between",
                 }}
               >
-                <Text>{data.comment_cnt}</Text>
-                <Octicons name="comment" style={styles.commentIcon} />
+                <Text style={{ padding: 5 }}>{data.title}</Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 5,
+                  }}
+                >
+                  <Octicons name="comment" style={styles.commentIcon} />
+                  <Text>{data.comment_cnt}</Text>
+                </View>
               </View>
             </View>
           </TouchableOpacity>
@@ -90,13 +108,11 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     backgroundColor: "#fff",
-    marginBottom: 50,
   },
   description: {
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "space-between",
-    width: "100%",
     paddingTop: 15,
     paddingBottom: 5,
     paddingLeft: 10,
@@ -104,18 +120,22 @@ const styles = StyleSheet.create({
   },
   descriptionText: {
     fontSize: 18,
+    fontWeight: "600",
   },
   moreButton: {
     flexDirection: "row",
     alignItems: "center",
   },
   card: {
+    alignItems: "center",
+    flexDirection: "row",
     backgroundColor: "#ffffff",
     borderRadius: 10,
     borderColor: "orange",
     borderStyle: "solid",
     borderWidth: 1,
-    padding: 15,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.25,

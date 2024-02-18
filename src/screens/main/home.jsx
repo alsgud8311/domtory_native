@@ -93,10 +93,10 @@ export default function Home({ navigation }) {
       <ScrollView style={styles.container}>
         <DailyMenuCard navigation={navigation} />
         <Shortcuts navigation={navigation} />
-        <CouncilNoticeCard navigation={navigation} />
-        <NoticeCard navigation={navigation} />
-        <CommunityCard navigation={navigation} />
         <RecentPostCard navigation={navigation} />
+        <CommunityCard navigation={navigation} />
+        <NoticeCard navigation={navigation} />
+        <CouncilNoticeCard navigation={navigation} />
       </ScrollView>
     </View>
   );

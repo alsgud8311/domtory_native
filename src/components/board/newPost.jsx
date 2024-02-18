@@ -33,6 +33,7 @@ export default function NewPost({
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [image, setImage] = useState([]);
+  const [existedImage, setExistedImage] = useState([]);
 
   const onChangeTitle = (inputTitle) => {
     setTitle(inputTitle);
@@ -163,11 +164,12 @@ export default function NewPost({
   };
 
   const handleUpdateSubmit = async () => {
-    Alert.alert("업로드 하시겠습니까?", "", [
+    Alert.alert("수정하시겠습니까?", "", [
       { text: "아니오", style: "cancel" },
       {
         text: "네",
         onPress: async () => {
+          console.log("원래 이미지", image);
           const formData = new FormData();
 
           // 제목과 내용 추가
@@ -176,11 +178,13 @@ export default function NewPost({
 
           // 삭제된 이미지 추가
           if (deletedImages.length > 0) {
+            console.log("삭제", deletedImages);
             formData.append("deleted_images", JSON.stringify(deletedImages));
           }
 
           // 새로운 이미지 파일 추가
           if (image) {
+            console.log(image);
             image.forEach((img) => {
               formData.append("images", {
                 uri: img.uri,
@@ -218,7 +222,8 @@ export default function NewPost({
     if (post) {
       setTitle(post.title);
       setContent(post.body);
-      setImage(post.post_image || []);
+      setExistedImage(post.post_image || []);
+      console.log("existed", existedImage);
     } else {
       setTitle("");
       setContent("");
@@ -241,7 +246,7 @@ export default function NewPost({
           text: "예",
           onPress: () => {
             setDeletedImages((prev) => [...prev, imgId]);
-            setImage((currentImages) =>
+            setExistedImage((currentImages) =>
               currentImages.filter((_, index) => index !== indexToRemove)
             );
           },
@@ -312,7 +317,7 @@ export default function NewPost({
                 <Text style={styles.buttonText}>완료</Text>
               </TouchableOpacity>
             </View>
-            {image.length > 0 && (
+            {existedImage.length > 0 && (
               <ScrollView
                 horizontal={true}
                 showsHorizontalScrollIndicator={false}
@@ -322,7 +327,22 @@ export default function NewPost({
                   <View key={index} style={styles.imagePreviewWrapper}>
                     <Image
                       source={{
-                        uri: post && img.image_url ? img.image_url : img.uri,
+                        uri: img.uri,
+                      }}
+                      style={styles.imagePreview}
+                    />
+                    <TouchableOpacity
+                      onPress={() => handleRemoveImage(img.id, index)}
+                    >
+                      <AntDesign name="closecircleo" size={17} color="gray" />
+                    </TouchableOpacity>
+                  </View>
+                ))}
+                {existedImage.map((img, index) => (
+                  <View key={index} style={styles.imagePreviewWrapper}>
+                    <Image
+                      source={{
+                        uri: img.image_url,
                       }}
                       style={styles.imagePreview}
                     />

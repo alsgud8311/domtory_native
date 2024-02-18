@@ -3,9 +3,13 @@ import { apiBe } from ".";
 //게시글 작성
 export const writePost = async (boardId, formData) => {
   try {
-    const reponse = await apiBe.post(`/board/post/create/${boardId}/`, formData, {
-      headers: { "content-type": "multipart/form-data" },
-    });
+    const reponse = await apiBe.post(
+      `/board/post/create/${boardId}/`,
+      formData,
+      {
+        headers: { "content-type": "multipart/form-data" },
+      }
+    );
     return { success: true };
   } catch (error) {
     return { success: false, data: error.response.data };
@@ -28,8 +32,14 @@ export const getPostDetail = async (postId) => {
 // 게시글 수정
 export const updatePost = async (postId, formData) => {
   try {
-    const response = await apiBe.patch(`/board/post/update/${postId}/`, formData);
-    return { success: true, data: response.data }
+    const response = await apiBe.patch(
+      `/board/post/update/${postId}/`,
+      formData,
+      {
+        headers: { "content-type": "multipart/form-data" },
+      }
+    );
+    return { success: true, data: response.data };
   } catch (error) {
     return { success: false, data: error };
   }

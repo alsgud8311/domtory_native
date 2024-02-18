@@ -70,7 +70,7 @@ export default function CouncilNoticeCard({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff",
-    marginBottom: 10,
+    marginBottom: 60,
   },
   description: {
     alignItems: "center",
@@ -84,6 +84,7 @@ const styles = StyleSheet.create({
   },
   descriptionText: {
     fontSize: 18,
+    fontWeight: "600",
   },
   moreButton: {
     flexDirection: "row",

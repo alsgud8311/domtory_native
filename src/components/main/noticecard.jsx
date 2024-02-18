@@ -20,7 +20,7 @@ export default function NoticeCard({ navigation }) {
       const getData = async () => {
         const { success, data } = await getNoticePageData("1");
         if (success) {
-          slicedData = data.postList.slice(0, 5);
+          slicedData = data.postList.slice(0, 3);
           setNoticeData(slicedData);
         } else {
           setNoticeData([{ title: "정보를 가져오지 못했습니다." }]);
@@ -91,6 +91,7 @@ const styles = StyleSheet.create({
   },
   descriptionText: {
     fontSize: 18,
+    fontWeight: "600",
   },
   moreButton: {
     flexDirection: "row",
@@ -120,6 +121,7 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
   },
   postDate: {
+    color: "gray",
     fontSize: 13,
   },
 });
