@@ -32,6 +32,7 @@ import {
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import Popup from "../../components/board/popup";
 import CouncilNoticeDetail from "../notice/CouncilNoticeDetail";
+import MyComment from "./mypost/mycomment";
 
 const CommunityStack = ({ navigation }) => {
   const Stack = createNativeStackNavigator();

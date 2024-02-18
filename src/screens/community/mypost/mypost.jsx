@@ -1,5 +1,6 @@
-import { Text } from "react-native";
+import React from "react";
+import MyPostBoard from "../../../components/mypage/mypageandcommentboard";
 
-export default function MyPosting() {
-  return <Text>My Post</Text>;
+export default function MyComment({ navigation }) {
+  return <MyPostBoard post={"post"} navigation={navigation} />;
 }

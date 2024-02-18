@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -8,33 +8,53 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Platform,
+  Alert,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import NewPost from "./newPost";
+import NewPost from "../board/newPost";
 import { AntDesign, Octicons } from "@expo/vector-icons";
 import { getPostList } from "../../server/board";
+import { getMyCommentList, getMyPostList } from "../../server/mypost";
+import { useFocusEffect } from "@react-navigation/native";
 
-export default function MypageAndCommentBoard({ navigation }) {
+export default function MypageAndCommentBoard({ post, navigation }) {
   const [data, setData] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
   const [refreshFlag, setRefreshFlag] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await getPostList(boardId);
-        if (result && result.data) {
-          setData(result.data);
+  useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        if (post === "post") {
+          try {
+            const result = await getMyPostList();
+            if (result && result.data) {
+              setData(result.data);
+            } else {
+              Alert.alert("정보를 불러오는데 실패했습니다.");
+              navigation.pop();
+            }
+          } catch (error) {
+            Alert.alert("정보를 불러오는데 실패했습니다");
+            navigation.pop();
+          }
         } else {
-          throw new Error("No data");
+          try {
+            const result = await getMyCommentList();
+            if (result && result.data) {
+              setData(result.data);
+            } else {
+              Alert.alert("정보를 불러오는데 실패했습니다.");
+              navigation.pop();
+            }
+          } catch (error) {
+            Alert.alert("정보를 불러오는데 실패했습니다");
+            navigation.pop();
+          }
         }
-      } catch (error) {
-        console.error("Failed to fetch data:", error);
-      }
-    };
-
-    fetchData();
-  }, [boardId, refreshFlag]);
+      };
+      fetchData();
+    }, [])
+  );
 
   console.log(data);
 
@@ -114,13 +134,6 @@ export default function MypageAndCommentBoard({ navigation }) {
       <TouchableOpacity onPress={handleOpenNewPost} style={styles.writeButton}>
         <AntDesign name="form" size={24} color={"#fff"} />
       </TouchableOpacity>
-
-      <NewPost
-        isVisible={isModalVisible}
-        onClose={handleCloseNewPost}
-        boardId={boardId}
-        onPostSubmit={handleNewPostSubmit}
-      />
     </SafeAreaView>
   );
 }
