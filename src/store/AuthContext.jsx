@@ -17,6 +17,7 @@ export const AuthProvider = ({ children }) => {
     refreshToken: null,
     pushToken: null,
     authenticated: false,
+    isStaff: false,
     username: null,
     name: null,
     id: null,
@@ -30,6 +31,7 @@ export const AuthProvider = ({ children }) => {
       const username = await SecureStore.getItemAsync("USERNAME");
       const name = await SecureStore.getItemAsync("NAME");
       const id = await SecureStore.getItemAsync("ID");
+      const isStaff = await SecureStore.getItemAsync("ISSTAFF");
 
       if (accessToken) {
         apiBe.defaults.headers.common[
@@ -43,6 +45,7 @@ export const AuthProvider = ({ children }) => {
           username: username,
           name: name,
           id: id,
+          isStaff: isStaff,
         });
       }
     };
@@ -103,13 +106,15 @@ export const AuthProvider = ({ children }) => {
         username: data.member.username,
         name: data.member.name,
         id: data.member.id,
+        isStaff: data.member.isStaff,
       }));
 
       await SecureStore.setItemAsync("ACCESS_TOKEN", data.accessToken);
       await SecureStore.setItemAsync("REFRESH_TOKEN", data.refreshToken);
       await SecureStore.setItemAsync("USERNAME", data.member.username);
-      await SecureStore.setItemAsync("NAME", data.member.username);
-      await SecureStore.setItemAsync("ID", data.member.username);
+      await SecureStore.setItemAsync("NAME", data.member.name);
+      await SecureStore.setItemAsync("ID", data.member.id);
+      await SecureStore.setItemAsync("ACCESS_TOKEN", data.member.isStaff);
       return { success: true, data: data };
     } catch (error) {
       return { success: false, data: error.response.data };
@@ -128,6 +133,7 @@ export const AuthProvider = ({ children }) => {
       await SecureStore.deleteItemAsync("USERNAME");
       await SecureStore.deleteItemAsync("NAME");
       await SecureStore.deleteItemAsync("ID");
+      await SecureStore.deleteItemAsync("ISSTAFF");
       apiBe.defaults.headers.common["Authorization"] = "";
 
       setAuthState({
@@ -137,6 +143,7 @@ export const AuthProvider = ({ children }) => {
         authenticated: false,
         username: null,
         id: null,
+        isStaff: false,
       });
       Alert.alert("로그아웃 되었습니다.", "다음에 또 만나요!");
       return { success: true };
