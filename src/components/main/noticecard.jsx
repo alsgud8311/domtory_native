@@ -10,6 +10,7 @@ import {
 import { AntDesign } from "@expo/vector-icons";
 import { getNoticePageData } from "../../server/cbhsnotice";
 import { useFocusEffect } from "@react-navigation/native";
+import { openBrowserAsync } from "expo-web-browser";
 
 export default function NoticeCard({ navigation }) {
   const [noticeData, setNoticeData] = useState(null);
@@ -50,7 +51,7 @@ export default function NoticeCard({ navigation }) {
           noticeData.map((notice, index) => (
             <TouchableOpacity
               key={index}
-              onPress={() => navigateToDetailPage(notice.id)}
+              onPress={() => openBrowserAsync(notice.notice_url)}
               style={index !== noticeData.length - 1 ? styles.postItem : null} // Apply borderBottom only to non-last items
             >
               <Text style={styles.postDate}>{notice.date}</Text>

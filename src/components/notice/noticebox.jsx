@@ -14,8 +14,11 @@ import { AntDesign } from "@expo/vector-icons";
 import axios from "axios";
 import NewPost from "../board/newPost";
 import { getCouncilNotice } from "../../server/notice";
+import { openBrowserAsync } from "expo-web-browser";
+import { useAuth } from "../../store/AuthContext";
 
-export default function Noticebox() {
+export default function Noticebox({ navigation }) {
+  const { authState } = useAuth();
   const [data, setData] = useState("");
   const [category, setCategory] = useState("cbhs");
 
@@ -105,7 +108,7 @@ export default function Noticebox() {
             </Text>
           </TouchableOpacity>
         </View>
-        {category === "council" && (
+        {category === "council" && authState.isStaff && (
           <TouchableOpacity onPress={handleOpenNewPost}>
             <AntDesign name="form" style={select.writeText} />
           </TouchableOpacity>
@@ -122,20 +125,27 @@ export default function Noticebox() {
       <FlatList
         data={data}
         renderItem={({ item, index }) => (
-          <ListItem bottomDivider>
-            <ListItem.Content
-              style={list.content}
-              onPress={() => navigateToDetailPage(item.id)}
-            >
-              <ListItem.Subtitle style={list.number}>
-                {item.id}
-              </ListItem.Subtitle>
-              <ListItem.Title style={list.title}>{item.title}</ListItem.Title>
-              <ListItem.Subtitle style={list.date}>
-                {item.date}
-              </ListItem.Subtitle>
-            </ListItem.Content>
-          </ListItem>
+          <TouchableOpacity
+            onPress={() => {
+              if (category === "council") {
+                navigation.navigate("자율회 공지사항", { postId: item.id });
+              } else {
+                openBrowserAsync(item.notice_url);
+              }
+            }}
+          >
+            <ListItem bottomDivider>
+              <ListItem.Content style={list.content}>
+                <ListItem.Subtitle style={list.number}>
+                  {item.id}
+                </ListItem.Subtitle>
+                <ListItem.Title style={list.title}>{item.title}</ListItem.Title>
+                <ListItem.Subtitle style={list.date}>
+                  {item.date}
+                </ListItem.Subtitle>
+              </ListItem.Content>
+            </ListItem>
+          </TouchableOpacity>
         )}
         keyExtractor={(item, index) => item.id.toString()}
         ListFooterComponent={loading ? <ActivityIndicator /> : null}
