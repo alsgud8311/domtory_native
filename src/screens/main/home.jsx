@@ -88,7 +88,6 @@ export default function Home({ navigation }) {
 
     return unsubscribe;
   }, []);
-
   return (
     <View>
       <ScrollView style={styles.container}>
@@ -102,7 +101,6 @@ export default function Home({ navigation }) {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     width: "100%",
