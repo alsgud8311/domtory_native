@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     writeButton: {
         position: "absolute",
         right: 20,
-        bottom: 90,
+        bottom: 40,
         width: 50,
         height: 50,
         borderRadius: 28,
