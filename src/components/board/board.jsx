@@ -36,6 +36,8 @@ export default function Board({ boardId, navigation }) {
         fetchData();
     }, [boardId, refreshFlag]);
 
+    console.log(data);
+
     const handleOpenNewPost = () => {
         setModalVisible(true);
     };
@@ -83,7 +85,7 @@ export default function Board({ boardId, navigation }) {
                         {/* 제목, 내용 */}
                         <View>
                             <Text style={styles.title}>{item.title}</Text>
-                            <Text style={styles.content}>{item.content}</Text>
+                            <Text style={styles.content}>{item.body}</Text>
                         </View>
                         {/* 유저, 작성일 */}
                         <View style={{ flexDirection: "row", marginTop: 7, height: 15 }}>
@@ -169,7 +171,8 @@ const styles = StyleSheet.create({
         marginBottom: 2.5,
     },
     content: {
-        fontSize: 14,
+        fontSize: 13,
+        marginBottom: 2
     },
     image: {
         width: 60,
@@ -180,7 +183,7 @@ const styles = StyleSheet.create({
     writeButton: {
         position: "absolute",
         right: 20,
-        bottom: 90,
+        bottom: 40,
         width: 50,
         height: 50,
         borderRadius: 28,
