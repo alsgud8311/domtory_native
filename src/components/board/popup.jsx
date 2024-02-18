@@ -18,12 +18,15 @@ import NewPost from './newPost';
 import { useAuth } from "../../store/AuthContext";
 
 const PopupMenu = () => {
+    const {authState} = useAuth();
+    console.log(authState.id);
     const [data, setData] = useState({});
     const route = useRoute();
     const { postId } = route.params;
 
     const [isModalVisible, setModalVisible] = useState(false);
     const [refreshFlag, setRefreshFlag] = useState(false);
+    const [options, setOptions] = useState([]);
 
     const handleOpenNewPost = () => {
         setModalVisible(true);
@@ -52,42 +55,67 @@ const PopupMenu = () => {
 
     const [visible, setVisible] = useState(false);
     const scale = useRef(new Animated.Value(0)).current;
-    const options = [
-        {
-            title: '게시글 수정',
-            action: () => Alert.alert(
-                '게시글 수정',
-                '게시글을 수정하시겠습니까?',
-                [
-                    {
-                        text: '취소',
-                        style: 'cancel',
-                    },
-                    {
-                        text: '예', onPress: () => handleOpenNewPost()
-                    },
-                ],
-                { cancelable: false } // Android에서 백 버튼을 눌렀을 때 대화 상자가 닫히지 않도록 설정
-            ),
-        },
-        {
-            title: '게시글 신고',
-            action: () => Alert.alert(
-                '게시글 신고',
-                '게시글을 신고하시겠습니까?',
-                [
-                    {
-                        text: '취소',
-                        style: 'cancel',
-                    },
-                    {
-                        text: '예', onPress: () => handleReport('post', postId)
-                    },
-                ],
-                { cancelable: false }
-            ),
-        },
-    ];
+
+    useEffect(() => {
+        if (data.member && authState.id && data.member === authState.id) {
+            setOptions([
+                {
+                    title: '게시글 수정',
+                    action: () => Alert.alert(
+                        '게시글 수정',
+                        '게시글을 수정하시겠습니까?',
+                        [
+                            {
+                                text: '취소',
+                                style: 'cancel',
+                            },
+                            {
+                                text: '예', onPress: () => handleOpenNewPost()
+                            },
+                        ],
+                        { cancelable: false } // Android에서 백 버튼을 눌렀을 때 대화 상자가 닫히지 않도록 설정
+                    ),
+                },
+                {
+                    title: '게시글 신고',
+                    action: () => Alert.alert(
+                        '게시글 신고',
+                        '게시글을 신고하시겠습니까?',
+                        [
+                            {
+                                text: '취소',
+                                style: 'cancel',
+                            },
+                            {
+                                text: '예', onPress: () => handleReport('post', postId)
+                            },
+                        ],
+                        { cancelable: false }
+                    ),
+                },
+            ]);
+        } else {
+            setOptions([
+                {
+                    title: '게시글 신고',
+                    action: () => Alert.alert(
+                        '게시글 신고',
+                        '게시글을 신고하시겠습니까?',
+                        [
+                            {
+                                text: '취소',
+                                style: 'cancel',
+                            },
+                            {
+                                text: '예', onPress: () => handleReport('post', postId)
+                            },
+                        ],
+                        { cancelable: false }
+                    ),
+                },
+            ]);
+        }
+    }, [data, authState.id]);
 
     function resizeBox(to) {
         to === 1 && setVisible(true);
