@@ -15,8 +15,10 @@ import axios from "axios";
 import NewPost from "../board/newPost";
 import { getCouncilNotice } from "../../server/notice";
 import { openBrowserAsync } from "expo-web-browser";
+import { useAuth } from "../../store/AuthContext";
 
 export default function Noticebox({ navigation }) {
+  const { authState } = useAuth();
   const [data, setData] = useState("");
   const [category, setCategory] = useState("cbhs");
 
@@ -106,7 +108,7 @@ export default function Noticebox({ navigation }) {
             </Text>
           </TouchableOpacity>
         </View>
-        {category === "council" && (
+        {category === "council" && authState.isStaff && (
           <TouchableOpacity onPress={handleOpenNewPost}>
             <AntDesign name="form" style={select.writeText} />
           </TouchableOpacity>
