@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -10,25 +10,22 @@ import {
   Platform,
   Alert,
 } from "react-native";
-import NewPost from "../board/newPost";
-import { AntDesign, Octicons } from "@expo/vector-icons";
-import { getPostList } from "../../server/board";
+
+import { Octicons } from "@expo/vector-icons";
 import { getMyCommentList, getMyPostList } from "../../server/mypost";
 import { useFocusEffect } from "@react-navigation/native";
 
 export default function MypageAndCommentBoard({ post, navigation }) {
-  const [data, setData] = useState([]);
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [refreshFlag, setRefreshFlag] = useState(false);
+  const [data, setData] = useState(null);
 
   useFocusEffect(
     useCallback(() => {
       const fetchData = async () => {
         if (post === "post") {
           try {
-            const result = await getMyPostList();
-            if (result && result.data) {
-              setData(result.data);
+            const { success, postData } = await getMyPostList();
+            if (success) {
+              setData(postData);
             } else {
               Alert.alert("정보를 불러오는데 실패했습니다.");
               navigation.pop();
@@ -56,50 +53,21 @@ export default function MypageAndCommentBoard({ post, navigation }) {
     }, [])
   );
 
-  console.log(data);
-
-  const handleOpenNewPost = () => {
-    setModalVisible(true);
-  };
-
-  const handleCloseNewPost = () => {
-    setModalVisible(false);
-  };
-
-  const handleNewPostSubmit = () => {
-    setRefreshFlag(!refreshFlag);
-  };
-
   const renderItem = ({ item }) => {
-    const navigateToDetailScreen = () => {
-      let screenName;
-      switch (boardId) {
-        case 1:
-          screenName = "자유 게시판";
-          break;
-        case 2:
-          screenName = "중고거래게시판";
-          break;
-        case 3:
-          screenName = "취준생게시판";
-          break;
-        case 4:
-          screenName = "번개모임게시판";
-          break;
-        case 5:
-          screenName = "분실물게시판";
-          break;
-        default:
-          screenName = "일치하는 게시판 없음";
-      }
-
-      if (screenName !== "일치하는 게시판 없음") {
-        navigation.navigate(screenName, { postId: item.id });
-      }
+    const boardId = {
+      1: "자유 게시판",
+      2: "중고거래게시판",
+      3: "취준생게시판",
+      4: "번개모임게시판",
+      5: "분실물게시판",
     };
 
     return (
-      <TouchableOpacity onPress={navigateToDetailScreen}>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate(boardId[item.board], { postId: item.id })
+        }
+      >
         <View style={styles.item}>
           <View style={{ flexDirection: "column", marginBottom: 5 }}>
             {/* 제목, 내용 */}
@@ -131,9 +99,6 @@ export default function MypageAndCommentBoard({ post, navigation }) {
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ paddingVertical: 20 }}
       />
-      <TouchableOpacity onPress={handleOpenNewPost} style={styles.writeButton}>
-        <AntDesign name="form" size={24} color={"#fff"} />
-      </TouchableOpacity>
     </SafeAreaView>
   );
 }
