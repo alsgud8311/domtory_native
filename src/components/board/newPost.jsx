@@ -321,7 +321,9 @@ export default function NewPost({
                 {image.map((img, index) => (
                   <View key={index} style={styles.imagePreviewWrapper}>
                     <Image
-                      source={{ uri: post ? img.image_url : img.uri }}
+                      source={{
+                        uri: post && img.image_url ? img.image_url : img.uri,
+                      }}
                       style={styles.imagePreview}
                     />
                     <TouchableOpacity
