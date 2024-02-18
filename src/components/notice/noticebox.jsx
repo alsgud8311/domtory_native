@@ -43,9 +43,8 @@ export default function Noticebox({ navigation }) {
       if (category === "council") {
         const councilNoticeResult = await getCouncilNotice();
         if (councilNoticeResult.success) {
-          //setCouncilData(councilNoticeResult.data.postList);
           setData(councilNoticeResult.data.postList);
-          setCouncilTotalPages(councilNoticeResult.data.pageCnt);
+          setCbhsTotalPages(councilNoticeResult.data.pageCnt);
           setCurrentPage(councilNoticeResult.data.curPage);
         } else {
           console.error(error);
@@ -53,7 +52,6 @@ export default function Noticebox({ navigation }) {
       } else {
         let apiUrl = `https://api.domtory.site/notice/?page=${page}`;
         response = await axios.get(apiUrl);
-        //setCbhsData(response.data.postList);
         setData(response.data.postList);
         setCbhsTotalPages(response.data.pageCnt);
         setCurrentPage(response.data.curPage);

@@ -1,7 +1,7 @@
 import { apiBe } from ".";
 
 // 자율회 공지사항 get
-export const getCouncilNotice = async (page) => {
+export const getCouncilNotice = async () => {
     try {
         const { data } = await apiBe.get(`/board/post/list/6/`);
         if (data) {
