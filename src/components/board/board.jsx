@@ -23,13 +23,16 @@ export default function Board({ boardId, navigation }) {
         const fetchData = async () => {
             try {
                 const result = await getPostList(boardId);
-                console.log(result);
-                setData(result.data);
+                if (result && result.data) {
+                    setData(result.data);
+                } else {
+                    throw new Error('No data');
+                }
             } catch (error) {
                 console.error("Failed to fetch data:", error);
             }
         };
-
+    
         fetchData();
     }, [boardId, refreshFlag]);
 
