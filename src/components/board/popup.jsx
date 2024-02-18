@@ -57,7 +57,7 @@ const PopupMenu = () => {
   const scale = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    if (data.member && authState.id && data.member === authState.id) {
+    if (data.member && authState.id && data.member === parseInt(authState.id)) {
       setOptions([
         {
           title: "게시글 수정",

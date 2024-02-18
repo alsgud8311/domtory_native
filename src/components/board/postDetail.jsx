@@ -34,7 +34,6 @@ export const handleReport = async (type, id) => {
     Alert.alert("오류", "신고에 실패했습니다. 다시 시도해주세요.");
   }
 };
-import ImageModal from "react-native-image-modal";
 
 export default function PostDetail({ data, reloadData, postId }) {
   if (!data) {
@@ -239,10 +238,8 @@ export default function PostDetail({ data, reloadData, postId }) {
           data.post_image.map((img, index) => {
             if (!img.is_deleted) {
               return (
-                <ImageModal
-                  key={index}
-                  swipeToDismiss={true}
-                  resizeMode="contain"
+                <Image
+                  key={img.id}
                   source={{ uri: img.image_url }}
                   style={{
                     width: screenWidth,
@@ -450,10 +447,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginLeft: 3,
-    paddingBottom: 15,
+    paddingBottom: 5,
     borderBottomWidth: 1,
     borderBottomColor: "#e1e1e1",
     marginBottom: 13,
+    marginTop: 15,
   },
   commentIcon: {
     fontSize: 17,
@@ -554,18 +552,14 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     paddingHorizontal: 10,
     alignItems: "center",
-    justifyContent: "center",
     flex: 1,
   },
   commentInput: {
     flex: 1,
     paddingHorizontal: 10,
-    marginTop: 10,
-    // paddingVertical: 10,
-    minHeight: 40,
-    fontSize: 15,
-    textAlignVertical: "center", // 세로 방향 가운데 정렬
-    justifyContent: "center",
+    paddingBottom: 1.5,
+    minHeight: 45,
+    fontSize: 14,
   },
   anonymousCheck: {
     flexDirection: "row",
