@@ -130,7 +130,7 @@ export default function NewPost({
             } else {
               result = await writePost(boardId, formData);
               if (result.success) {
-                console.log("게시글이 성공적으로 작성되었습니다.", result);
+                Alert.alert("게시글이 작성되었습니다.");
                 setTitle("");
                 setContent("");
                 setImage([]);
@@ -169,7 +169,6 @@ export default function NewPost({
       {
         text: "네",
         onPress: async () => {
-          console.log("원래 이미지", image);
           const formData = new FormData();
 
           // 제목과 내용 추가
@@ -178,8 +177,12 @@ export default function NewPost({
 
           // 삭제된 이미지 추가
           if (deletedImages.length > 0) {
-            console.log("삭제", deletedImages);
-            formData.append("deleted_images", JSON.stringify(deletedImages));
+            // console.log("deleted", deletedImages);
+            // formData.append("deleted_images", deletedImages);
+            deletedImages.forEach((imgId) => {
+              console.log(imgId);
+              formData.append("deleted_images", imgId);
+            });
           }
 
           // 새로운 이미지 파일 추가
@@ -197,7 +200,7 @@ export default function NewPost({
           try {
             const result = await updatePost(post.id, formData);
             if (result && result.success) {
-              console.log("게시글이 성공적으로 수정되었습니다.", result);
+              Alert.alert("게시글이 성공적으로 수정되었습니다.");
               onClose();
               onPostSubmit();
             } else {
@@ -317,28 +320,13 @@ export default function NewPost({
                 <Text style={styles.buttonText}>완료</Text>
               </TouchableOpacity>
             </View>
-            {existedImage.length > 0 && (
-              <ScrollView
-                horizontal={true}
-                showsHorizontalScrollIndicator={false}
-                style={styles.imagePreviewContainer}
-              >
-                {image.map((img, index) => (
-                  <View key={index} style={styles.imagePreviewWrapper}>
-                    <Image
-                      source={{
-                        uri: img.uri,
-                      }}
-                      style={styles.imagePreview}
-                    />
-                    <TouchableOpacity
-                      onPress={() => handleRemoveImage(img.id, index)}
-                    >
-                      <AntDesign name="closecircleo" size={17} color="gray" />
-                    </TouchableOpacity>
-                  </View>
-                ))}
-                {existedImage.map((img, index) => (
+            <ScrollView
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+              style={styles.imagePreviewContainer}
+            >
+              {existedImage.length > 0 &&
+                existedImage.map((img, index) => (
                   <View key={index} style={styles.imagePreviewWrapper}>
                     <Image
                       source={{
@@ -353,8 +341,22 @@ export default function NewPost({
                     </TouchableOpacity>
                   </View>
                 ))}
-              </ScrollView>
-            )}
+              {image.map((img, index) => (
+                <View key={index} style={styles.imagePreviewWrapper}>
+                  <Image
+                    source={{
+                      uri: img.uri,
+                    }}
+                    style={styles.imagePreview}
+                  />
+                  <TouchableOpacity
+                    onPress={() => handleRemoveImage(img.id, index)}
+                  >
+                    <AntDesign name="closecircleo" size={17} color="gray" />
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </ScrollView>
           </View>
         </TouchableWithoutFeedback>
       </SafeAreaView>

@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   title: {
-    fontSize: 14,
+    fontSize: 17,
   },
 });
 

@@ -61,16 +61,16 @@ export default function RecentPostCard({ navigation }) {
                 gap: 10,
               }}
             >
-              <Text
+              <View
                 style={{
-                  paddingLeft: 5,
-                  fontSize: 15,
+                  paddingVertical: 5,
                   borderRightColor: "orange",
-                  borderRightWidth: 5,
+                  borderRightWidth: 1,
+                  paddingHorizontal: 10,
                 }}
               >
-                {boardList[data.board]}
-              </Text>
+                <Text>{boardList[data.board]}</Text>
+              </View>
               <View
                 style={{
                   flexDirection: "row",
@@ -86,8 +86,8 @@ export default function RecentPostCard({ navigation }) {
                     gap: 5,
                   }}
                 >
-                  <Octicons name="comment" style={styles.commentIcon} />
-                  <Text>{data.comment_cnt}</Text>
+                  <Octicons name="comment" style={{ color: "crimson" }} />
+                  <Text style={{ color: "crimson" }}>{data.comment_cnt}</Text>
                 </View>
               </View>
             </View>
