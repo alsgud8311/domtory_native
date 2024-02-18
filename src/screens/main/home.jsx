@@ -1,44 +1,29 @@
 import { StatusBar } from "expo-status-bar";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-  Alert,
-  RefreshControl,
-} from "react-native";
+import { ScrollView, StyleSheet, Text, View, Alert } from "react-native";
 import DailyMenuCard from "../../components/main/menucard";
 import Shortcuts from "../../components/main/shortcuts";
 import CommunityCard from "../../components/main/communitycard";
 import NoticeCard from "../../components/main/noticecard";
 import RecentPostCard from "../../components/main/recentcard";
 import CouncilNoticeCard from "../../components/main/councilnoticecard";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import * as Notifications from "expo-notifications";
 import messaging from "@react-native-firebase/messaging";
 import React from "react";
 import { apiBe } from "../../server";
-import { Notifications } from "expo";
-import * as Notification from "expo-notifications";
-
 // import * as SplashScreen from "expo-splash-screen";
 
-Notification.setNotificationHandler({
+Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
     shouldPlaySound: true,
-    shouldSetBadge: true,
+    shouldSetBadge: false,
   }),
 });
 
-const board = {
-  1: "자유 게시판",
-  2: "중고거래게시판",
-  3: "취준생게시판",
-  4: "번개모임게시판",
-  5: "분실물게시판",
-};
-
 export default function Home({ navigation }) {
+  const [pushToken, setPushToken] = useState("");
+  const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
 
@@ -47,19 +32,19 @@ export default function Home({ navigation }) {
     messaging()
       .getInitialNotification()
       .then(async (remoteMessage) => {
-        if (remoteMessage.data) {
-          console.log("종료 상태에서 오픈");
-          const { postId, boardId } = remoteMessage.data;
-          navigation.navigate(board[boardId], { postId: postId });
+        if (remoteMessage) {
+          console.log(
+            "종료 상태에서 열렸을 때 알림 상태",
+            remoteMessage.notification
+          );
         }
       });
 
     messaging().onNotificationOpenedApp((remoteMessage) => {
-      console.log("백그라운드에서 열었을 때", remoteMessage);
-      if (remoteMessage.data) {
-        const { postId, boardId } = remoteMessage.data;
-        navigation.navigate(board[boardId], { postId: postId });
-      }
+      console.log(
+        "백그라운드 상태에서 알림 열었을 때",
+        remoteMessage.notification
+      );
     });
 
     messaging().setBackgroundMessageHandler(async (remoteMessage) => {
@@ -67,23 +52,10 @@ export default function Home({ navigation }) {
     });
 
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
-      console.log("포어그라운드", remoteMessage);
-      if (remoteMessage.data) {
-        const { postId, boardId } = remoteMessage.data;
-        Alert.alert(
-          remoteMessage.notification.title,
-          remoteMessage.notification.body,
-          [
-            { text: "취소", style: "cancel" },
-            {
-              text: "보러가기",
-              onPress: () => {
-                navigation.navigate(board[boardId], { postId: postId });
-              },
-            },
-          ]
-        );
-      }
+      Alert.alert(
+        JSON.stringify(remoteMessage.notification.title),
+        JSON.stringify(remoteMessage.notification.body)
+      );
     });
 
     return unsubscribe;
