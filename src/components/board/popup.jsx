@@ -41,9 +41,14 @@ const PopupMenu = ({ navigation }) => {
 
   const handleDeleteButton = async (postId) => {
     try {
-      await deletePost(postId);
-      Alert.alert("삭제가 완료되었습니다.");
-      navigation.pop();
+      const { success } = await deletePost(postId);
+      if (success) {
+        Alert.alert("삭제가 완료되었습니다.");
+        navigation.pop();
+      } else {
+        Alert.alert("삭제 도중 오류가 발생했습니다.");
+        navigation.pop();
+      }
     } catch {
       Alert.alert("삭제 도중 오류가 발생했습니다.");
       navigation.pop();

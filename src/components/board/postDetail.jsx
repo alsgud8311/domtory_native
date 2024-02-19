@@ -24,6 +24,7 @@ import {
   updatePost,
   report,
 } from "../../server/board";
+import { useAuth } from "../../store/AuthContext";
 
 export const handleReport = async (type, id) => {
   const result = await report(type, id);
@@ -36,6 +37,7 @@ export const handleReport = async (type, id) => {
 };
 
 export default function PostDetail({ data, reloadData, postId }) {
+  const { authState } = useAuth();
   if (!data) {
     return (
       <View>
@@ -264,10 +266,18 @@ export default function PostDetail({ data, reloadData, postId }) {
               {/* 댓글 본문 (삭제 여부 확인) */}
               {comment.is_deleted ? (
                 <>
-                  <Image
-                    source={domtory}
-                    style={{ width: 23, height: 23, borderRadius: 3 }}
-                  />
+                  <View style={{ flexDirection: "row" }}>
+                    <Image
+                      source={domtory}
+                      style={{
+                        width: 23,
+                        height: 23,
+                        borderRadius: 3,
+                        alignItems: "center",
+                      }}
+                    />
+                    <Text style={styles.commentMember}>삭제된 도토리</Text>
+                  </View>
                   <Text style={styles.commentDeleted}>삭제된 댓글입니다.</Text>
                 </>
               ) : (
@@ -281,9 +291,13 @@ export default function PostDetail({ data, reloadData, postId }) {
                     <View style={{ flexDirection: "row" }}>
                       <Image
                         source={domtory}
-                        style={{ width: 23, height: 23, borderRadius: 3 }}
+                        style={{
+                          width: 23,
+                          height: 23,
+                          borderRadius: 3,
+                        }}
                       />
-                      <Text style={styles.commentMember}>도토리</Text>
+                      <Text style={styles.commentMember}>익명의 도토리</Text>
                     </View>
                     <View style={styles.commentOption}>
                       <Octicons
@@ -291,16 +305,21 @@ export default function PostDetail({ data, reloadData, postId }) {
                         style={styles.commnetReply}
                         onPress={() => promptForReply(comment.id)}
                       />
-                      <TouchableOpacity
-                        onPress={() => confirmDelete(comment.id)}
-                      >
-                        <Octicons name="trash" style={styles.commnetDelete} />
-                      </TouchableOpacity>
-                      <Octicons
-                        name="stop"
-                        style={styles.commnetReport}
-                        onPress={() => confirmAndReport("comment", comment.id)}
-                      />
+                      {parseInt(authState.id) === comment.member ? (
+                        <TouchableOpacity
+                          onPress={() => confirmDelete(comment.id)}
+                        >
+                          <Octicons name="trash" style={styles.commnetDelete} />
+                        </TouchableOpacity>
+                      ) : (
+                        <Octicons
+                          name="stop"
+                          style={styles.commnetReport}
+                          onPress={() =>
+                            confirmAndReport("comment", comment.id)
+                          }
+                        />
+                      )}
                     </View>
                   </View>
 
@@ -312,13 +331,19 @@ export default function PostDetail({ data, reloadData, postId }) {
               {/* 대댓글 렌더링 부분 */}
               {comment.reply && comment.reply.length > 0 && (
                 <View style={styles.replyContainer}>
-                  {comment.reply.map((reply) =>
+                  {comment.reply.map((reply, index) =>
                     reply.is_deleted ? (
                       <View style={styles.reply}>
-                        <Image
-                          source={domtory}
-                          style={{ width: 23, height: 23, borderRadius: 3 }}
-                        />
+                        <View style={{ flexDirection: "row" }}>
+                          <Image
+                            source={domtory}
+                            style={{ width: 23, height: 23, borderRadius: 3 }}
+                          />
+                          <Text style={styles.commentMember}>
+                            삭제된 도토리
+                          </Text>
+                        </View>
+
                         <Text key={reply.id} style={styles.commentDeleted}>
                           삭제된 댓글입니다.
                         </Text>
@@ -337,27 +362,25 @@ export default function PostDetail({ data, reloadData, postId }) {
                               style={{ width: 23, height: 23, borderRadius: 3 }}
                             />
                             <Text style={styles.commentMember}>
-                              {reply.member}
+                              익명의 도토리
                             </Text>
                           </View>
                           <View style={styles.commentOption}>
-                            <Octicons
-                              name="comment-discussion"
-                              style={styles.commnetReply}
-                              onPress={() => promptForReply(comment.id)}
-                            />
-                            <Octicons
-                              name="trash"
-                              style={styles.commnetDelete}
-                              onPress={() => confirmReplyDelete(reply.id)}
-                            />
-                            <Octicons
-                              name="stop"
-                              style={styles.commnetReport}
-                              onPress={() =>
-                                confirmAndReport("comment", reply.id)
-                              }
-                            />
+                            {parseInt(authState.id) === reply.member ? (
+                              <Octicons
+                                name="trash"
+                                style={styles.commnetDelete}
+                                onPress={() => confirmReplyDelete(reply.id)}
+                              />
+                            ) : (
+                              <Octicons
+                                name="stop"
+                                style={styles.commnetReport}
+                                onPress={() =>
+                                  confirmAndReport("comment", reply.id)
+                                }
+                              />
+                            )}
                           </View>
                         </View>
                         <Text style={styles.commentContent}>{reply.body}</Text>
@@ -372,9 +395,18 @@ export default function PostDetail({ data, reloadData, postId }) {
             </View>
           ))}
       </ScrollView>
-
       {/* 댓글 작성 */}
-      <KeyboardAvoidingView style={styles.writeComment}>
+      <KeyboardAvoidingView
+        style={styles.writeComment}
+        behavior={Platform.OS === "ios" ? "padding" : null}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : -500} // iOS 외 플랫폼에서는 원하는 값으로 설정
+      >
+        {/* <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        > */}
         <View style={styles.inputBox}>
           <TextInput
             placeholder={
@@ -397,6 +429,7 @@ export default function PostDetail({ data, reloadData, postId }) {
             <Feather name="edit-3" size={23} color="#ffa451" />
           </TouchableOpacity>
         </View>
+        {/* </ScrollView> */}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -539,7 +572,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: "white",
     width: "100%",
-    paddingBottom: 70,
+    marginBottom: 70,
   },
   inputBox: {
     flexDirection: "row",

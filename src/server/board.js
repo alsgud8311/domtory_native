@@ -48,11 +48,8 @@ export const updatePost = async (postId, formData) => {
 //게시글 삭제
 export const deletePost = async (postId) => {
   try {
-    const { data } = await apiBe.delete(`/board/post/delete/${postId}/`);
-    if (data) {
-      return { success: true };
-    }
-    return { success: false, data: "삭제 중에 오류가 발생했습니다" };
+    const response = await apiBe.delete(`/board/post/delete/${postId}/`);
+    return { success: true };
   } catch (error) {
     return { success: false, data: error.response.data };
   }
@@ -139,11 +136,8 @@ export const postComment = async (postId, comment) => {
 //댓글 삭제
 export const deleteComment = async (commentId) => {
   try {
-    const { data } = await apiBe.delete(`/board/comment/delete/${commentId}/`);
-    if (data) {
-      return { success: true, data: data };
-    }
-    return { success: false, data: "댓글을 삭제하는 중에 오류가 발생했습니다" };
+    const response = await apiBe.delete(`/board/comment/delete/${commentId}/`);
+    return { success: true, data: data };
   } catch (error) {
     return { success: false, data: error.response.data };
   }

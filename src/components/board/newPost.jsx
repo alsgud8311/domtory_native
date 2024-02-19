@@ -12,6 +12,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import {
@@ -34,6 +35,7 @@ export default function NewPost({
   const [content, setContent] = useState("");
   const [image, setImage] = useState([]);
   const [existedImage, setExistedImage] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const onChangeTitle = (inputTitle) => {
     setTitle(inputTitle);
@@ -89,11 +91,16 @@ export default function NewPost({
   };
 
   const handleSubmit = async () => {
+    if (image.length + existedImage.length >= 5) {
+      Alert.alert("5개 이상의 사진은 업로드가 불가능합니다!");
+      return;
+    }
     Alert.alert("업로드 하시겠습니까?", "", [
       { text: "아니오", style: "cancel" },
       {
         text: "네",
         onPress: async () => {
+          setIsLoading(true);
           const formData = new FormData();
 
           // 사진, 제목, 내용을 FormData에 추가
@@ -142,10 +149,15 @@ export default function NewPost({
                   "오류",
                   "게시글 작성에 실패했습니다. 다시 시도해주세요."
                 );
+                setIsLoading(false);
               }
             }
           } catch (error) {
-            console.error("게시글 전송 중 오류가 발생했습니다:", error);
+            Alert.alert(
+              "오류",
+              "게시글 작성에 실패했습니다. 다시 시도해주세요."
+            );
+            setIsLoading(false);
 
             // 스택 추적 로깅
             if (error.stack) {
@@ -169,6 +181,7 @@ export default function NewPost({
       {
         text: "네",
         onPress: async () => {
+          setIsLoading(true);
           const formData = new FormData();
 
           // 제목과 내용 추가
@@ -212,9 +225,14 @@ export default function NewPost({
                 "오류",
                 "게시글 작성에 실패했습니다. 다시 시도해주세요."
               );
+              setIsLoading(false);
             }
           } catch (error) {
-            console.error("게시글 전송 중 오류가 발생했습니다:", error);
+            Alert.alert(
+              "오류",
+              "게시글 작성에 실패했습니다. 다시 시도해주세요."
+            );
+            setIsLoading(false);
           }
         },
       },
@@ -226,6 +244,7 @@ export default function NewPost({
       setTitle(post.title);
       setContent(post.body);
       setExistedImage(post.post_image || []);
+      setIsLoading(false);
       console.log("existed", existedImage);
     } else {
       setTitle("");
@@ -250,6 +269,25 @@ export default function NewPost({
           onPress: () => {
             setDeletedImages((prev) => [...prev, imgId]);
             setExistedImage((currentImages) =>
+              currentImages.filter((_, index) => index !== indexToRemove)
+            );
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  const handleRemoveNewImage = (indexToRemove) => {
+    Alert.alert(
+      "이미지 삭제",
+      "해당 이미지를 삭제하시겠습니까?",
+      [
+        { text: "취소", style: "cancel" },
+        {
+          text: "예",
+          onPress: () => {
+            setImage((currentImages) =>
               currentImages.filter((_, index) => index !== indexToRemove)
             );
           },
@@ -313,11 +351,15 @@ export default function NewPost({
               </TouchableOpacity>
 
               <TouchableOpacity
-                disabled={isButtonDisabled}
+                disabled={isButtonDisabled || isLoading}
                 style={styles.button}
                 onPress={post ? handleUpdateSubmit : handleSubmit}
               >
-                <Text style={styles.buttonText}>완료</Text>
+                {isLoading ? (
+                  <ActivityIndicator color="crimson" />
+                ) : (
+                  <Text style={styles.buttonText}>완료</Text>
+                )}
               </TouchableOpacity>
             </View>
             <ScrollView
@@ -349,9 +391,7 @@ export default function NewPost({
                     }}
                     style={styles.imagePreview}
                   />
-                  <TouchableOpacity
-                    onPress={() => handleRemoveImage(img.id, index)}
-                  >
+                  <TouchableOpacity onPress={() => handleRemoveNewImage(index)}>
                     <AntDesign name="closecircleo" size={17} color="gray" />
                   </TouchableOpacity>
                 </View>
