@@ -102,10 +102,10 @@ export default function NewPost({
   };
 
   const handleSubmit = async () => {
-    if (image.length + existedImage.length >= 5) {
-      Alert.alert("5개 이상의 사진은 업로드가 불가능합니다!");
-      return;
-    }
+    // if (image.length + existedImage.length >= 5) {
+    //   Alert.alert("5개 이상의 사진은 업로드가 불가능합니다!");
+    //   return;
+    // }
     Alert.alert("업로드 하시겠습니까?", "", [
       { text: "아니오", style: "cancel" },
       {
