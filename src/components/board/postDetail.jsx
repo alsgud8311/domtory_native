@@ -93,9 +93,9 @@ export default function PostDetail({ data, reloadData, postId }) {
 
   // 댓글 POST
   const handleCommentSubmit = async () => {
-    const result = await postComment(postId, comment);
-    if (result.success) {
-      console.log("댓글이 성공적으로 작성되었습니다.");
+    const { success } = await postComment(postId, comment);
+    if (success) {
+      Alert.alert("댓글이 작성되었습니다.");
       setComment("");
       reloadData();
     } else {
@@ -108,9 +108,9 @@ export default function PostDetail({ data, reloadData, postId }) {
   const handleReplySubmit = async () => {
     if (!currentReplyingTo) return;
 
-    const result = await postReply(currentReplyingTo, comment);
-    if (result.success) {
-      console.log("대댓글이 성공적으로 작성되었습니다.");
+    const { success } = await postReply(currentReplyingTo, comment);
+    if (success) {
+      Alert.alert("댓글이 작성되었습니다.");
       setComment("");
       setCurrentReplyingTo(null);
       reloadData();
@@ -141,13 +141,13 @@ export default function PostDetail({ data, reloadData, postId }) {
 
   // 댓글 삭제
   const handleDelete = async (commentId) => {
-    const result = await deleteComment(commentId);
-    if (result.success) {
-      console.log("댓글이 성공적으로 삭제되었습니다.");
+    const { success } = await deleteComment(commentId);
+    if (success) {
+      Alert.alert("댓글이 삭제되었습니다.");
       reloadData();
     } else {
       console.error("댓글 삭제에 실패했습니다:", result.data);
-      Alert.alert("댓글 삭제", "댓글 삭제에 실패했습니다. 다시 시도해주세요.");
+      Alert.alert("댓글 삭제에 실패했습니다. 다시 시도해주세요.");
     }
   };
 
@@ -172,16 +172,13 @@ export default function PostDetail({ data, reloadData, postId }) {
 
   // 대댓글 삭제
   const handleReplyDelete = async (commentId) => {
-    const result = await deleteReply(commentId);
-    if (result.success) {
-      console.log("대댓글이 성공적으로 삭제되었습니다.");
+    const { success } = await deleteReply(commentId);
+    if (success) {
+      Alert.alert("대댓글이 삭제되었습니다.");
       reloadData();
     } else {
       console.error("대댓글 삭제에 실패했습니다:", result.data);
-      Alert.alert(
-        "대댓글 삭제",
-        "대댓글 삭제에 실패했습니다. 다시 시도해주세요."
-      );
+      Alert.alert("대댓글 삭제에 실패했습니다. 다시 시도해주세요.");
     }
   };
 

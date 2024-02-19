@@ -69,6 +69,15 @@ export default function NewPost({
   };
 
   const handleClose = () => {
+    if (!title && !content) {
+      setTitle("");
+      setContent("");
+      setImage([]);
+      setIsTitleFocused(false);
+      setIsContentFocused(false);
+      onClose();
+      return;
+    }
     Alert.alert(
       "작성을 취소하시겠습니까?",
       "",
