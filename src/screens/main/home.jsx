@@ -68,7 +68,7 @@ export default function Home({ navigation }) {
 
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
       console.log("포어그라운드", remoteMessage);
-      if (remoteMessage.data) {
+      if (remoteMessage.data.postId && remoteMessage.data.boardId) {
         const { postId, boardId } = remoteMessage.data;
         Alert.alert(
           remoteMessage.notification.title,
@@ -82,6 +82,11 @@ export default function Home({ navigation }) {
               },
             },
           ]
+        );
+      } else {
+        Alert.alert(
+          remoteMessage.notification.title,
+          remoteMessage.notification.body
         );
       }
     });

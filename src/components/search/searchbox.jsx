@@ -148,7 +148,10 @@ export default function Searchbox({ route, navigation }) {
             </TouchableOpacity>
           </View>
         </View>
-        <TouchableOpacity onPress={hideKeyboard}>
+        <TouchableOpacity
+          onPress={hideKeyboard}
+          style={{ alignItems: "center", flex: 1 }}
+        >
           <Text style={styles.canceltext}>취소</Text>
         </TouchableOpacity>
       </View>
@@ -192,18 +195,21 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
     borderBottomWidth: 1,
     paddingHorizontal: 10,
+    alignItems: "center",
   },
   inputContainer: {
+    width: "85%",
     flexDirection: "row",
     alignItems: "center",
+    padding: 10,
   },
   searchbox: {
     height: 40,
     backgroundColor: "#f0f0f0",
     borderBottomLeftRadius: 10,
     borderTopLeftRadius: 10,
-    width: "80%",
     paddingLeft: 10,
+    width: "90%",
   },
   searchbtn: {
     backgroundColor: "#f0f0f0",
@@ -216,9 +222,6 @@ const styles = StyleSheet.create({
   },
   canceltext: {
     fontSize: 15,
-    width: 40,
-    height: 40,
-    marginTop: 20,
   },
   item: {
     backgroundColor: "#ffffff",
