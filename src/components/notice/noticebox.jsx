@@ -127,6 +127,7 @@ export default function Noticebox({ div, navigation }) {
         data={data}
         renderItem={({ item, index }) => (
           <TouchableOpacity
+            key={index}
             onPress={() => {
               if (category === "council") {
                 navigation.navigate("자율회 공지사항", { postId: item.id });

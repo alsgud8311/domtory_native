@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   SafeAreaView,
   View,
@@ -14,6 +14,7 @@ import {
   Alert,
   Button,
   RefreshControl,
+  Keyboard,
 } from "react-native";
 import { Octicons, Feather } from "@expo/vector-icons";
 import domtory from "../../assets/icon.png";
@@ -102,7 +103,9 @@ export default function PostDetail({ data, reloadData, postId }) {
         },
         {
           text: "예",
-          onPress: () => setCurrentReplyingTo(commentId),
+          onPress: () => {
+            setCurrentReplyingTo(commentId);
+          },
         },
       ],
       { cancelable: false }

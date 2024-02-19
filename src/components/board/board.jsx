@@ -93,12 +93,11 @@ export default function Board({ boardId, navigation }) {
     return (
       <TouchableOpacity onPress={navigateToDetailScreen}>
         <View style={styles.item}>
-          <View style={{ flexDirection: "column", marginBottom: 5 }}>
-            {/* 제목, 내용 */}
-            <View>
-              <Text style={styles.title}>{item.title}</Text>
-              <Text style={styles.content}>{item.body}</Text>
-            </View>
+          {/* 제목, 내용 */}
+          <View style={{ width: "80%" }}>
+            <Text style={styles.title}>{item.title}</Text>
+            <Text style={styles.content}>{item.body}</Text>
+
             {/* 유저, 작성일 */}
             <View style={{ flexDirection: "row", marginTop: 7, height: 15 }}>
               <Text style={styles.date}>{item.created_at}</Text>
@@ -108,7 +107,18 @@ export default function Board({ boardId, navigation }) {
           </View>
           {/* 사진 */}
           {item.thumbnail_url && (
-            <Image source={{ uri: item.thumbnail_url }} style={styles.image} />
+            <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                paddingRight: 10,
+              }}
+            >
+              <Image
+                source={{ uri: item.thumbnail_url }}
+                style={styles.image}
+              />
+            </View>
           )}
         </View>
       </TouchableOpacity>
@@ -149,6 +159,7 @@ const styles = StyleSheet.create({
   },
   // 글 박스
   item: {
+    width: "100%",
     backgroundColor: "#ffffff",
     borderRadius: 5,
     padding: 15,

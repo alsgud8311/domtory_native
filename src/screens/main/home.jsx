@@ -40,8 +40,9 @@ export default function Home({ navigation }) {
     messaging()
       .getInitialNotification()
       .then(async (remoteMessage) => {
-        if (remoteMessage) {
-          console.log("종료 상태에서 오픈");
+        if (remoteMessage.data) {
+          const { postId, boardId } = remoteMessage.data;
+          navigation.navigate(board[boardId], { postId: postId });
         }
       });
 
