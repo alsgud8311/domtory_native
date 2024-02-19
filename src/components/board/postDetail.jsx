@@ -277,6 +277,24 @@ export default function PostDetail({ data, reloadData, postId }) {
                   </View>
                   <Text style={styles.commentDeleted}>삭제된 댓글입니다.</Text>
                 </>
+              ) : comment.is_blocked ? (
+                <>
+                  <View style={{ flexDirection: "row" }}>
+                    <Image
+                      source={domtory}
+                      style={{
+                        width: 23,
+                        height: 23,
+                        borderRadius: 3,
+                        alignItems: "center",
+                      }}
+                    />
+                    <Text style={styles.commentMember}>신고당한 도토리</Text>
+                  </View>
+                  <Text style={styles.commentDeleted}>
+                    신고당한 댓글입니다.
+                  </Text>
+                </>
               ) : (
                 <>
                   <View
@@ -324,7 +342,6 @@ export default function PostDetail({ data, reloadData, postId }) {
                   <Text style={styles.commentDate}>{comment.created_at}</Text>
                 </>
               )}
-
               {/* 대댓글 렌더링 부분 */}
               {comment.reply && comment.reply.length > 0 && (
                 <View style={styles.replyContainer}>
@@ -343,6 +360,22 @@ export default function PostDetail({ data, reloadData, postId }) {
 
                         <Text key={reply.id} style={styles.commentDeleted}>
                           삭제된 댓글입니다.
+                        </Text>
+                      </View>
+                    ) : reply.is_blocked ? (
+                      <View style={styles.reply}>
+                        <View style={{ flexDirection: "row" }}>
+                          <Image
+                            source={domtory}
+                            style={{ width: 23, height: 23, borderRadius: 3 }}
+                          />
+                          <Text style={styles.commentMember}>
+                            신고당한 도토리
+                          </Text>
+                        </View>
+
+                        <Text key={reply.id} style={styles.commentDeleted}>
+                          신고당한 대댓글입니다.
                         </Text>
                       </View>
                     ) : (
