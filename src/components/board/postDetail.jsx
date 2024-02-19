@@ -611,7 +611,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     backgroundColor: "#d8d8d853",
     marginTop: 3,
-    marginBottom: 7,
+    marginBottom: 5,
     marginHorizontal: 10,
     paddingHorizontal: 10,
     alignItems: "center",
@@ -619,6 +619,7 @@ const styles = StyleSheet.create({
   },
   commentInput: {
     flex: 1,
+    paddingTop: Platform.OS === "ios" ? 15 : 0,
     paddingHorizontal: 10,
     paddingBottom: 1.5,
     minHeight: 45,
