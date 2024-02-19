@@ -58,11 +58,9 @@ const CommunityStack = ({ navigation }) => {
       <Stack.Screen
         name="자유 게시판"
         component={GeneralDetail}
-        options={{
-          headerRight: () => {
-            return <Popup />;
-          },
-        }}
+        options={({ navigation }) => ({
+          headerRight: () => <Popup navigation={navigation} />,
+        })}
       />
       <Stack.Screen
         name="자유게시판"
@@ -85,11 +83,9 @@ const CommunityStack = ({ navigation }) => {
       <Stack.Screen
         name="취준생게시판"
         component={JobseekerDetail}
-        options={{
-          headerRight: () => {
-            return <Popup />;
-          },
-        }}
+        options={({ navigation }) => ({
+          headerRight: () => <Popup navigation={navigation} />,
+        })}
       />
       <Stack.Screen
         name="취준생 게시판"
@@ -112,11 +108,9 @@ const CommunityStack = ({ navigation }) => {
       <Stack.Screen
         name="번개모임게시판"
         component={ImpromptuDetail}
-        options={{
-          headerRight: () => {
-            return <Popup />;
-          },
-        }}
+        options={({ navigation }) => ({
+          headerRight: () => <Popup navigation={navigation} />,
+        })}
       />
       <Stack.Screen
         name="번개모임 게시판"
@@ -139,11 +133,9 @@ const CommunityStack = ({ navigation }) => {
       <Stack.Screen
         name="중고거래게시판"
         component={FleeMarketDetail}
-        options={{
-          headerRight: () => {
-            return <Popup />;
-          },
-        }}
+        options={({ navigation }) => ({
+          headerRight: () => <Popup navigation={navigation} />,
+        })}
       />
       <Stack.Screen
         name="중고거래 게시판"
@@ -166,11 +158,9 @@ const CommunityStack = ({ navigation }) => {
       <Stack.Screen
         name="분실물게시판"
         component={LostAndFoundDetail}
-        options={{
-          headerRight: () => {
-            return <Popup />;
-          },
-        }}
+        options={({ navigation }) => ({
+          headerRight: () => <Popup navigation={navigation} />,
+        })}
       />
       <Stack.Screen
         name="분실물 게시판"

@@ -13,11 +13,11 @@ import {
 } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 import { handleReport } from "../board/postDetail";
-import { getPostDetail } from "../../server/board";
+import { deletePost, getPostDetail } from "../../server/board";
 import NewPost from "./newPost";
 import { useAuth } from "../../store/AuthContext";
 
-const PopupMenu = () => {
+const PopupMenu = ({ navigation }) => {
   const { authState } = useAuth();
   console.log(authState.id);
   const [data, setData] = useState({});
@@ -40,6 +40,16 @@ const PopupMenu = () => {
     setRefreshFlag(!refreshFlag);
   };
 
+  const handleDeleteButton = async (postId) => {
+    try {
+      await deletePost(postId);
+      Alert.alert("삭제가 완료되었습니다.");
+      navigation.pop();
+    } catch {
+      Alert.alert("삭제 도중 오류가 발생했습니다.");
+      navigation.pop();
+    }
+  };
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -79,11 +89,11 @@ const PopupMenu = () => {
             ),
         },
         {
-          title: "게시글 신고",
+          title: "게시글 삭제",
           action: () =>
             Alert.alert(
-              "게시글 신고",
-              "게시글을 신고하시겠습니까?",
+              "게시글 삭제",
+              "게시글을 삭제하시겠습니까?",
               [
                 {
                   text: "취소",
@@ -91,12 +101,31 @@ const PopupMenu = () => {
                 },
                 {
                   text: "예",
-                  onPress: () => handleReport("post", postId),
+                  onPress: () => handleDeleteButton(postId),
                 },
               ],
               { cancelable: false }
             ),
         },
+        //         {
+        //   title: "게시글 신고",
+        //   action: () =>
+        //     Alert.alert(
+        //       "게시글 신고",
+        //       "게시글을 신고하시겠습니까?",
+        //       [
+        //         {
+        //           text: "취소",
+        //           style: "cancel",
+        //         },
+        //         {
+        //           text: "예",
+        //           onPress: () => handleReport("post", postId),
+        //         },
+        //       ],
+        //       { cancelable: false }
+        //     ),
+        // },
       ]);
     } else {
       setOptions([
