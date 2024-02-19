@@ -17,7 +17,7 @@ import { getCouncilNotice } from "../../server/notice";
 import { openBrowserAsync } from "expo-web-browser";
 import { useAuth } from "../../store/AuthContext";
 
-export default function Noticebox({ navigation }) {
+export default function Noticebox({ div, navigation }) {
   const { authState } = useAuth();
   const [data, setData] = useState("");
   const [category, setCategory] = useState("cbhs");
@@ -63,6 +63,9 @@ export default function Noticebox({ navigation }) {
     }
   };
   useEffect(() => {
+    if (div === "council") {
+      setCategory("council");
+    }
     fetchPosts(currentPage);
   }, []);
 
