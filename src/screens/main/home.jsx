@@ -1,12 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-  Alert,
-  RefreshControl,
-} from "react-native";
+import { ScrollView, StyleSheet, View, Alert } from "react-native";
 import DailyMenuCard from "../../components/main/menucard";
 import Shortcuts from "../../components/main/shortcuts";
 import CommunityCard from "../../components/main/communitycard";
@@ -47,10 +40,8 @@ export default function Home({ navigation }) {
     messaging()
       .getInitialNotification()
       .then(async (remoteMessage) => {
-        if (remoteMessage.data) {
+        if (remoteMessage) {
           console.log("종료 상태에서 오픈");
-          const { postId, boardId } = remoteMessage.data;
-          navigation.navigate(board[boardId], { postId: postId });
         }
       });
 

@@ -12,8 +12,7 @@ import {
   Alert,
 } from "react-native";
 import { Entypo } from "@expo/vector-icons";
-import { handleReport } from "../board/postDetail";
-import { deletePost, getPostDetail } from "../../server/board";
+import { deletePost, getPostDetail, report } from "../../server/board";
 import NewPost from "./newPost";
 import { useAuth } from "../../store/AuthContext";
 
@@ -47,6 +46,18 @@ const PopupMenu = ({ navigation }) => {
       navigation.pop();
     } catch {
       Alert.alert("삭제 도중 오류가 발생했습니다.");
+      navigation.pop();
+    }
+  };
+
+  const handleReportPost = async (type, id) => {
+    const result = await report(type, id);
+    if (result.success) {
+      Alert.alert("신고 완료", "해당 게시글 신고를 완료했습니다.");
+      navigation.pop();
+    } else {
+      console.error("신고 실패:", result.data);
+      Alert.alert("오류", "신고에 실패했습니다. 다시 시도해주세요.");
       navigation.pop();
     }
   };
@@ -142,7 +153,7 @@ const PopupMenu = ({ navigation }) => {
                 },
                 {
                   text: "예",
-                  onPress: () => handleReport("post", postId),
+                  onPress: () => handleReportPost("post", postId),
                 },
               ],
               { cancelable: false }

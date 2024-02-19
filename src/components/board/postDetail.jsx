@@ -28,7 +28,7 @@ import {
 export const handleReport = async (type, id) => {
   const result = await report(type, id);
   if (result.success) {
-    Alert.alert("신고 완료", "해당 게시글/댓글 신고를 완료했습니다.");
+    Alert.alert("신고 완료", "해당 댓글 신고를 완료했습니다.");
   } else {
     console.error("신고 실패:", result.data);
     Alert.alert("오류", "신고에 실패했습니다. 다시 시도해주세요.");
