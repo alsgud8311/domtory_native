@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   SafeAreaView,
   View,
@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   Alert,
   Button,
+  RefreshControl,
 } from "react-native";
 import { Octicons, Feather } from "@expo/vector-icons";
 import domtory from "../../assets/icon.png";
@@ -25,6 +26,7 @@ import {
   report,
 } from "../../server/board";
 import { useAuth } from "../../store/AuthContext";
+import { useFocusEffect } from "@react-navigation/native";
 
 export const handleReport = async (type, id) => {
   const result = await report(type, id);
@@ -38,6 +40,22 @@ export const handleReport = async (type, id) => {
 
 export default function PostDetail({ data, reloadData, postId }) {
   const { authState } = useAuth();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    reloadData();
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      reloadData();
+    }, [refreshing])
+  );
+
   if (!data) {
     return (
       <View>
@@ -217,6 +235,9 @@ export default function PostDetail({ data, reloadData, postId }) {
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={styles.scrollView}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       >
         {/* 글내용 */}
         <View style={styles.header}>

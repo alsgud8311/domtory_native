@@ -188,7 +188,7 @@ const list = StyleSheet.create({
     fontSize: 13,
   },
   title: {
-    flex: 4,
+    flex: 3.5,
     fontSize: 13,
     marginRight: 15,
   },

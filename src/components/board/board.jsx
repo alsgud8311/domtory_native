@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Platform,
+  RefreshControl,
 } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import NewPost from "./newPost";
@@ -18,6 +19,14 @@ export default function Board({ boardId, navigation }) {
   const [data, setData] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
   const [refreshFlag, setRefreshFlag] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -36,7 +45,7 @@ export default function Board({ boardId, navigation }) {
       };
 
       fetchData();
-    }, [boardId, refreshFlag])
+    }, [boardId, refreshFlag, refreshing])
   );
 
   console.log(data);
@@ -109,6 +118,9 @@ export default function Board({ boardId, navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         data={data}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}

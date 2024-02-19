@@ -75,6 +75,7 @@ export default function NewPost({
       setImage([]);
       setIsTitleFocused(false);
       setIsContentFocused(false);
+      setIsLoading(false);
       onClose();
       return;
     }
@@ -90,6 +91,7 @@ export default function NewPost({
             setImage([]);
             setIsTitleFocused(false);
             setIsContentFocused(false);
+            setIsLoading(false);
             onClose();
           },
         },
@@ -136,6 +138,7 @@ export default function NewPost({
                 setImage([]);
                 onClose();
                 onSuccess();
+                setIsLoading(false);
               } else {
                 console.error("자율회 게시글 작성에 실패했습니다:", result);
                 Alert.alert(
@@ -152,6 +155,7 @@ export default function NewPost({
                 setImage([]);
                 onClose();
                 onPostSubmit();
+                setIsLoading(false);
               } else {
                 console.error("게시글 작성에 실패했습니다:");
                 Alert.alert(
@@ -225,6 +229,7 @@ export default function NewPost({
               Alert.alert("게시글이 성공적으로 수정되었습니다.");
               onClose();
               onPostSubmit();
+              setIsLoading(false);
             } else {
               console.error(
                 "게시글 작성에 실패했습니다:",
@@ -259,6 +264,7 @@ export default function NewPost({
       setTitle("");
       setContent("");
       setImage([]);
+      setIsLoading(false);
     }
   }, [post]);
 
