@@ -52,7 +52,10 @@ export default function CommunityCard({ navigation }) {
               <TouchableOpacity
                 key={index}
                 onPress={() =>
-                  navigation.navigate("자유 게시판", { postId: post.id })
+                  navigation.navigate("자유 게시판", {
+                    postId: post.id,
+                    memberId: post.member,
+                  })
                 }
                 style={
                   index !== communityData.length - 1

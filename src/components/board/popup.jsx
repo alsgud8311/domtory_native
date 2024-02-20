@@ -13,32 +13,14 @@ import {
 } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 import { deletePost, getPostDetail, report } from "../../server/board";
-import NewPost from "./newPost";
 import { useAuth } from "../../store/AuthContext";
 
 const PopupMenu = ({ navigation }) => {
   const { authState } = useAuth();
-  console.log(authState.id);
-  const [data, setData] = useState({});
   const route = useRoute();
   const { postId, memberId } = route.params;
-
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [refreshFlag, setRefreshFlag] = useState(false);
   const [options, setOptions] = useState([]);
-
-  const handleOpenNewPost = () => {
-    setModalVisible(true);
-  };
-
-  const handleCloseNewPost = () => {
-    setModalVisible(false);
-  };
-
-  const handleNewPostSubmit = () => {
-    setRefreshFlag(!refreshFlag);
-  };
-
+  console.log("뭐가문젠겨", postId, memberId);
   const handleDeleteButton = async (postId) => {
     try {
       const { success } = await deletePost(postId);
@@ -66,18 +48,6 @@ const PopupMenu = ({ navigation }) => {
       navigation.pop();
     }
   };
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const result = await getPostDetail(postId);
-  //       setData(result.data);
-  //     } catch (error) {
-  //       console.error("Failed to fetch data:", error);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, [postId]);
 
   const [visible, setVisible] = useState(false);
   const scale = useRef(new Animated.Value(0)).current;
@@ -98,7 +68,8 @@ const PopupMenu = ({ navigation }) => {
                 },
                 {
                   text: "예",
-                  onPress: () => handleOpenNewPost(),
+                  onPress: () =>
+                    navigation.navigate("게시글 수정", { postId: postId }),
                 },
               ],
               { cancelable: false } // Android에서 백 버튼을 눌렀을 때 대화 상자가 닫히지 않도록 설정
@@ -123,25 +94,6 @@ const PopupMenu = ({ navigation }) => {
               { cancelable: false }
             ),
         },
-        //         {
-        //   title: "게시글 신고",
-        //   action: () =>
-        //     Alert.alert(
-        //       "게시글 신고",
-        //       "게시글을 신고하시겠습니까?",
-        //       [
-        //         {
-        //           text: "취소",
-        //           style: "cancel",
-        //         },
-        //         {
-        //           text: "예",
-        //           onPress: () => handleReport("post", postId),
-        //         },
-        //       ],
-        //       { cancelable: false }
-        //     ),
-        // },
       ]);
     } else {
       setOptions([
@@ -166,7 +118,7 @@ const PopupMenu = ({ navigation }) => {
         },
       ]);
     }
-  }, [data, authState.id]);
+  }, [authState.id]);
 
   function resizeBox(to) {
     to === 1 && setVisible(true);
@@ -209,12 +161,6 @@ const PopupMenu = ({ navigation }) => {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
-      <NewPost
-        isVisible={isModalVisible}
-        onClose={handleCloseNewPost}
-        onPostSubmit={handleNewPostSubmit}
-        post={data}
-      />
     </>
   );
 };

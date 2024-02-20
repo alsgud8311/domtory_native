@@ -33,6 +33,7 @@ import { AntDesign, Entypo } from "@expo/vector-icons";
 import Popup from "../../components/board/popup";
 import CouncilNoticeDetail from "../notice/CouncilNoticeDetail";
 import MyComment from "./mypost/mycomment";
+import PostFix from "../board/postfix";
 
 const CommunityStack = ({ navigation }) => {
   const Stack = createNativeStackNavigator();
@@ -182,6 +183,11 @@ const CommunityStack = ({ navigation }) => {
       />
       <Stack.Screen name="검색" component={Search} />
       <Stack.Screen name="자율회 공지사항" component={CouncilNoticeDetail} />
+      <Stack.Screen
+        name="게시글 수정"
+        component={PostFix}
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 };

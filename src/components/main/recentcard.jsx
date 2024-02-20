@@ -49,7 +49,10 @@ export default function RecentPostCard({ navigation }) {
             key={index}
             style={styles.card}
             onPress={() =>
-              navigation.navigate(boardList[data.board], { postId: data.id })
+              navigation.navigate(boardList[data.board], {
+                postId: data.id,
+                memberId: data.member,
+              })
             }
           >
             <View
