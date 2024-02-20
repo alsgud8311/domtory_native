@@ -12,7 +12,6 @@ import React from "react";
 import { apiBe } from "../../server";
 import { Notifications } from "expo";
 import * as Notification from "expo-notifications";
-
 // import * as SplashScreen from "expo-splash-screen";
 
 Notification.setNotificationHandler({
@@ -40,17 +39,28 @@ export default function Home({ navigation }) {
     messaging()
       .getInitialNotification()
       .then(async (remoteMessage) => {
-        if (remoteMessage.data) {
+        if (remoteMessage && remoteMessage.data) {
           const { postId, boardId } = remoteMessage.data;
-          navigation.navigate(board[boardId], { postId: postId });
+          if (postId && boardId) {
+            navigation.navigate(board[boardId], { postId: postId });
+          } else {
+            console.log("푸시 알림 데이터가 부족합니다.");
+          }
+        } else {
+          console.log("푸시 알림 데이터가 없습니다.");
         }
       });
 
     messaging().onNotificationOpenedApp((remoteMessage) => {
-      console.log("백그라운드에서 열었을 때", remoteMessage);
-      if (remoteMessage.data) {
+      if (remoteMessage && remoteMessage.data) {
         const { postId, boardId } = remoteMessage.data;
-        navigation.navigate(board[boardId], { postId: postId });
+        if (postId && boardId) {
+          navigation.navigate(board[boardId], { postId: postId });
+        } else {
+          console.log("푸시 알림 데이터가 부족합니다.");
+        }
+      } else {
+        console.log("푸시 알림 데이터가 없습니다.");
       }
     });
 
@@ -60,21 +70,28 @@ export default function Home({ navigation }) {
 
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
       console.log("포어그라운드", remoteMessage);
-      if (remoteMessage.data.postId && remoteMessage.data.boardId) {
+      if (remoteMessage && remoteMessage.data) {
         const { postId, boardId } = remoteMessage.data;
-        Alert.alert(
-          remoteMessage.notification.title,
-          remoteMessage.notification.body,
-          [
-            { text: "취소", style: "cancel" },
-            {
-              text: "보러가기",
-              onPress: () => {
-                navigation.navigate(board[boardId], { postId: postId });
+        if (postId && boardId) {
+          Alert.alert(
+            remoteMessage.notification.title,
+            remoteMessage.notification.body,
+            [
+              { text: "취소", style: "cancel" },
+              {
+                text: "보러가기",
+                onPress: () => {
+                  navigation.navigate(board[boardId], { postId: postId });
+                },
               },
-            },
-          ]
-        );
+            ]
+          );
+        } else {
+          Alert.alert(
+            remoteMessage.notification.title,
+            remoteMessage.notification.body
+          );
+        }
       } else {
         Alert.alert(
           remoteMessage.notification.title,
