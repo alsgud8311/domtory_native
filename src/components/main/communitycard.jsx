@@ -63,7 +63,13 @@ export default function CommunityCard({ navigation }) {
                     : styles.postLastItem
                 } // Apply borderBottom only to non-last items
               >
-                <Text style={styles.postText}>{post.title}</Text>
+                <Text
+                  style={styles.postText}
+                  ellipsizeMode="tail"
+                  numberOfLines={1}
+                >
+                  {post.title}
+                </Text>
                 <Text style={styles.postDate}>{post.created_at}</Text>
               </TouchableOpacity>
             ))}
@@ -137,6 +143,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   postText: {
+    width: "80%",
     fontSize: 16,
     paddingTop: 5,
   },
