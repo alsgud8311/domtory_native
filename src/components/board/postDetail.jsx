@@ -276,51 +276,12 @@ export default function PostDetail({ data, reloadData, postId }) {
         {/* /댓글 */}
         {data.comment &&
           data.comment.length > 0 &&
-          data.comment.map((comment) => (
-            <View key={comment.id} style={styles.commentContainer}>
-              {/* 댓글 본문 (삭제 여부 확인) */}
-              {comment.is_deleted ? (
-                <>
-                  <View style={{ flexDirection: "row" }}>
-                    <Image
-                      source={domtory}
-                      style={{
-                        width: 23,
-                        height: 23,
-                        borderRadius: 3,
-                        alignItems: "center",
-                      }}
-                    />
-                    <Text style={styles.commentMember}>삭제된 도토리</Text>
-                  </View>
-                  <Text style={styles.commentDeleted}>삭제된 댓글입니다.</Text>
-                </>
-              ) : comment.is_blocked ? (
-                <>
-                  <View style={{ flexDirection: "row" }}>
-                    <Image
-                      source={domtory}
-                      style={{
-                        width: 23,
-                        height: 23,
-                        borderRadius: 3,
-                        alignItems: "center",
-                      }}
-                    />
-                    <Text style={styles.commentMember}>신고당한 도토리</Text>
-                  </View>
-                  <Text style={styles.commentDeleted}>
-                    신고당한 댓글입니다.
-                  </Text>
-                </>
-              ) : (
-                <>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                    }}
-                  >
+          data.comment.map((comment) =>
+            comment.is_deleted && comment.reply.length === 0 ? null : (
+              <View key={comment.id} style={styles.commentContainer}>
+                {/* 댓글 본문 (삭제 여부 확인) */}
+                {comment.is_deleted ? (
+                  <>
                     <View style={{ flexDirection: "row" }}>
                       <Image
                         source={domtory}
@@ -328,120 +289,172 @@ export default function PostDetail({ data, reloadData, postId }) {
                           width: 23,
                           height: 23,
                           borderRadius: 3,
+                          alignItems: "center",
                         }}
                       />
-                      <Text style={styles.commentMember}>익명의 도토리</Text>
+                      <Text style={styles.commentMember}>삭제된 도토리</Text>
                     </View>
-                    <View style={styles.commentOption}>
-                      <Octicons
-                        name="comment-discussion"
-                        style={styles.commnetReply}
-                        onPress={() => promptForReply(comment.id)}
+                    <Text style={styles.commentDeleted}>
+                      삭제된 댓글입니다.
+                    </Text>
+                  </>
+                ) : comment.is_blocked ? (
+                  <>
+                    <View style={{ flexDirection: "row" }}>
+                      <Image
+                        source={domtory}
+                        style={{
+                          width: 23,
+                          height: 23,
+                          borderRadius: 3,
+                          alignItems: "center",
+                        }}
                       />
-                      {parseInt(authState.id) === comment.member ? (
-                        <TouchableOpacity
-                          onPress={() => confirmDelete(comment.id)}
-                        >
-                          <Octicons name="trash" style={styles.commnetDelete} />
-                        </TouchableOpacity>
-                      ) : (
-                        <Octicons
-                          name="stop"
-                          style={styles.commnetReport}
-                          onPress={() =>
-                            confirmAndReport("comment", comment.id)
-                          }
-                        />
-                      )}
+                      <Text style={styles.commentMember}>신고당한 도토리</Text>
                     </View>
-                  </View>
-
-                  <Text style={styles.commentContent}>{comment.body}</Text>
-                  <Text style={styles.commentDate}>{comment.created_at}</Text>
-                </>
-              )}
-              {/* 대댓글 렌더링 부분 */}
-              {comment.reply && comment.reply.length > 0 && (
-                <View style={styles.replyContainer}>
-                  {comment.reply.map((reply, index) =>
-                    reply.is_deleted ? (
-                      <View style={styles.reply}>
-                        <View style={{ flexDirection: "row" }}>
-                          <Image
-                            source={domtory}
-                            style={{ width: 23, height: 23, borderRadius: 3 }}
-                          />
-                          <Text style={styles.commentMember}>
-                            삭제된 도토리
-                          </Text>
-                        </View>
-
-                        <Text key={reply.id} style={styles.commentDeleted}>
-                          삭제된 댓글입니다.
-                        </Text>
-                      </View>
-                    ) : reply.is_blocked ? (
-                      <View style={styles.reply}>
-                        <View style={{ flexDirection: "row" }}>
-                          <Image
-                            source={domtory}
-                            style={{ width: 23, height: 23, borderRadius: 3 }}
-                          />
-                          <Text style={styles.commentMember}>
-                            신고당한 도토리
-                          </Text>
-                        </View>
-
-                        <Text key={reply.id} style={styles.commentDeleted}>
-                          신고당한 대댓글입니다.
-                        </Text>
-                      </View>
-                    ) : (
-                      <View style={styles.reply}>
-                        <View
+                    <Text style={styles.commentDeleted}>
+                      신고당한 댓글입니다.
+                    </Text>
+                  </>
+                ) : (
+                  <>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <View style={{ flexDirection: "row" }}>
+                        <Image
+                          source={domtory}
                           style={{
-                            flexDirection: "row",
-                            justifyContent: "space-between",
+                            width: 23,
+                            height: 23,
+                            borderRadius: 3,
                           }}
-                        >
+                        />
+                        <Text style={styles.commentMember}>익명의 도토리</Text>
+                      </View>
+                      <View style={styles.commentOption}>
+                        <Octicons
+                          name="comment-discussion"
+                          style={styles.commnetReply}
+                          onPress={() => promptForReply(comment.id)}
+                        />
+                        {parseInt(authState.id) === comment.member ? (
+                          <TouchableOpacity
+                            onPress={() => confirmDelete(comment.id)}
+                          >
+                            <Octicons
+                              name="trash"
+                              style={styles.commnetDelete}
+                            />
+                          </TouchableOpacity>
+                        ) : (
+                          <Octicons
+                            name="stop"
+                            style={styles.commnetReport}
+                            onPress={() =>
+                              confirmAndReport("comment", comment.id)
+                            }
+                          />
+                        )}
+                      </View>
+                    </View>
+
+                    <Text style={styles.commentContent}>{comment.body}</Text>
+                    <Text style={styles.commentDate}>{comment.created_at}</Text>
+                  </>
+                )}
+                {/* 대댓글 렌더링 부분 */}
+                {comment.reply && comment.reply.length > 0 && (
+                  <View style={styles.replyContainer}>
+                    {comment.reply.map((reply, index) =>
+                      reply.is_deleted ? (
+                        <View style={styles.reply}>
                           <View style={{ flexDirection: "row" }}>
                             <Image
                               source={domtory}
                               style={{ width: 23, height: 23, borderRadius: 3 }}
                             />
                             <Text style={styles.commentMember}>
-                              익명의 도토리
+                              삭제된 도토리
                             </Text>
                           </View>
-                          <View style={styles.commentOption}>
-                            {parseInt(authState.id) === reply.member ? (
-                              <Octicons
-                                name="trash"
-                                style={styles.commnetDelete}
-                                onPress={() => confirmReplyDelete(reply.id)}
-                              />
-                            ) : (
-                              <Octicons
-                                name="stop"
-                                style={styles.commnetReport}
-                                onPress={() =>
-                                  confirmAndReport("comment", reply.id)
-                                }
-                              />
-                            )}
-                          </View>
+
+                          <Text key={reply.id} style={styles.commentDeleted}>
+                            삭제된 댓글입니다.
+                          </Text>
                         </View>
-                        <Text style={styles.commentContent}>{reply.body}</Text>
-                        <Text style={styles.commentDate}>
-                          {reply.created_at}
-                        </Text>
-                      </View>
-                    )
-                  )}
-                </View>
-              )}
-            </View>
-          ))}
+                      ) : reply.is_blocked ? (
+                        <View style={styles.reply}>
+                          <View style={{ flexDirection: "row" }}>
+                            <Image
+                              source={domtory}
+                              style={{ width: 23, height: 23, borderRadius: 3 }}
+                            />
+                            <Text style={styles.commentMember}>
+                              신고당한 도토리
+                            </Text>
+                          </View>
+
+                          <Text key={reply.id} style={styles.commentDeleted}>
+                            신고당한 대댓글입니다.
+                          </Text>
+                        </View>
+                      ) : (
+                        <View style={styles.reply}>
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              justifyContent: "space-between",
+                            }}
+                          >
+                            <View style={{ flexDirection: "row" }}>
+                              <Image
+                                source={domtory}
+                                style={{
+                                  width: 23,
+                                  height: 23,
+                                  borderRadius: 3,
+                                }}
+                              />
+                              <Text style={styles.commentMember}>
+                                익명의 도토리
+                              </Text>
+                            </View>
+                            <View style={styles.commentOption}>
+                              {parseInt(authState.id) === reply.member ? (
+                                <Octicons
+                                  name="trash"
+                                  style={styles.commnetDelete}
+                                  onPress={() => confirmReplyDelete(reply.id)}
+                                />
+                              ) : (
+                                <Octicons
+                                  name="stop"
+                                  style={styles.commnetReport}
+                                  onPress={() =>
+                                    confirmAndReport("comment", reply.id)
+                                  }
+                                />
+                              )}
+                            </View>
+                          </View>
+                          <Text style={styles.commentContent}>
+                            {reply.body}
+                          </Text>
+                          <Text style={styles.commentDate}>
+                            {reply.created_at}
+                          </Text>
+                        </View>
+                      )
+                    )}
+                  </View>
+                )}
+              </View>
+            )
+          )}
       </ScrollView>
       {/* 댓글 작성 */}
       <KeyboardAvoidingView
