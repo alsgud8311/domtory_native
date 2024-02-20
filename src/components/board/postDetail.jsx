@@ -334,7 +334,15 @@ export default function PostDetail({ data, reloadData, postId }) {
                             borderRadius: 3,
                           }}
                         />
-                        <Text style={styles.commentMember}>익명의 도토리</Text>
+                        {comment.anonymous_number ? (
+                          <Text style={styles.commentMember}>
+                            글쓴이 도토리
+                          </Text>
+                        ) : (
+                          <Text style={styles.commentMember}>
+                            익명의 도토리{comment.anonymous_number}
+                          </Text>
+                        )}
                       </View>
                       <View style={styles.commentOption}>
                         <Octicons
@@ -372,7 +380,7 @@ export default function PostDetail({ data, reloadData, postId }) {
                   <View style={styles.replyContainer}>
                     {comment.reply.map((reply, index) =>
                       reply.is_deleted ? (
-                        <View style={styles.reply}>
+                        <View style={styles.reply} key={index}>
                           <View style={{ flexDirection: "row" }}>
                             <Image
                               source={domtory}
@@ -420,9 +428,15 @@ export default function PostDetail({ data, reloadData, postId }) {
                                   borderRadius: 3,
                                 }}
                               />
-                              <Text style={styles.commentMember}>
-                                익명의 도토리
-                              </Text>
+                              {reply.anonymous_number === 0 ? (
+                                <Text style={styles.commentMember}>
+                                  글쓴이 도토리
+                                </Text>
+                              ) : (
+                                <Text style={styles.commentMember}>
+                                  익명의 도토리{reply.anonymous_number}
+                                </Text>
+                              )}
                             </View>
                             <View style={styles.commentOption}>
                               {parseInt(authState.id) === reply.member ? (

@@ -14,7 +14,6 @@ import tools from "../../assets/tools.png";
 import dorm from "../../assets/dorm.png";
 import night from "../../assets/night.png";
 import books from "../../assets/books.png";
-import TestScreen from "./webmodal";
 import { useCallback, useState } from "react";
 
 export default function Shortcuts({ navigation }) {
