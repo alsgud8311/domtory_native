@@ -13,7 +13,6 @@ export default function GeneralDetail() {
       const result = await getPostDetail(postId);
       console.log(result);
       setData(result.data);
-      console.log("damm");
     } catch (error) {
       console.error("Failed to reload data:", error);
     }

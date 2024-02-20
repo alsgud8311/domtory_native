@@ -27,7 +27,7 @@ import {
   report,
 } from "../../server/board";
 import { useAuth } from "../../store/AuthContext";
-import { useFocusEffect } from "@react-navigation/native";
+import ImageModal from "react-native-image-modal";
 
 export const handleReport = async (type, id) => {
   const result = await report(type, id);
@@ -255,7 +255,8 @@ export default function PostDetail({ data, reloadData, postId }) {
           data.post_image.map((img, index) => {
             if (!img.is_deleted) {
               return (
-                <Image
+                <ImageModal
+                  resizeMode="contain"
                   key={img.id}
                   source={{ uri: img.image_url }}
                   style={{
