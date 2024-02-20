@@ -259,7 +259,6 @@ export default function NewPost({
       setContent(post.body);
       setExistedImage(post.post_image || []);
       setIsLoading(false);
-      console.log("existed", existedImage);
     } else {
       setTitle("");
       setContent("");

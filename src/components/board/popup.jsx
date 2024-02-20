@@ -21,7 +21,7 @@ const PopupMenu = ({ navigation }) => {
   console.log(authState.id);
   const [data, setData] = useState({});
   const route = useRoute();
-  const { postId } = route.params;
+  const { postId, memberId } = route.params;
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [refreshFlag, setRefreshFlag] = useState(false);
@@ -66,24 +66,24 @@ const PopupMenu = ({ navigation }) => {
       navigation.pop();
     }
   };
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await getPostDetail(postId);
-        setData(result.data);
-      } catch (error) {
-        console.error("Failed to fetch data:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const result = await getPostDetail(postId);
+  //       setData(result.data);
+  //     } catch (error) {
+  //       console.error("Failed to fetch data:", error);
+  //     }
+  //   };
 
-    fetchData();
-  }, [postId]);
+  //   fetchData();
+  // }, [postId]);
 
   const [visible, setVisible] = useState(false);
   const scale = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    if (data.member && authState.id && data.member === parseInt(authState.id)) {
+    if (memberId && authState.id && memberId === parseInt(authState.id)) {
       setOptions([
         {
           title: "게시글 수정",

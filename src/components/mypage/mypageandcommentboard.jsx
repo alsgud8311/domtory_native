@@ -65,7 +65,10 @@ export default function MypageAndCommentBoard({ post, navigation }) {
     return (
       <TouchableOpacity
         onPress={() =>
-          navigation.navigate(boardId[item.board], { postId: item.id })
+          navigation.navigate(boardId[item.board], {
+            postId: item.id,
+            memberId: item.member,
+          })
         }
       >
         <View style={styles.item}>

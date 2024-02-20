@@ -51,12 +51,6 @@ export default function PostDetail({ data, reloadData, postId }) {
     }, 1000);
   }, []);
 
-  useFocusEffect(
-    useCallback(() => {
-      reloadData();
-    }, [refreshing])
-  );
-
   if (!data) {
     return (
       <View>

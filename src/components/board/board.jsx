@@ -86,7 +86,10 @@ export default function Board({ boardId, navigation }) {
       }
 
       if (screenName !== "일치하는 게시판 없음") {
-        navigation.navigate(screenName, { postId: item.id });
+        navigation.navigate(screenName, {
+          postId: item.id,
+          memberId: item.member,
+        });
       }
     };
 
@@ -96,7 +99,9 @@ export default function Board({ boardId, navigation }) {
           {/* 제목, 내용 */}
           <View style={{ width: "80%" }}>
             <Text style={styles.title}>{item.title}</Text>
-            <Text style={styles.content}>{item.body}</Text>
+            <Text style={styles.content} ellipsizeMode="tail" numberOfLines={2}>
+              {item.body}
+            </Text>
 
             {/* 유저, 작성일 */}
             <View style={{ flexDirection: "row", marginTop: 7, height: 15 }}>
