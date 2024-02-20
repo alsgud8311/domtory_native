@@ -72,12 +72,15 @@ export default function MypageAndCommentBoard({ post, navigation }) {
         }
       >
         <View style={styles.item}>
-          <View style={{ flexDirection: "column", marginBottom: 5 }}>
-            {/* 제목, 내용 */}
-            <View>
-              <Text style={styles.title}>{item.title}</Text>
-              <Text style={styles.content}>{item.body}</Text>
-            </View>
+          {/* 제목, 내용 */}
+          <View style={{ width: "80%" }}>
+            <Text style={styles.title} ellipsizeMode="tail" numberOfLines={1}>
+              {item.title}
+            </Text>
+            <Text style={styles.content} ellipsizeMode="tail" numberOfLines={2}>
+              {item.body}
+            </Text>
+
             {/* 유저, 작성일 */}
             <View style={{ flexDirection: "row", marginTop: 7, height: 15 }}>
               <Text style={styles.date}>{item.created_at}</Text>
@@ -87,7 +90,18 @@ export default function MypageAndCommentBoard({ post, navigation }) {
           </View>
           {/* 사진 */}
           {item.thumbnail_url && (
-            <Image source={{ uri: item.thumbnail_url }} style={styles.image} />
+            <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                paddingRight: 10,
+              }}
+            >
+              <Image
+                source={{ uri: item.thumbnail_url }}
+                style={styles.image}
+              />
+            </View>
           )}
         </View>
       </TouchableOpacity>
@@ -115,6 +129,7 @@ const styles = StyleSheet.create({
   },
   // 글 박스
   item: {
+    width: "100%",
     backgroundColor: "#ffffff",
     borderRadius: 5,
     padding: 15,
@@ -147,11 +162,13 @@ const styles = StyleSheet.create({
     color: "#5a5a5a",
   },
   title: {
+    paddingRight: 10,
     fontSize: 14,
     fontWeight: "700",
     marginBottom: 2.5,
   },
   content: {
+    paddingRight: 10,
     fontSize: 13,
     marginBottom: 2,
   },

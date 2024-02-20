@@ -98,7 +98,9 @@ export default function Board({ boardId, navigation }) {
         <View style={styles.item}>
           {/* 제목, 내용 */}
           <View style={{ width: "80%" }}>
-            <Text style={styles.title}>{item.title}</Text>
+            <Text style={styles.title} ellipsizeMode="tail" numberOfLines={1}>
+              {item.title}
+            </Text>
             <Text style={styles.content} ellipsizeMode="tail" numberOfLines={2}>
               {item.body}
             </Text>
@@ -198,10 +200,12 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 14,
+    paddingRight: 10,
     fontWeight: "700",
     marginBottom: 2.5,
   },
   content: {
+    paddingRight: 10,
     fontSize: 13,
     marginBottom: 2,
   },
