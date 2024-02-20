@@ -44,7 +44,7 @@ export default function Shortcuts({ navigation }) {
         <TouchableOpacity
           style={styles.buttonWrapper}
           // 학사내 공지사항으로 navigate
-          onPress={() => navigation.navigate("공지사항")}
+          onPress={() => navigation.navigate("공지사항", { div: "cbhs" })}
         >
           <Image style={styles.buttons} source={announcement} />
           <Text>공지사항</Text>

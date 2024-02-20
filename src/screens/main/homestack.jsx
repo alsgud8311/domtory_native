@@ -21,7 +21,7 @@ import Header from "../../components/common/header";
 import { stackscreenOptions } from "../../constants/screenoptions";
 import { Image } from "react-native";
 import domtoryText from "../../assets/domtory_text.png";
-import { Entypo } from "@expo/vector-icons";
+import { AntDesign, Entypo } from "@expo/vector-icons";
 import PostDetail from "../../components/board/postDetail";
 import PopupMenu from "../../components/board/popup";
 
@@ -56,7 +56,24 @@ const HomeStack = ({ navigation }) => {
       <Stack.Screen name="학사내 공지사항" component={CbhsNoticeDetail} />
       <Stack.Screen name="자율회 공지사항" component={CouncilNoticeDetail} />
       <Stack.Screen name="전체검색" component={Search} />
-
+      <Stack.Screen
+        name="자유게시판"
+        component={General}
+        options={{
+          headerRight: () => {
+            return (
+              <AntDesign
+                name="search1"
+                size={30}
+                color="black"
+                onPress={() =>
+                  navigation.navigate("검색", { board: "자유게시판" })
+                }
+              />
+            );
+          },
+        }}
+      />
       {/* <Stack.Screen name="자유게시판"
         component={General}
         options={{

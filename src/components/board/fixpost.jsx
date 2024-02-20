@@ -23,15 +23,7 @@ import { writePost, updatePost } from "../../server/board";
 import { writeCouncilPost } from "../../server/notice";
 import { useFocusEffect } from "@react-navigation/native";
 
-export default function NewPost({
-  isVisible,
-  onClose,
-  boardId,
-  onPostSubmit,
-  council,
-  onSuccess,
-  post,
-}) {
+export default function fixPost({ navigation, postId }) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [image, setImage] = useState([]);

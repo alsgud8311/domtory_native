@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -8,93 +8,69 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Platform,
-  RefreshControl,
+  Alert,
 } from "react-native";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import NewPost from "./newPost";
-import { AntDesign, Octicons } from "@expo/vector-icons";
-import { getPostList } from "../../server/board";
 
-export default function Board({ boardId, navigation }) {
-  const [data, setData] = useState([]);
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [refreshFlag, setRefreshFlag] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
+import { Octicons } from "@expo/vector-icons";
+import { getMyCommentList, getMyPostList } from "../../server/mypost";
+import { useFocusEffect } from "@react-navigation/native";
 
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 1000);
-  }, []);
+export default function MypageAndCommentBoard({ post, navigation }) {
+  const [data, setData] = useState(null);
 
   useFocusEffect(
     useCallback(() => {
       const fetchData = async () => {
-        try {
-          const result = await getPostList(boardId);
-          if (result && result.data) {
-            setData(result.data);
-          } else {
-            throw new Error("No data");
+        if (post === "post") {
+          try {
+            const { success, postData } = await getMyPostList();
+            if (success) {
+              setData(postData);
+            } else {
+              Alert.alert("정보를 불러오는데 실패했습니다.");
+              navigation.pop();
+            }
+          } catch (error) {
+            Alert.alert("정보를 불러오는데 실패했습니다");
+            navigation.pop();
           }
-        } catch (error) {
-          Alert.alert("정보를 가져오는데 실패했습니다.");
-          navigation.pop();
+        } else {
+          try {
+            const result = await getMyCommentList();
+            if (result && result.data) {
+              setData(result.data);
+            } else {
+              Alert.alert("정보를 불러오는데 실패했습니다.");
+              navigation.pop();
+            }
+          } catch (error) {
+            Alert.alert("정보를 불러오는데 실패했습니다");
+            navigation.pop();
+          }
         }
       };
-
       fetchData();
-    }, [boardId, refreshFlag, refreshing])
+    }, [])
   );
 
-  console.log(data);
-
-  const handleOpenNewPost = () => {
-    setModalVisible(true);
-  };
-
-  const handleCloseNewPost = () => {
-    setModalVisible(false);
-  };
-
-  const handleNewPostSubmit = () => {
-    setRefreshFlag(!refreshFlag);
-  };
-
   const renderItem = ({ item }) => {
-    const navigateToDetailScreen = () => {
-      let screenName;
-      switch (boardId) {
-        case 1:
-          screenName = "자유 게시판";
-          break;
-        case 2:
-          screenName = "중고거래게시판";
-          break;
-        case 3:
-          screenName = "취준생게시판";
-          break;
-        case 4:
-          screenName = "번개모임게시판";
-          break;
-        case 5:
-          screenName = "분실물게시판";
-          break;
-        default:
-          screenName = "일치하는 게시판 없음";
-      }
-
-      if (screenName !== "일치하는 게시판 없음") {
-        navigation.navigate(screenName, {
-          postId: item.id,
-          memberId: item.member,
-        });
-      }
+    const boardId = {
+      1: "자유 게시판",
+      2: "중고거래게시판",
+      3: "취준생게시판",
+      4: "번개모임게시판",
+      5: "분실물게시판",
     };
 
     return (
-      <TouchableOpacity onPress={navigateToDetailScreen}>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate(boardId[item.board], {
+            postId: item.id,
+            memberId: item.member,
+          })
+        }
+      >
         <View style={styles.item}>
           {/* 제목, 내용 */}
           <View style={{ width: "80%" }}>
@@ -135,23 +111,10 @@ export default function Board({ boardId, navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
         data={data}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ paddingVertical: 20 }}
-      />
-      <TouchableOpacity onPress={handleOpenNewPost} style={styles.writeButton}>
-        <AntDesign name="form" size={24} color={"#fff"} />
-      </TouchableOpacity>
-
-      <NewPost
-        isVisible={isModalVisible}
-        onClose={handleCloseNewPost}
-        boardId={boardId}
-        onPostSubmit={handleNewPostSubmit}
       />
     </SafeAreaView>
   );
@@ -199,8 +162,8 @@ const styles = StyleSheet.create({
     color: "#5a5a5a",
   },
   title: {
-    fontSize: 14,
     paddingRight: 10,
+    fontSize: 14,
     fontWeight: "700",
     marginBottom: 2.5,
   },

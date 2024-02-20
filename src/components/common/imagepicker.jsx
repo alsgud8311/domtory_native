@@ -20,6 +20,7 @@ export const pickImage = async () => {
   console.log("이미지 선택");
   let result = await ImagePicker.launchImageLibraryAsync({
     mediaTypes: ImagePicker.MediaTypeOptions.All,
+    aspect: [4, 4],
     //사진 수정허용
     allowsEditing: true,
     //현재 용량 줄이고 높이기

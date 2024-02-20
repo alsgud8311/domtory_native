@@ -55,11 +55,13 @@ export default function CommunityCard({ navigation }) {
                   navigation.navigate("자유 게시판", { postId: post.id })
                 }
                 style={
-                  index !== communityData.length - 1 ? styles.postItem : null
+                  index !== communityData.length - 1
+                    ? styles.postItem
+                    : styles.postLastItem
                 } // Apply borderBottom only to non-last items
               >
-                <Text style={styles.postDate}>{post.created_at}</Text>
                 <Text style={styles.postText}>{post.title}</Text>
+                <Text style={styles.postDate}>{post.created_at}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -96,6 +98,7 @@ const styles = StyleSheet.create({
   },
   descriptionText: {
     fontSize: 18,
+    fontWeight: "600",
   },
   moreButton: {
     flexDirection: "row",
@@ -106,25 +109,36 @@ const styles = StyleSheet.create({
     borderColor: "orange",
     borderStyle: "solid",
     borderWidth: 1,
-    paddingHorizontal: 15,
-    paddingTop: 5,
+    paddingHorizontal: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    paddingVertical: 5,
   },
   postItem: {
     borderBottomWidth: 0.5,
     borderColor: "orange",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 10,
+    gap: 10,
+    justifyContent: "space-between",
+  },
+  postLastItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 10,
+    gap: 10,
+    justifyContent: "space-between",
   },
   postText: {
     fontSize: 16,
     paddingTop: 5,
-    paddingBottom: 15,
   },
   postDate: {
-    fontSize: 13,
-    paddingTop: 10,
+    fontSize: 12,
+    color: "gray",
   },
 });

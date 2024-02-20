@@ -73,18 +73,20 @@ const styles = StyleSheet.create({
   dateText: {
     fontSize: 24,
     marginBottom: 5,
+    fontWeight: "600",
   },
   mealTypeText: {
     fontSize: 24,
     borderBottomWidth: 2,
     borderColor: "#ff9933",
     paddingBottom: 5,
+    fontWeight: "600",
   },
   menuList: {
     paddingTop: 10,
   },
   menuItem: {
-    fontSize: 18,
+    fontSize: 15,
     paddingVertical: 2,
   },
 });

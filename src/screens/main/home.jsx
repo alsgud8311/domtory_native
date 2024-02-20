@@ -1,12 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-  Alert,
-  RefreshControl,
-} from "react-native";
+import { ScrollView, StyleSheet, View, Alert } from "react-native";
 import DailyMenuCard from "../../components/main/menucard";
 import Shortcuts from "../../components/main/shortcuts";
 import CommunityCard from "../../components/main/communitycard";
@@ -48,7 +41,6 @@ export default function Home({ navigation }) {
       .getInitialNotification()
       .then(async (remoteMessage) => {
         if (remoteMessage.data) {
-          console.log("종료 상태에서 오픈");
           const { postId, boardId } = remoteMessage.data;
           navigation.navigate(board[boardId], { postId: postId });
         }
@@ -68,7 +60,7 @@ export default function Home({ navigation }) {
 
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
       console.log("포어그라운드", remoteMessage);
-      if (remoteMessage.data) {
+      if (remoteMessage.data.postId && remoteMessage.data.boardId) {
         const { postId, boardId } = remoteMessage.data;
         Alert.alert(
           remoteMessage.notification.title,
@@ -83,6 +75,11 @@ export default function Home({ navigation }) {
             },
           ]
         );
+      } else {
+        Alert.alert(
+          remoteMessage.notification.title,
+          remoteMessage.notification.body
+        );
       }
     });
 
@@ -93,10 +90,10 @@ export default function Home({ navigation }) {
       <ScrollView style={styles.container}>
         <DailyMenuCard navigation={navigation} />
         <Shortcuts navigation={navigation} />
-        <CouncilNoticeCard navigation={navigation} />
-        <NoticeCard navigation={navigation} />
-        <CommunityCard navigation={navigation} />
         <RecentPostCard navigation={navigation} />
+        <CommunityCard navigation={navigation} />
+        <NoticeCard navigation={navigation} />
+        <CouncilNoticeCard navigation={navigation} />
       </ScrollView>
     </View>
   );

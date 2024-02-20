@@ -18,7 +18,7 @@ export default function ShortcutCard({ navigation }) {
         </View>
         <TouchableOpacity
           style={styles.sortcutButton}
-          onPress={() => navigation.navigate("공지사항")}
+          onPress={() => navigation.navigate("공지사항", { div: "cbhs" })}
         >
           <AntDesign name="notification" size={24} color="black" />
           <Text style={styles.sortcutText}>공지사항</Text>

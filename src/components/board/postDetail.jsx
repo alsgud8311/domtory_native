@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   SafeAreaView,
   View,
@@ -13,6 +13,8 @@ import {
   TouchableOpacity,
   Alert,
   Button,
+  RefreshControl,
+  Keyboard,
 } from "react-native";
 import { Octicons, Feather } from "@expo/vector-icons";
 import domtory from "../../assets/icon.png";
@@ -24,19 +26,31 @@ import {
   updatePost,
   report,
 } from "../../server/board";
+import { useAuth } from "../../store/AuthContext";
+import { useFocusEffect } from "@react-navigation/native";
 
 export const handleReport = async (type, id) => {
   const result = await report(type, id);
   if (result.success) {
-    Alert.alert("신고 완료", "해당 게시글/댓글 신고를 완료했습니다.");
+    Alert.alert("신고 완료", "해당 댓글 신고를 완료했습니다.");
   } else {
     console.error("신고 실패:", result.data);
     Alert.alert("오류", "신고에 실패했습니다. 다시 시도해주세요.");
   }
 };
-import ImageModal from "react-native-image-modal";
 
 export default function PostDetail({ data, reloadData, postId }) {
+  const { authState } = useAuth();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    reloadData();
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  }, []);
+
   if (!data) {
     return (
       <View>
@@ -83,7 +97,9 @@ export default function PostDetail({ data, reloadData, postId }) {
         },
         {
           text: "예",
-          onPress: () => setCurrentReplyingTo(commentId),
+          onPress: () => {
+            setCurrentReplyingTo(commentId);
+          },
         },
       ],
       { cancelable: false }
@@ -92,9 +108,9 @@ export default function PostDetail({ data, reloadData, postId }) {
 
   // 댓글 POST
   const handleCommentSubmit = async () => {
-    const result = await postComment(postId, comment);
-    if (result.success) {
-      console.log("댓글이 성공적으로 작성되었습니다.");
+    const { success } = await postComment(postId, comment);
+    if (success) {
+      Alert.alert("댓글이 작성되었습니다.");
       setComment("");
       reloadData();
     } else {
@@ -107,9 +123,9 @@ export default function PostDetail({ data, reloadData, postId }) {
   const handleReplySubmit = async () => {
     if (!currentReplyingTo) return;
 
-    const result = await postReply(currentReplyingTo, comment);
-    if (result.success) {
-      console.log("대댓글이 성공적으로 작성되었습니다.");
+    const { success } = await postReply(currentReplyingTo, comment);
+    if (success) {
+      Alert.alert("댓글이 작성되었습니다.");
       setComment("");
       setCurrentReplyingTo(null);
       reloadData();
@@ -140,13 +156,13 @@ export default function PostDetail({ data, reloadData, postId }) {
 
   // 댓글 삭제
   const handleDelete = async (commentId) => {
-    const result = await deleteComment(commentId);
-    if (result.success) {
-      console.log("댓글이 성공적으로 삭제되었습니다.");
+    const { success } = await deleteComment(commentId);
+    if (success) {
+      Alert.alert("댓글이 삭제되었습니다.");
       reloadData();
     } else {
       console.error("댓글 삭제에 실패했습니다:", result.data);
-      Alert.alert("댓글 삭제", "댓글 삭제에 실패했습니다. 다시 시도해주세요.");
+      Alert.alert("댓글 삭제에 실패했습니다. 다시 시도해주세요.");
     }
   };
 
@@ -171,16 +187,13 @@ export default function PostDetail({ data, reloadData, postId }) {
 
   // 대댓글 삭제
   const handleReplyDelete = async (commentId) => {
-    const result = await deleteReply(commentId);
-    if (result.success) {
-      console.log("대댓글이 성공적으로 삭제되었습니다.");
+    const { success } = await deleteReply(commentId);
+    if (success) {
+      Alert.alert("대댓글이 삭제되었습니다.");
       reloadData();
     } else {
       console.error("대댓글 삭제에 실패했습니다:", result.data);
-      Alert.alert(
-        "대댓글 삭제",
-        "대댓글 삭제에 실패했습니다. 다시 시도해주세요."
-      );
+      Alert.alert("대댓글 삭제에 실패했습니다. 다시 시도해주세요.");
     }
   };
 
@@ -219,6 +232,9 @@ export default function PostDetail({ data, reloadData, postId }) {
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={styles.scrollView}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       >
         {/* 글내용 */}
         <View style={styles.header}>
@@ -239,10 +255,8 @@ export default function PostDetail({ data, reloadData, postId }) {
           data.post_image.map((img, index) => {
             if (!img.is_deleted) {
               return (
-                <ImageModal
-                  key={index}
-                  swipeToDismiss={true}
-                  resizeMode="contain"
+                <Image
+                  key={img.id}
                   source={{ uri: img.image_url }}
                   style={{
                     width: screenWidth,
@@ -262,122 +276,198 @@ export default function PostDetail({ data, reloadData, postId }) {
         {/* /댓글 */}
         {data.comment &&
           data.comment.length > 0 &&
-          data.comment.map((comment) => (
-            <View key={comment.id} style={styles.commentContainer}>
-              {/* 댓글 본문 (삭제 여부 확인) */}
-              {comment.is_deleted ? (
-                <>
-                  <Image
-                    source={domtory}
-                    style={{ width: 23, height: 23, borderRadius: 3 }}
-                  />
-                  <Text style={styles.commentDeleted}>삭제된 댓글입니다.</Text>
-                </>
-              ) : (
-                <>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                    }}
-                  >
+          data.comment.map((comment) =>
+            comment.is_deleted && comment.reply.length === 0 ? null : (
+              <View key={comment.id} style={styles.commentContainer}>
+                {/* 댓글 본문 (삭제 여부 확인) */}
+                {comment.is_deleted ? (
+                  <>
                     <View style={{ flexDirection: "row" }}>
                       <Image
                         source={domtory}
-                        style={{ width: 23, height: 23, borderRadius: 3 }}
+                        style={{
+                          width: 23,
+                          height: 23,
+                          borderRadius: 3,
+                          alignItems: "center",
+                        }}
                       />
-                      <Text style={styles.commentMember}>도토리</Text>
+                      <Text style={styles.commentMember}>삭제된 도토리</Text>
                     </View>
-                    <View style={styles.commentOption}>
-                      <Octicons
-                        name="comment-discussion"
-                        style={styles.commnetReply}
-                        onPress={() => promptForReply(comment.id)}
+                    <Text style={styles.commentDeleted}>
+                      삭제된 댓글입니다.
+                    </Text>
+                  </>
+                ) : comment.is_blocked ? (
+                  <>
+                    <View style={{ flexDirection: "row" }}>
+                      <Image
+                        source={domtory}
+                        style={{
+                          width: 23,
+                          height: 23,
+                          borderRadius: 3,
+                          alignItems: "center",
+                        }}
                       />
-                      <TouchableOpacity
-                        onPress={() => confirmDelete(comment.id)}
-                      >
-                        <Octicons name="trash" style={styles.commnetDelete} />
-                      </TouchableOpacity>
-                      <Octicons
-                        name="stop"
-                        style={styles.commnetReport}
-                        onPress={() => confirmAndReport("comment", comment.id)}
-                      />
+                      <Text style={styles.commentMember}>신고당한 도토리</Text>
                     </View>
-                  </View>
-
-                  <Text style={styles.commentContent}>{comment.body}</Text>
-                  <Text style={styles.commentDate}>{comment.created_at}</Text>
-                </>
-              )}
-
-              {/* 대댓글 렌더링 부분 */}
-              {comment.reply && comment.reply.length > 0 && (
-                <View style={styles.replyContainer}>
-                  {comment.reply.map((reply) =>
-                    reply.is_deleted ? (
-                      <View style={styles.reply}>
+                    <Text style={styles.commentDeleted}>
+                      신고당한 댓글입니다.
+                    </Text>
+                  </>
+                ) : (
+                  <>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <View style={{ flexDirection: "row" }}>
                         <Image
                           source={domtory}
-                          style={{ width: 23, height: 23, borderRadius: 3 }}
-                        />
-                        <Text key={reply.id} style={styles.commentDeleted}>
-                          삭제된 댓글입니다.
-                        </Text>
-                      </View>
-                    ) : (
-                      <View style={styles.reply}>
-                        <View
                           style={{
-                            flexDirection: "row",
-                            justifyContent: "space-between",
+                            width: 23,
+                            height: 23,
+                            borderRadius: 3,
                           }}
-                        >
+                        />
+                        <Text style={styles.commentMember}>익명의 도토리</Text>
+                      </View>
+                      <View style={styles.commentOption}>
+                        <Octicons
+                          name="comment-discussion"
+                          style={styles.commnetReply}
+                          onPress={() => promptForReply(comment.id)}
+                        />
+                        {parseInt(authState.id) === comment.member ? (
+                          <TouchableOpacity
+                            onPress={() => confirmDelete(comment.id)}
+                          >
+                            <Octicons
+                              name="trash"
+                              style={styles.commnetDelete}
+                            />
+                          </TouchableOpacity>
+                        ) : (
+                          <Octicons
+                            name="stop"
+                            style={styles.commnetReport}
+                            onPress={() =>
+                              confirmAndReport("comment", comment.id)
+                            }
+                          />
+                        )}
+                      </View>
+                    </View>
+
+                    <Text style={styles.commentContent}>{comment.body}</Text>
+                    <Text style={styles.commentDate}>{comment.created_at}</Text>
+                  </>
+                )}
+                {/* 대댓글 렌더링 부분 */}
+                {comment.reply && comment.reply.length > 0 && (
+                  <View style={styles.replyContainer}>
+                    {comment.reply.map((reply, index) =>
+                      reply.is_deleted ? (
+                        <View style={styles.reply}>
                           <View style={{ flexDirection: "row" }}>
                             <Image
                               source={domtory}
                               style={{ width: 23, height: 23, borderRadius: 3 }}
                             />
                             <Text style={styles.commentMember}>
-                              {reply.member}
+                              삭제된 도토리
                             </Text>
                           </View>
-                          <View style={styles.commentOption}>
-                            <Octicons
-                              name="comment-discussion"
-                              style={styles.commnetReply}
-                              onPress={() => promptForReply(comment.id)}
-                            />
-                            <Octicons
-                              name="trash"
-                              style={styles.commnetDelete}
-                              onPress={() => confirmReplyDelete(reply.id)}
-                            />
-                            <Octicons
-                              name="stop"
-                              style={styles.commnetReport}
-                              onPress={() =>
-                                confirmAndReport("comment", reply.id)
-                              }
-                            />
-                          </View>
-                        </View>
-                        <Text style={styles.commentContent}>{reply.body}</Text>
-                        <Text style={styles.commentDate}>
-                          {reply.created_at}
-                        </Text>
-                      </View>
-                    )
-                  )}
-                </View>
-              )}
-            </View>
-          ))}
-      </ScrollView>
 
+                          <Text key={reply.id} style={styles.commentDeleted}>
+                            삭제된 댓글입니다.
+                          </Text>
+                        </View>
+                      ) : reply.is_blocked ? (
+                        <View style={styles.reply}>
+                          <View style={{ flexDirection: "row" }}>
+                            <Image
+                              source={domtory}
+                              style={{ width: 23, height: 23, borderRadius: 3 }}
+                            />
+                            <Text style={styles.commentMember}>
+                              신고당한 도토리
+                            </Text>
+                          </View>
+
+                          <Text key={reply.id} style={styles.commentDeleted}>
+                            신고당한 대댓글입니다.
+                          </Text>
+                        </View>
+                      ) : (
+                        <View style={styles.reply}>
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              justifyContent: "space-between",
+                            }}
+                          >
+                            <View style={{ flexDirection: "row" }}>
+                              <Image
+                                source={domtory}
+                                style={{
+                                  width: 23,
+                                  height: 23,
+                                  borderRadius: 3,
+                                }}
+                              />
+                              <Text style={styles.commentMember}>
+                                익명의 도토리
+                              </Text>
+                            </View>
+                            <View style={styles.commentOption}>
+                              {parseInt(authState.id) === reply.member ? (
+                                <Octicons
+                                  name="trash"
+                                  style={styles.commnetDelete}
+                                  onPress={() => confirmReplyDelete(reply.id)}
+                                />
+                              ) : (
+                                <Octicons
+                                  name="stop"
+                                  style={styles.commnetReport}
+                                  onPress={() =>
+                                    confirmAndReport("comment", reply.id)
+                                  }
+                                />
+                              )}
+                            </View>
+                          </View>
+                          <Text style={styles.commentContent}>
+                            {reply.body}
+                          </Text>
+                          <Text style={styles.commentDate}>
+                            {reply.created_at}
+                          </Text>
+                        </View>
+                      )
+                    )}
+                  </View>
+                )}
+              </View>
+            )
+          )}
+      </ScrollView>
       {/* 댓글 작성 */}
-      <KeyboardAvoidingView style={styles.writeComment}>
+      <KeyboardAvoidingView
+        style={styles.writeComment}
+        behavior={Platform.OS === "ios" ? "padding" : null}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : -500} // iOS 외 플랫폼에서는 원하는 값으로 설정
+      >
+        {/* <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        > */}
         <View style={styles.inputBox}>
           <TextInput
             placeholder={
@@ -400,6 +490,7 @@ export default function PostDetail({ data, reloadData, postId }) {
             <Feather name="edit-3" size={23} color="#ffa451" />
           </TouchableOpacity>
         </View>
+        {/* </ScrollView> */}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -450,10 +541,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginLeft: 3,
-    paddingBottom: 15,
+    paddingBottom: 5,
     borderBottomWidth: 1,
     borderBottomColor: "#e1e1e1",
     marginBottom: 13,
+    marginTop: 15,
   },
   commentIcon: {
     fontSize: 17,
@@ -541,7 +633,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: "white",
     width: "100%",
-    paddingBottom: 70,
+    marginBottom: 70,
   },
   inputBox: {
     flexDirection: "row",
@@ -550,22 +642,19 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     backgroundColor: "#d8d8d853",
     marginTop: 3,
-    marginBottom: 7,
+    marginBottom: 5,
     marginHorizontal: 10,
     paddingHorizontal: 10,
     alignItems: "center",
-    justifyContent: "center",
     flex: 1,
   },
   commentInput: {
     flex: 1,
+    paddingTop: Platform.OS === "ios" ? 15 : 0,
     paddingHorizontal: 10,
-    marginTop: 10,
-    // paddingVertical: 10,
-    minHeight: 40,
-    fontSize: 15,
-    textAlignVertical: "center", // 세로 방향 가운데 정렬
-    justifyContent: "center",
+    paddingBottom: 1.5,
+    minHeight: 45,
+    fontSize: 14,
   },
   anonymousCheck: {
     flexDirection: "row",

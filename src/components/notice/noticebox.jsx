@@ -17,7 +17,7 @@ import { getCouncilNotice } from "../../server/notice";
 import { openBrowserAsync } from "expo-web-browser";
 import { useAuth } from "../../store/AuthContext";
 
-export default function Noticebox({ navigation }) {
+export default function Noticebox({ div, navigation }) {
   const { authState } = useAuth();
   const [data, setData] = useState("");
   const [category, setCategory] = useState("cbhs");
@@ -63,6 +63,9 @@ export default function Noticebox({ navigation }) {
     }
   };
   useEffect(() => {
+    if (div === "council") {
+      setCategory("council");
+    }
     fetchPosts(currentPage);
   }, []);
 
@@ -124,6 +127,7 @@ export default function Noticebox({ navigation }) {
         data={data}
         renderItem={({ item, index }) => (
           <TouchableOpacity
+            key={index}
             onPress={() => {
               if (category === "council") {
                 navigation.navigate("자율회 공지사항", { postId: item.id });
@@ -185,7 +189,7 @@ const list = StyleSheet.create({
     fontSize: 13,
   },
   title: {
-    flex: 4,
+    flex: 3.5,
     fontSize: 13,
     marginRight: 15,
   },

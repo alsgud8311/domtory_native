@@ -1,91 +1,69 @@
-import { getNoticeIdData } from "../../server/councilnotice";
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Image,
-} from "react-native";
+import React, { useState, useEffect } from "react";
+import { useRoute } from "@react-navigation/native";
+import { ActivityIndicator, Image, ScrollView, Text, View } from "react-native";
+import { getPostDetail } from "../../server/board";
+import kingDomtory from "../../assets/council_domtory.png";
 
-const CouncilNoticeDetail = ({ route }) => {
-  const [noticeData, setNoticeData] = useState(null);
+export default function CouncilNoticeDetail() {
+  const [data, setData] = useState(null);
+  const route = useRoute();
   const { postId } = route.params;
 
-  useEffect(() => {
-    (async () => {
-      const data = await getNoticeIdData(postId); // 비동기 함수를 기다림
-      setNoticeData(data); // 데이터 설정
-      console.log(data);
-    })();
-  }, []);
+  const reloadData = async () => {
+    try {
+      const result = await getPostDetail(postId);
+      console.log(result);
+      setData(result.data);
+    } catch (error) {
+      console.error("Failed to reload data:", error);
+    }
+  };
 
-  if (!noticeData) {
+  useEffect(() => {
+    reloadData();
+  }, [postId]);
+
+  if (!data) {
     return (
-      <View style={styles.container}>
-        <Text>Loading...</Text>
+      <View
+        style={{
+          width: "100%",
+          height: "100%",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <ActivityIndicator size="large" color="orange" />
       </View>
     );
   }
   return (
-    <View style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <Text style={styles.title}>{noticeData.title}</Text>
-        <View style={styles.info}>
-          <Text style={styles.cbhs}>자율회</Text>
-          <Text style={styles.date}>{noticeData.created_at}</Text>
+    <ScrollView
+      style={{ width: "100%", backgroundColor: "white", padding: 20 }}
+    >
+      <View
+        style={{ width: "100%", flexDirection: "row", alignItems: "center" }}
+      >
+        <Image
+          source={kingDomtory}
+          style={{
+            width: 50,
+            height: 50,
+            backgroundColor: "#fff5d3",
+            borderRadius: 15,
+          }}
+        />
+        <View>
+          <Text style={{ fontSize: 18, paddingLeft: 10 }}>자율회 도토리</Text>
+          <Text style={{ fontSize: 13, paddingLeft: 10, color: "gray" }}>
+            {data.date}
+          </Text>
         </View>
-        {noticeData.images && (
-          <Image
-            source={{ uri: noticeData.post_image }}
-            style={styles.post_image}
-            resizeMode="contain"
-          />
-        )}
-        <Text style={styles.content}>{noticeData.body}</Text>
-      </ScrollView>
-    </View>
+      </View>
+      <View style={{ width: "100%", padding: 20 }}>
+        <Text style={{ fontSize: 20, paddingBottom: 20 }}>{data.title}</Text>
+        <Text style={{ fontSize: 17 }}>{data.body}</Text>
+      </View>
+    </ScrollView>
   );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    minHeight: "100%",
-    backgroundColor: "#fff",
-    padding: 20,
-  },
-  title: {
-    fontSize: 18,
-    borderBottomColor: "orange",
-    borderBottomWidth: 1,
-    paddingVertical: 20,
-    paddingHorizontal: 5,
-  },
-  info: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-  },
-  cbhs: {
-    fontSize: 12,
-  },
-  date: {
-    fontSize: 12,
-  },
-  content: {
-    fontSize: 14,
-    paddingVertical: 10,
-    paddingHorizontal: 5,
-  },
-  image: {
-    width: "100%", // 이미지 너비
-    aspectRatio: 13 / 16,
-    marginTop: 20,
-    marginBottom: 10,
-  },
-});
-
-export default CouncilNoticeDetail;
+}

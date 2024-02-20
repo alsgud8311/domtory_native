@@ -20,7 +20,7 @@ export default function NoticeCard({ navigation }) {
       const getData = async () => {
         const { success, data } = await getNoticePageData("1");
         if (success) {
-          slicedData = data.postList.slice(0, 5);
+          slicedData = data.postList.slice(0, 3);
           setNoticeData(slicedData);
         } else {
           setNoticeData([{ title: "정보를 가져오지 못했습니다." }]);
@@ -40,7 +40,7 @@ export default function NoticeCard({ navigation }) {
         <Text style={styles.descriptionText}>학사 공지사항</Text>
         <TouchableOpacity
           style={styles.moreButton}
-          onPress={() => navigation.navigate("공지사항")}
+          onPress={() => navigation.navigate("공지사항", { div: "cbhs" })}
         >
           <Text>더 보기</Text>
           <AntDesign name="right" size={15} />
@@ -82,6 +82,7 @@ const styles = StyleSheet.create({
   },
   description: {
     flexDirection: "row",
+    alignItems: "center",
     justifyContent: "space-between",
     width: "100%",
     paddingTop: 15,
@@ -91,6 +92,7 @@ const styles = StyleSheet.create({
   },
   descriptionText: {
     fontSize: 18,
+    fontWeight: "600",
   },
   moreButton: {
     flexDirection: "row",
@@ -120,6 +122,7 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
   },
   postDate: {
+    color: "gray",
     fontSize: 13,
   },
 });
