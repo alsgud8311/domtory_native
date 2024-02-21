@@ -334,7 +334,7 @@ export default function PostDetail({ data, reloadData, postId }) {
                             borderRadius: 3,
                           }}
                         />
-                        {comment.anonymous_number ? (
+                        {comment.anonymous_number === 0 ? (
                           <Text style={styles.commentMember}>
                             글쓴이 도토리
                           </Text>

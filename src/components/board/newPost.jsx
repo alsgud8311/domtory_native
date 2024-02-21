@@ -22,6 +22,7 @@ import {
 import { writePost, updatePost } from "../../server/board";
 import { writeCouncilPost } from "../../server/notice";
 import { useFocusEffect } from "@react-navigation/native";
+import { openBrowserAsync } from "expo-web-browser";
 
 export default function NewPost({
   isVisible,
@@ -323,7 +324,7 @@ export default function NewPost({
     >
       <SafeAreaView style={styles.safeArea}>
         <TouchableWithoutFeedback onPress={dismissKeyboard}>
-          <View style={styles.container}>
+          <ScrollView style={styles.container}>
             <View style={styles.header}>
               <TouchableOpacity onPress={handleClose}>
                 <AntDesign name="close" size={22} />
@@ -415,7 +416,75 @@ export default function NewPost({
                 </View>
               ))}
             </ScrollView>
-          </View>
+            <ScrollView style={styles.rulewrapper}>
+              <Text
+                style={{
+                  textAlign: "center",
+                  fontSize: 17,
+                  color: "gray",
+                  marginBottom: 10,
+                }}
+              >
+                돔토리 커뮤니티 이용 규칙
+              </Text>
+              <Text style={styles.ruleText}>
+                돔토리는 학사 내 사생끼리 건강하고 기분좋게 소통할 수 있는
+                커뮤니티를 만들기 위해 커뮤니티 이용규칙을 제정하여 운영하고
+                있습니다. 위반 시 게시물이 삭제되고 서비스 이용이 일정 기간
+                제한될 수 있습니다.{"\n"}
+              </Text>
+              <Text style={styles.ruleText}>
+                * 정치•사회 관련 행위 금지{"\n"}- 국가기관, 정치 관련 단체,
+                언론, 시민단체에 대한 언급 혹은 이와 관련한 행위{"\n"} - ﻿﻿정책•
+                외교 또는 정치·정파에 대한 의견, 주장 및 이념, 가치관을 드러내는
+                행위{"\n"}- 성별, 종교, 인종, 출신, 지역, 직업, 이념 등 사회적
+                이슈에 대한 언급 혹은 이와 관련한 행위 {"\n"}- 위와 같은
+                내용으로 유추될 수 있는 비유, 은어 사용 행위 {"\n"}
+                {"\n"}* 홍보 및 판매 관련 행위 금지 {"\n"}- 영리 여부와 관계
+                없이 사업체•기관•단체•개인에게 직간접적으로 영향을 줄 수 있는
+                게시물 작성 행위{"\n"} - 위와 관련된 것으로 의심되거나 예상될 수
+                있는 바이럴 홍보 및 명칭.{"\n"}
+              </Text>
+              <Text style={styles.ruleText}>
+                * 불법촬영물 유통 금지 {"\n"}불법촬영물 등을 게재할 경우
+                전기통신사업법에 따라 삭제 조치 및 서비스 이용이 영구적으로
+                제한될 수 있으며 관련 법률에 따라 처벌받을 수 있습니다.{"\n"}
+              </Text>
+              <Text style={styles.ruleText}>
+                * 그 밖에 규칙 위반 해위 {"\n"}- 타인의 권리를 침해하거나
+                불쾌감을 주는 행위 {"\n"}- 범죄, 불법 행위 등 법령 위반 행위
+                {"\n"}- 욕설, 비하, 차별, 혐오, 자살, 폭력 관련 게시물{"\n"}-
+                음란물, 성적 수치심 유발 게시물{"\n"}- 스포일러, 공포, 놀라게
+                하는 행위를 포함한 게시물{"\n"}
+                {"\n"}커뮤니티 이용규칙 전문은 아래 버튼을 통해 볼 수 있습니다.
+                {"\n"}
+              </Text>
+              <TouchableOpacity
+                style={{
+                  borderWidth: 3,
+                  borderRadius: 10,
+                  padding: 10,
+                  borderColor: "orange",
+                  backgroundColor: "orange",
+                }}
+              >
+                <Text
+                  style={{
+                    textAlign: "center",
+                    color: "white",
+                    fontWeight: 800,
+                  }}
+                  onPress={() =>
+                    openBrowserAsync(
+                      "https://luxurious-share-af6.notion.site/ebd8c0c297574790921bea4d47d7b73f?pvs=4"
+                    )
+                  }
+                >
+                  커뮤니티 이용규칙 전문 보기
+                </Text>
+              </TouchableOpacity>
+            </ScrollView>
+          </ScrollView>
         </TouchableWithoutFeedback>
       </SafeAreaView>
     </Modal>
@@ -535,5 +604,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
     color: "#333333",
+  },
+  rulewrapper: {
+    padding: 20,
+    flex: 1,
+    flexDirection: "column",
+  },
+  ruleText: {
+    fontSize: 15,
+    color: "gray",
   },
 });

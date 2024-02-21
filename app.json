@@ -46,7 +46,7 @@
       [
         "expo-image-picker",
         {
-          "photoPermission": "The app accesses your photos to confirm your dormitory code"
+          "photoPermission": "$(PRODUCT_NAME)가 사진 또는 동영상을 게시글에 첨부하여 커뮤니티에 등록하는 기능 사용을 위해 사진 라이브러리에 접근하도록 허용합니다. "
         }
       ],
       [
