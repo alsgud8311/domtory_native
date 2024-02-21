@@ -200,8 +200,8 @@ export default function PostDetail({ data, reloadData, postId }) {
   // 신고 확인 및 처리
   const confirmAndReport = (type, id) => {
     Alert.alert(
-      "신고",
-      "이 게시글/댓글을 신고하시겠습니까?",
+      "댓글 신고",
+      "해당 댓글을 신고하시겠습니까?\n신고된 게시글은 1차적으로 판별 시스템에 의해 삭제조치되며, 삭제 조치가 이루어지지 않은 게시글은 자율회에서 검토 후 삭제되거나 커뮤니티 이용 규칙에 위반되지 않는다고 판단할 시 보존됩니다.",
       [
         {
           text: "취소",

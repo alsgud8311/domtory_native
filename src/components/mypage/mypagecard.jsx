@@ -1,6 +1,12 @@
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { AntDesign, MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
+import {
+  AntDesign,
+  MaterialIcons,
+  FontAwesome5,
+  FontAwesome,
+} from "@expo/vector-icons";
 import { useAuth } from "../../store/AuthContext";
+import { openBrowserAsync } from "expo-web-browser";
 
 export default function MypageCard({ navigation }) {
   const { onLogout, onWithdrawal, authState } = useAuth();
@@ -60,6 +66,32 @@ export default function MypageCard({ navigation }) {
           <Text style={styles.cardText}>비밀번호 변경</Text>
         </TouchableOpacity>
       </View>
+      <View>
+        <TouchableOpacity
+          style={styles.card}
+          onPress={() =>
+            openBrowserAsync(
+              "https://luxurious-share-af6.notion.site/9ed580ee5cc242cab12a1131a9da8b97?pvs=4"
+            )
+          }
+        >
+          <FontAwesome name="book" size={24} color="black" />
+          <Text style={styles.cardText}>이용 약관</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={{ borderBottomWidth: 1, borderColor: "gray" }}>
+        <TouchableOpacity
+          style={styles.card}
+          onPress={() =>
+            openBrowserAsync(
+              "https://luxurious-share-af6.notion.site/e58b04065f63441f8a1f00c1519353e7?pvs=4"
+            )
+          }
+        >
+          <FontAwesome name="address-book" size={24} color="black" />
+          <Text style={styles.cardText}>개인정보 처리방침</Text>
+        </TouchableOpacity>
+      </View>
       <View style={{ borderBottomWidth: 1, borderColor: "gray" }}>
         <TouchableOpacity style={styles.card} onPress={onPressLogout}>
           <AntDesign name="unlock" size={24} color="black" />
@@ -77,7 +109,8 @@ export default function MypageCard({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingTop: 20,
   },
   wrapper: {
     borderBottomWidth: 1,
