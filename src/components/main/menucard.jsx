@@ -30,7 +30,7 @@ export default function DailyMenuCard({ navigation }) {
   const mealTime = {
     아침: "07:00~08:30\n간편식 제공은 06:00~",
     점심: "12:00~13:00",
-    저녁: "18:00~20:00(방학에는 ~19:30)",
+    저녁: "18:00~20:00\n방학의 경우 ~19:30까지)",
   };
 
   return (
@@ -50,7 +50,9 @@ export default function DailyMenuCard({ navigation }) {
               }}
             >
               <Text style={styles.mealTypeText}>{menuData.dayDiv}</Text>
-              <Text style={{ color: "gray" }}>{mealTime[menuData.dayDiv]}</Text>
+              <Text style={{ color: "gray", textAlign: "right" }}>
+                {mealTime[menuData.dayDiv]}
+              </Text>
             </View>
             <View style={styles.menuList}>
               {menuData.menuList.map((menu, index) => (

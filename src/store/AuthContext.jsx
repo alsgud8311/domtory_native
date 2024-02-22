@@ -32,6 +32,9 @@ export const AuthProvider = ({ children }) => {
       const name = await SecureStore.getItemAsync("NAME");
       const id = await SecureStore.getItemAsync("ID");
       const isStaff = await SecureStore.getItemAsync("STAFF");
+      const pushTokenActive = await SecureStore.getItemAsync(
+        "PUSHTOKEN_ACTIVE"
+      );
 
       if (accessToken) {
         apiBe.defaults.headers.common[
@@ -46,6 +49,7 @@ export const AuthProvider = ({ children }) => {
           name: name,
           id: id,
           staff: isStaff,
+          pushTokenActive: pushTokenActive,
         });
       }
     };
@@ -89,13 +93,16 @@ export const AuthProvider = ({ children }) => {
               pushToken: token,
             };
             await apiBe.post("/push/token/", data);
-            console.log("Sending Push Token Success");
+            await SecureStore.setItemAsync("PUSHTOKEN_ACTIVE", "YES");
           } catch (error) {
             console.log("Sending Push Token error", error);
           }
         } else {
           console.log("getToken Failed");
         }
+      } else {
+        setAuthState({ pushToken: null, pushTokenActive: "NO" });
+        await SecureStore.setItemAsync("PUSHTOKEN_ACTIVE", "NO");
       }
 
       setAuthState((prevState) => ({
@@ -149,6 +156,7 @@ export const AuthProvider = ({ children }) => {
       await SecureStore.deleteItemAsync("NAME");
       await SecureStore.deleteItemAsync("ID");
       await SecureStore.deleteItemAsync("STAFF");
+      await SecureStore.deleteItemAsync("PUSHTOKEN_ACTIVE");
       apiBe.defaults.headers.common["Authorization"] = "";
 
       setAuthState({
@@ -159,12 +167,33 @@ export const AuthProvider = ({ children }) => {
         username: null,
         id: null,
         staff: null,
+        pushTokenActive: null,
       });
       Alert.alert("로그아웃 되었습니다.", "다음에 또 만나요!");
       return { success: true };
     } catch (error) {
-      console.log(error);
-      return { success: false };
+      await SecureStore.deleteItemAsync("ACCESS_TOKEN");
+      await SecureStore.deleteItemAsync("REFRESH_TOKEN");
+      await SecureStore.deleteItemAsync("PUSH_TOKEN");
+      await SecureStore.deleteItemAsync("USERNAME");
+      await SecureStore.deleteItemAsync("NAME");
+      await SecureStore.deleteItemAsync("ID");
+      await SecureStore.deleteItemAsync("STAFF");
+      await SecureStore.deleteItemAsync("PUSHTOKEN_ACTIVE");
+      apiBe.defaults.headers.common["Authorization"] = "";
+
+      setAuthState({
+        accessToken: null,
+        refreshToken: null,
+        pushToken: null,
+        authenticated: false,
+        username: null,
+        id: null,
+        staff: null,
+        pushTokenActive: null,
+      });
+      Alert.alert("로그아웃 되었습니다.", "다음에 또 만나요!");
+      return { success: true };
     }
   };
 
@@ -195,6 +224,7 @@ export const AuthProvider = ({ children }) => {
     onPasswordChange: changePassword,
     onWithdrawal: withdrawal,
     authState: authState,
+    setAuthState: setAuthState,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
