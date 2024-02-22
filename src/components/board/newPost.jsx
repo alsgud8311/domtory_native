@@ -129,12 +129,11 @@ export default function NewPost({
           formData.append("title", title);
           formData.append("body", content);
 
-          let result;
           try {
             if (council === "true") {
-              result = await writeCouncilPost(formData);
-              if (result.success) {
-                console.log("자율회 게시글이 성공적으로 작성되었습니다.");
+              const { success } = await writeCouncilPost(formData);
+              if (success) {
+                Alert.alert("자율회 게시글이 작성되었습니다.");
                 setTitle("");
                 setContent("");
                 setImage([]);
@@ -149,8 +148,8 @@ export default function NewPost({
                 );
               }
             } else {
-              result = await writePost(boardId, formData);
-              if (result.success) {
+              const { success } = await writePost(boardId, formData);
+              if (success) {
                 Alert.alert("게시글이 작성되었습니다.");
                 setTitle("");
                 setContent("");

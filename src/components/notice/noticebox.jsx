@@ -109,7 +109,7 @@ export default function Noticebox({ div, navigation }) {
             </Text>
           </TouchableOpacity>
         </View>
-        {category === "council" && authState.isStaff && (
+        {category === "council" && authState.staff === "YES" && (
           <TouchableOpacity onPress={handleOpenNewPost}>
             <AntDesign name="form" style={select.writeText} />
           </TouchableOpacity>

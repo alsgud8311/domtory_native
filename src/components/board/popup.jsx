@@ -12,7 +12,7 @@ import {
   Alert,
 } from "react-native";
 import { Entypo } from "@expo/vector-icons";
-import { deletePost, getPostDetail, report } from "../../server/board";
+import { block, deletePost, getPostDetail, report } from "../../server/board";
 import { useAuth } from "../../store/AuthContext";
 
 const PopupMenu = ({ navigation }) => {
@@ -45,6 +45,18 @@ const PopupMenu = ({ navigation }) => {
     } else {
       console.error("신고 실패:", result.data);
       Alert.alert("오류", "신고에 실패했습니다. 다시 시도해주세요.");
+      navigation.pop();
+    }
+  };
+
+  const handleBlockPost = async (postId) => {
+    const { success } = await block(postId, "post");
+    if (success) {
+      Alert.alert("차단 완료", "해당 게시물을 숨김처리했습니다.");
+      navigation.pop();
+    } else {
+      console.error("차단 실패:", result.data);
+      Alert.alert("차단 오류", "차단에 실패했습니다. 다시 시도해주세요.");
       navigation.pop();
     }
   };
@@ -89,6 +101,47 @@ const PopupMenu = ({ navigation }) => {
                 {
                   text: "예",
                   onPress: () => handleDeleteButton(postId),
+                },
+              ],
+              { cancelable: false }
+            ),
+        },
+      ]);
+    } else if (authState.staff === "YES") {
+      setOptions([
+        {
+          title: "게시글 신고",
+          action: () =>
+            Alert.alert(
+              "게시글 신고",
+              "게시글을 신고하시겠습니까?\n신고된 게시글은 1차적으로 판별 시스템에 의해 삭제조치되며, 삭제 조치가 이루어지지 않은 게시글은 자율회에서 검토 후 삭제되거나 커뮤니티 이용 규칙에 위반되지 않는다고 판단할 시 보존됩니다.",
+              [
+                {
+                  text: "취소",
+                  style: "cancel",
+                },
+                {
+                  text: "예",
+                  onPress: () => handleReportPost("post", postId),
+                },
+              ],
+              { cancelable: false }
+            ),
+        },
+        {
+          title: "게시물 차단",
+          action: () =>
+            Alert.alert(
+              "게시물 차단",
+              "해당 게시물을 차단하시겠습니까?\n차단된 게시물은 유저들이 더 이상 볼 수 없습니다.",
+              [
+                {
+                  text: "취소",
+                  style: "cancel",
+                },
+                {
+                  text: "예",
+                  onPress: () => handleBlockPost(postId),
                 },
               ],
               { cancelable: false }

@@ -179,3 +179,17 @@ export const report = async (type, id) => {
     return { success: false, data: error.response.data };
   }
 };
+
+// 게시글 블락
+export const block = async (postOrCommentId, type) => {
+  const data = {
+    postOrCommentId: postOrCommentId,
+    type: type,
+  };
+  try {
+    const response = await apiBe.post(`/report/block/`, data);
+    return { success: true };
+  } catch (error) {
+    return { success: false };
+  }
+};

@@ -16,7 +16,7 @@ import {
   RefreshControl,
   Keyboard,
 } from "react-native";
-import { Octicons, Feather } from "@expo/vector-icons";
+import { Octicons, Feather, FontAwesome5 } from "@expo/vector-icons";
 import domtory from "../../assets/icon.png";
 import {
   postComment,
@@ -25,6 +25,7 @@ import {
   deleteReply,
   updatePost,
   report,
+  block,
 } from "../../server/board";
 import { useAuth } from "../../store/AuthContext";
 import ImageModal from "react-native-image-modal";
@@ -227,6 +228,36 @@ export default function PostDetail({ data, reloadData, postId }) {
     }
   };
 
+  // 댓글차단
+  const handleBlock = (commentId) => {
+    Alert.alert(
+      "댓글 차단",
+      "해당 댓글을 차단하시겠습니까? 차단하면 해당 댓글은 모두에게 보이지 않습니다.",
+      [
+        {
+          text: "취소",
+          style: "cancel",
+        },
+        {
+          text: "예",
+          onPress: () => commentBlock(commentId),
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  const commentBlock = async (commentId) => {
+    const { success } = await block(commentId, "comment");
+    if (success) {
+      Alert.alert("대댓글이 차단 및 숨김처리 되었습니다.");
+      reloadData();
+    } else {
+      console.error("대댓글 차단에 실패했습니다:", result.data);
+      Alert.alert("댓글/대댓글 차단에 실패했습니다. 다시 시도해주세요.");
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -311,10 +342,10 @@ export default function PostDetail({ data, reloadData, postId }) {
                           alignItems: "center",
                         }}
                       />
-                      <Text style={styles.commentMember}>신고당한 도토리</Text>
+                      <Text style={styles.commentMember}>유배당한 도토리</Text>
                     </View>
                     <Text style={styles.commentDeleted}>
-                      신고당한 댓글입니다.
+                      해당 댓글은 신고되거나 관리자에 의해 숨김처리 되었습니다.
                     </Text>
                   </>
                 ) : (
@@ -359,6 +390,21 @@ export default function PostDetail({ data, reloadData, postId }) {
                               style={styles.commnetDelete}
                             />
                           </TouchableOpacity>
+                        ) : authState.staff === "YES" ? (
+                          <>
+                            <Octicons
+                              name="stop"
+                              style={styles.commnetReport}
+                              onPress={() =>
+                                confirmAndReport("comment", comment.id)
+                              }
+                            />
+                            <FontAwesome5
+                              name="ban"
+                              style={styles.commnetReport}
+                              onPress={() => handleBlock(comment.id)}
+                            />
+                          </>
                         ) : (
                           <Octicons
                             name="stop"
@@ -446,13 +492,19 @@ export default function PostDetail({ data, reloadData, postId }) {
                                   onPress={() => confirmReplyDelete(reply.id)}
                                 />
                               ) : (
-                                <Octicons
-                                  name="stop"
-                                  style={styles.commnetReport}
-                                  onPress={() =>
-                                    confirmAndReport("comment", reply.id)
-                                  }
-                                />
+                                <>
+                                  <Octicons
+                                    name="stop"
+                                    style={styles.commnetReport}
+                                    onPress={() =>
+                                      confirmAndReport("comment", reply.id)
+                                    }
+                                  />
+                                  <FontAwesome5
+                                    name="ban"
+                                    style={styles.commnetReport}
+                                  />
+                                </>
                               )}
                             </View>
                           </View>

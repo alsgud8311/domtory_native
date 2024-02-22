@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
     refreshToken: null,
     pushToken: null,
     authenticated: false,
-    Staff: null,
+    staff: null,
     username: null,
     name: null,
     id: null,
@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
           username: username,
           name: name,
           id: id,
-          isStaff: isStaff,
+          staff: isStaff,
         });
       }
     };
@@ -106,8 +106,19 @@ export const AuthProvider = ({ children }) => {
         username: data.member.username,
         name: data.member.name,
         id: data.member.id.toString(),
-        Staff: data.member.isStaff,
       }));
+
+      if (data.member.is_staff) {
+        setAuthState((prev) => ({
+          ...prev,
+          staff: "YES",
+        }));
+      } else {
+        setAuthState((prev) => ({
+          ...prev,
+          staff: "NO",
+        }));
+      }
 
       await SecureStore.setItemAsync("ACCESS_TOKEN", data.accessToken);
       await SecureStore.setItemAsync("REFRESH_TOKEN", data.refreshToken);
@@ -117,7 +128,7 @@ export const AuthProvider = ({ children }) => {
       if (data.member.isStaff) {
         await SecureStore.setItemAsync("STAFF", "YES");
       } else {
-        await SecureStore.setItemAsync("STAFF", "");
+        await SecureStore.setItemAsync("STAFF", "NO");
       }
       return { success: true, data: data };
     } catch (error) {
@@ -147,7 +158,7 @@ export const AuthProvider = ({ children }) => {
         authenticated: false,
         username: null,
         id: null,
-        Staff: false,
+        staff: null,
       });
       Alert.alert("로그아웃 되었습니다.", "다음에 또 만나요!");
       return { success: true };
