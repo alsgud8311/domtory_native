@@ -125,6 +125,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   cardText: {
-    fontSize: 20,
+    fontSize: 17,
   },
 });

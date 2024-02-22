@@ -12,7 +12,11 @@ export default function Profile() {
       <View style={{ gap: 10 }}>
         <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
           <Text style={{ fontSize: 30 }}>{authState.name.substr(1)}</Text>
-          <Text style={{ fontSize: 18 }}>도토리</Text>
+          {authState.staff === "YES" ? (
+            <Text style={{ fontSize: 18 }}>자율회 도토리</Text>
+          ) : (
+            <Text style={{ fontSize: 18 }}>도토리</Text>
+          )}
         </View>
         <Text style={{ fontSize: 17, color: "gray" }}>
           {authState.username}
