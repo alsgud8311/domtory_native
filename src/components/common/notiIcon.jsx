@@ -15,7 +15,6 @@ export default function NotiIcon({ navigation }) {
         (notification) => !notification.isChecked
       ).length;
       setCount(checkedCount);
-      console.log("췤", checkedCount);
     }
   };
   useFocusEffect(
@@ -33,22 +32,24 @@ export default function NotiIcon({ navigation }) {
       onPress={() => navigation.navigate("알림")}
     >
       <Ionicons name="notifications-sharp" size={30} color="orange" />
-      <View
-        style={{
-          zIndex: 100,
-          position: "absolute",
-          top: 0,
-          right: 0,
-          borderWidth: 3,
-          borderRadius: 10,
-          borderColor: "crimson",
-          backgroundColor: "crimson",
-        }}
-      >
-        <Text style={{ color: "white", fontSize: 12, fontWeight: 800 }}>
-          {count}
-        </Text>
-      </View>
+      {count > 0 && (
+        <View
+          style={{
+            zIndex: 100,
+            position: "absolute",
+            top: 0,
+            right: 0,
+            borderWidth: 3,
+            borderRadius: 10,
+            borderColor: "crimson",
+            backgroundColor: "crimson",
+          }}
+        >
+          <Text style={{ color: "white", fontSize: 12, fontWeight: 800 }}>
+            {count}
+          </Text>
+        </View>
+      )}
     </TouchableOpacity>
   );
 }
