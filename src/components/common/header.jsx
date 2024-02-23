@@ -25,12 +25,13 @@ export default function Header({ navigation }) {
           alignItems: "center",
         }}
       >
-        <Image source={logo} style={{ width: 50, height: 50 }} />
+        <Image
+          source={logo}
+          style={{ width: 50, height: 50, marginLeft: 10 }}
+        />
         <Image source={domtoryText} style={{ width: 80, height: 30 }} />
         <View style={{ flexDirection: "row", gap: 10 }}>
-          <TouchableOpacity>
-            <NotiIcon navigation={navigation} />
-          </TouchableOpacity>
+          <NotiIcon navigation={navigation} />
           <TouchableOpacity>
             <AntDesign
               name="search1"

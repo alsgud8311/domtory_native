@@ -10,7 +10,6 @@ import { getNotificationList } from "../../server/notifications";
 
 export default function NotificationList() {
   const [data, setData] = useState(null);
-  const route = useRoute();
   const navigation = useNavigation();
   const getData = async () => {
     const { success, data } = await getNotificationList();

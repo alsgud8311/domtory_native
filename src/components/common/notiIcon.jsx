@@ -5,14 +5,16 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { getNotificationList } from "../../server/notifications";
 
 export default function NotiIcon({ navigation }) {
-  const [data, setData] = useState();
+  const [data, setData] = useState(null);
+  const [count, setCount] = useState(null);
   const getData = async () => {
     const { success, data } = await getNotificationList();
     if (success) {
+      setData(data);
       const checkedCount = data.filter(
         (notification) => !notification.isChecked
       ).length;
-      setData(checkedCount);
+      setCount(checkedCount);
       console.log("췤", checkedCount);
     }
   };
@@ -25,17 +27,10 @@ export default function NotiIcon({ navigation }) {
   if (!data) {
     return <Ionicons name="notifications-sharp" size={30} color="orange" />;
   }
-
   return (
     <TouchableOpacity
       style={{ flexDirection: "row", paddingRight: 5 }}
-      onPress={() =>
-        navigation.navigate("알림", {
-          data: data,
-          getData: getData,
-          setData: setData,
-        })
-      }
+      onPress={() => navigation.navigate("알림")}
     >
       <Ionicons name="notifications-sharp" size={30} color="orange" />
       <View
@@ -51,7 +46,7 @@ export default function NotiIcon({ navigation }) {
         }}
       >
         <Text style={{ color: "white", fontSize: 12, fontWeight: 800 }}>
-          {data}
+          {count}
         </Text>
       </View>
     </TouchableOpacity>

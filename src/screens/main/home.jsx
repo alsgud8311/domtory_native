@@ -14,6 +14,7 @@ import * as Notification from "expo-notifications";
 import { useAuth } from "../../store/AuthContext";
 import { requestUserPermission } from "../../utils/firebase/firebaseSetting";
 import * as SecureStore from "expo-secure-store";
+import { pushCheckUpdate } from "../../server/notifications";
 // import * as SplashScreen from "expo-splash-screen";
 
 Notification.setNotificationHandler({
@@ -34,31 +35,6 @@ const board = {
 
 export default function Home({ navigation }) {
   const { authState, setAuthState } = useAuth();
-
-  const notificationCheck = async () => {
-    const { AuthorizationSuccess } = await requestUserPermission();
-    if (AuthorizationSuccess && authState.pushTokenActive === "NO") {
-      const token = await messaging().getToken();
-      setAuthState((prev) => ({ ...prev, pushToken: token }));
-      await SecureStore.setItemAsync("PUSH_TOKEN", token);
-      if (token) {
-        console.log("Push Token: ", token);
-        try {
-          const data = {
-            pushToken: token,
-          };
-          await apiBe.post("/push/token/", data);
-          await SecureStore.setItemAsync("PUSHTOKEN_ACTIVE", "YES");
-        } catch (error) {
-          console.log("Sending Push Token error", error);
-        }
-      } else {
-        console.log("getToken Failed");
-      }
-    } else {
-      console.log("already registered");
-    }
-  };
 
   //개별 알림이 사용가능한지 확인
   useEffect(() => {
@@ -94,9 +70,14 @@ export default function Home({ navigation }) {
         .getInitialNotification()
         .then(async (remoteMessage) => {
           if (remoteMessage && remoteMessage.data) {
-            const { postId, boardId } = remoteMessage.data;
-            if (postId && boardId) {
-              navigation.navigate(board[boardId], { postId: postId });
+            const { postId, boardId, pushedAt } = remoteMessage.data;
+            if (postId && boardId && pushedAt) {
+              const { success } = await pushCheckUpdate(authState.id, pushedAt);
+              if (success) {
+                navigation.navigate(board[boardId], { postId: postId });
+              } else {
+                navigation.navigate(board[boardId], { postId: postId });
+              }
             } else {
               console.log("푸시 알림 데이터가 부족합니다.");
             }
@@ -105,11 +86,16 @@ export default function Home({ navigation }) {
           }
         });
 
-      messaging().onNotificationOpenedApp((remoteMessage) => {
+      messaging().onNotificationOpenedApp(async (remoteMessage) => {
         if (remoteMessage && remoteMessage.data) {
-          const { postId, boardId } = remoteMessage.data;
-          if (postId && boardId) {
-            navigation.navigate(board[boardId], { postId: postId });
+          const { postId, boardId, pushedAt } = remoteMessage.data;
+          if (postId && boardId && pushedAt) {
+            const { success } = await pushCheckUpdate(authState.id, pushedAt);
+            if (success) {
+              navigation.navigate(board[boardId], { postId: postId });
+            } else {
+              navigation.navigate(board[boardId], { postId: postId });
+            }
           } else {
             console.log("푸시 알림 데이터가 부족합니다.");
           }
@@ -125,8 +111,8 @@ export default function Home({ navigation }) {
       const unsubscribe = messaging().onMessage(async (remoteMessage) => {
         console.log("포어그라운드", remoteMessage);
         if (remoteMessage && remoteMessage.data) {
-          const { postId, boardId } = remoteMessage.data;
-          if (postId && boardId) {
+          const { postId, boardId, pushedAt } = remoteMessage.data;
+          if (postId && boardId && pushedAt) {
             Alert.alert(
               remoteMessage.notification.title,
               remoteMessage.notification.body,
@@ -134,8 +120,16 @@ export default function Home({ navigation }) {
                 { text: "취소", style: "cancel" },
                 {
                   text: "보러가기",
-                  onPress: () => {
-                    navigation.navigate(board[boardId], { postId: postId });
+                  onPress: async () => {
+                    const { success } = await pushCheckUpdate(
+                      authState.id,
+                      pushedAt
+                    );
+                    if (success) {
+                      navigation.navigate(board[boardId], { postId: postId });
+                    } else {
+                      navigation.navigate(board[boardId], { postId: postId });
+                    }
                   },
                 },
               ]
