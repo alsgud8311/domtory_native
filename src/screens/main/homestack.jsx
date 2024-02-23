@@ -25,6 +25,7 @@ import { AntDesign, Entypo } from "@expo/vector-icons";
 import PostDetail from "../../components/board/postDetail";
 import PopupMenu from "../../components/board/popup";
 import PostFix from "../board/postfix";
+import NotificationList from "./notification";
 
 function Logo() {
   return (
@@ -116,6 +117,7 @@ const HomeStack = ({ navigation }) => {
           headerRight: () => <PopupMenu navigation={navigation} />,
         })}
       />
+      <Stack.Screen name="알림" component={NotificationList} />
     </Stack.Navigator>
   );
 };

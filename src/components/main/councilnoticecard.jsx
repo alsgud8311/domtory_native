@@ -55,6 +55,13 @@ export default function CouncilNoticeCard({ navigation }) {
               }
             >
               <Text style={styles.postText}>{notice.title}</Text>
+              <Text
+                style={{ fontSize: 14 }}
+                ellipsizeMode="tail"
+                numberOfLines={2}
+              >
+                {notice.body}
+              </Text>
             </TouchableOpacity>
           ))
         ) : (
@@ -97,7 +104,7 @@ const styles = StyleSheet.create({
     width: 250,
     height: 100,
     marginRight: 20,
-    alignItems: "center",
+
     justifyContent: "center",
     backgroundColor: "#ffffff",
     borderRadius: 10,
@@ -113,7 +120,6 @@ const styles = StyleSheet.create({
   },
   postText: {
     fontSize: 16,
-    paddingVertical: 5,
-    textAlign: "center",
+    paddingVertical: 2,
   },
 });

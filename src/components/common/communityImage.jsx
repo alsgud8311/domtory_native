@@ -19,6 +19,7 @@ export const pickImage = async () => {
   console.log("이미지 선택");
   let result = await ImagePicker.launchImageLibraryAsync({
     mediaTypes: ImagePicker.MediaTypeOptions.All,
+    aspect: [4, 4],
     quality: 1,
     allowsMultipleSelection: true,
   });
