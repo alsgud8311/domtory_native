@@ -56,12 +56,18 @@ export default function CouncilNoticeCard({ navigation }) {
             >
               <Text style={styles.postText}>{notice.title}</Text>
               <Text
-                style={{ fontSize: 14 }}
+                style={{ fontSize: 14, marginBottom: 10 }}
                 ellipsizeMode="tail"
                 numberOfLines={2}
               >
                 {notice.body}
               </Text>
+              <View
+                style={{ flexDirection: "row", gap: 5, alignItems: "center" }}
+              >
+                <AntDesign name="doubleright" size={15} />
+                <Text>더보기</Text>
+              </View>
             </TouchableOpacity>
           ))
         ) : (
@@ -102,7 +108,7 @@ const styles = StyleSheet.create({
   },
   card: {
     width: 250,
-    height: 100,
+    height: 110,
     marginRight: 20,
 
     justifyContent: "center",
