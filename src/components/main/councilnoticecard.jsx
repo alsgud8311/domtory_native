@@ -54,7 +54,26 @@ export default function CouncilNoticeCard({ navigation }) {
                 navigation.navigate("자율회 공지사항", { postId: notice.id })
               }
             >
-              <Text style={styles.postText}>{notice.title}</Text>
+              <Text
+                style={styles.postText}
+                ellipsizeMode="tail"
+                numberOfLines={1}
+              >
+                {notice.title}
+              </Text>
+              <Text
+                style={{ fontSize: 14, marginBottom: 10 }}
+                ellipsizeMode="tail"
+                numberOfLines={2}
+              >
+                {notice.body}
+              </Text>
+              <View
+                style={{ flexDirection: "row", gap: 5, alignItems: "center" }}
+              >
+                <AntDesign name="doubleright" size={15} />
+                <Text>더보기</Text>
+              </View>
             </TouchableOpacity>
           ))
         ) : (
@@ -95,9 +114,9 @@ const styles = StyleSheet.create({
   },
   card: {
     width: 250,
-    height: 100,
+    height: 110,
     marginRight: 20,
-    alignItems: "center",
+
     justifyContent: "center",
     backgroundColor: "#ffffff",
     borderRadius: 10,
@@ -113,7 +132,6 @@ const styles = StyleSheet.create({
   },
   postText: {
     fontSize: 16,
-    paddingVertical: 5,
-    textAlign: "center",
+    paddingVertical: 2,
   },
 });

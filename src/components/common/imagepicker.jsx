@@ -23,8 +23,8 @@ export const pickImage = async () => {
     aspect: [4, 4],
     //사진 수정허용
     allowsEditing: true,
-    //현재 용량 줄이고 높이기
-    quality: 1,
+    // //현재 용량 줄이고 높이기
+    // quality: 1,
     //여러개 사진 선택 허용 여부
     allowsMultipleSelection: false,
   });

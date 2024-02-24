@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
     refreshToken: null,
     pushToken: null,
     authenticated: false,
-    Staff: null,
+    staff: null,
     username: null,
     name: null,
     id: null,
@@ -32,6 +32,9 @@ export const AuthProvider = ({ children }) => {
       const name = await SecureStore.getItemAsync("NAME");
       const id = await SecureStore.getItemAsync("ID");
       const isStaff = await SecureStore.getItemAsync("STAFF");
+      const pushTokenActive = await SecureStore.getItemAsync(
+        "PUSHTOKEN_ACTIVE"
+      );
 
       if (accessToken) {
         apiBe.defaults.headers.common[
@@ -45,7 +48,8 @@ export const AuthProvider = ({ children }) => {
           username: username,
           name: name,
           id: id,
-          isStaff: isStaff,
+          staff: isStaff,
+          pushTokenActive: pushTokenActive,
         });
       }
     };
@@ -89,13 +93,16 @@ export const AuthProvider = ({ children }) => {
               pushToken: token,
             };
             await apiBe.post("/push/token/", data);
-            console.log("Sending Push Token Success");
+            await SecureStore.setItemAsync("PUSHTOKEN_ACTIVE", "YES");
           } catch (error) {
             console.log("Sending Push Token error", error);
           }
         } else {
           console.log("getToken Failed");
         }
+      } else {
+        setAuthState({ pushToken: null, pushTokenActive: "NO" });
+        await SecureStore.setItemAsync("PUSHTOKEN_ACTIVE", "NO");
       }
 
       setAuthState((prevState) => ({
@@ -106,8 +113,19 @@ export const AuthProvider = ({ children }) => {
         username: data.member.username,
         name: data.member.name,
         id: data.member.id.toString(),
-        Staff: data.member.isStaff,
       }));
+
+      if (data.member.is_staff) {
+        setAuthState((prev) => ({
+          ...prev,
+          staff: "YES",
+        }));
+      } else {
+        setAuthState((prev) => ({
+          ...prev,
+          staff: "NO",
+        }));
+      }
 
       await SecureStore.setItemAsync("ACCESS_TOKEN", data.accessToken);
       await SecureStore.setItemAsync("REFRESH_TOKEN", data.refreshToken);
@@ -117,7 +135,7 @@ export const AuthProvider = ({ children }) => {
       if (data.member.isStaff) {
         await SecureStore.setItemAsync("STAFF", "YES");
       } else {
-        await SecureStore.setItemAsync("STAFF", "");
+        await SecureStore.setItemAsync("STAFF", "NO");
       }
       return { success: true, data: data };
     } catch (error) {
@@ -138,6 +156,7 @@ export const AuthProvider = ({ children }) => {
       await SecureStore.deleteItemAsync("NAME");
       await SecureStore.deleteItemAsync("ID");
       await SecureStore.deleteItemAsync("STAFF");
+      await SecureStore.deleteItemAsync("PUSHTOKEN_ACTIVE");
       apiBe.defaults.headers.common["Authorization"] = "";
 
       setAuthState({
@@ -147,13 +166,34 @@ export const AuthProvider = ({ children }) => {
         authenticated: false,
         username: null,
         id: null,
-        Staff: false,
+        staff: null,
+        pushTokenActive: null,
       });
       Alert.alert("로그아웃 되었습니다.", "다음에 또 만나요!");
       return { success: true };
     } catch (error) {
-      console.log(error);
-      return { success: false };
+      await SecureStore.deleteItemAsync("ACCESS_TOKEN");
+      await SecureStore.deleteItemAsync("REFRESH_TOKEN");
+      await SecureStore.deleteItemAsync("PUSH_TOKEN");
+      await SecureStore.deleteItemAsync("USERNAME");
+      await SecureStore.deleteItemAsync("NAME");
+      await SecureStore.deleteItemAsync("ID");
+      await SecureStore.deleteItemAsync("STAFF");
+      await SecureStore.deleteItemAsync("PUSHTOKEN_ACTIVE");
+      apiBe.defaults.headers.common["Authorization"] = "";
+
+      setAuthState({
+        accessToken: null,
+        refreshToken: null,
+        pushToken: null,
+        authenticated: false,
+        username: null,
+        id: null,
+        staff: null,
+        pushTokenActive: null,
+      });
+      Alert.alert("로그아웃 되었습니다.", "다음에 또 만나요!");
+      return { success: true };
     }
   };
 
@@ -184,6 +224,7 @@ export const AuthProvider = ({ children }) => {
     onPasswordChange: changePassword,
     onWithdrawal: withdrawal,
     authState: authState,
+    setAuthState: setAuthState,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

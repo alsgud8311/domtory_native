@@ -27,6 +27,12 @@ export default function DailyMenuCard({ navigation }) {
     }, [])
   );
 
+  const mealTime = {
+    아침: "07:00~08:30\n간편식 제공은 06:00~",
+    점심: "12:00~13:00",
+    저녁: "18:00~20:00\n방학의 경우 ~19:30까지)",
+  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -36,7 +42,18 @@ export default function DailyMenuCard({ navigation }) {
         {menuData ? (
           <>
             <Text style={styles.dateText}>{menuData.formatedDate}</Text>
-            <Text style={styles.mealTypeText}>{menuData.dayDiv}</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Text style={styles.mealTypeText}>{menuData.dayDiv}</Text>
+              <Text style={{ color: "gray", textAlign: "right" }}>
+                {mealTime[menuData.dayDiv]}
+              </Text>
+            </View>
             <View style={styles.menuList}>
               {menuData.menuList.map((menu, index) => (
                 <Text key={index} style={styles.menuItem}>

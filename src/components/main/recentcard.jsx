@@ -49,7 +49,10 @@ export default function RecentPostCard({ navigation }) {
             key={index}
             style={styles.card}
             onPress={() =>
-              navigation.navigate(boardList[data.board], { postId: data.id })
+              navigation.navigate(boardList[data.board], {
+                postId: data.id,
+                memberId: data.member,
+              })
             }
           >
             <View
@@ -78,7 +81,13 @@ export default function RecentPostCard({ navigation }) {
                   justifyContent: "space-between",
                 }}
               >
-                <Text style={{ padding: 5 }}>{data.title}</Text>
+                <Text
+                  style={{ padding: 5, width: "90%" }}
+                  ellipsizeMode="tail"
+                  numberOfLines={1}
+                >
+                  {data.title}
+                </Text>
                 <View
                   style={{
                     flexDirection: "row",

@@ -24,6 +24,8 @@ import domtoryText from "../../assets/domtory_text.png";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import PostDetail from "../../components/board/postDetail";
 import PopupMenu from "../../components/board/popup";
+import PostFix from "../board/postfix";
+import NotificationList from "./notification";
 
 function Logo() {
   return (
@@ -74,68 +76,48 @@ const HomeStack = ({ navigation }) => {
           },
         }}
       />
-      {/* <Stack.Screen name="자유게시판"
-        component={General}
-        options={{
-          headerRight: () => {
-            return <AntDesign name="search1" size={30} color="black" onPress={() => navigation.navigate("검색")}/>}
-          ,}} />
-      <Stack.Screen name="자유 게시판" component={GeneralDetail} />
-      <Stack.Screen name="중고거래 게시판" component={FleeMarket} />
-      <Stack.Screen name="중고거래게시판" component={FleeMarketDetail} />
-      <Stack.Screen name="번개모임 게시판" component={Impromptu} />
-      <Stack.Screen name="번개모임게시판" component={ImpromptuDetail} />
-      <Stack.Screen name="취준생 게시판" component={Jobseeker} />
-      <Stack.Screen name="취준생게시판" component={JobseekerDetail} />
-      <Stack.Screen name="분실물 게시판" component={LostAndFound} />
-      <Stack.Screen name="분실물게시판" component={LostAndFoundDetail} />
-      {/* <Stack.Screen name="설정" component={Setting} /> */}
+      <Stack.Screen
+        name="게시글 수정"
+        component={PostFix}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen name="검색" component={Search} />
       <Stack.Screen
         name="자유 게시판"
         component={GeneralDetail}
-        options={{
-          headerRight: () => {
-            return <PopupMenu />;
-          },
-        }}
+        options={({ navigation }) => ({
+          headerRight: () => <PopupMenu navigation={navigation} />,
+        })}
       />
       <Stack.Screen
         name="취준생게시판"
         component={JobseekerDetail}
-        options={{
-          headerRight: () => {
-            return <PopupMenu />;
-          },
-        }}
+        options={({ navigation }) => ({
+          headerRight: () => <PopupMenu navigation={navigation} />,
+        })}
       />
       <Stack.Screen
         name="번개모임게시판"
         component={ImpromptuDetail}
-        options={{
-          headerRight: () => {
-            return <PopupMenu />;
-          },
-        }}
+        options={({ navigation }) => ({
+          headerRight: () => <PopupMenu navigation={navigation} />,
+        })}
       />
       <Stack.Screen
         name="중고거래게시판"
         component={FleeMarketDetail}
-        options={{
-          headerRight: () => {
-            return <PopupMenu />;
-          },
-        }}
+        options={({ navigation }) => ({
+          headerRight: () => <PopupMenu navigation={navigation} />,
+        })}
       />
       <Stack.Screen
         name="분실물게시판"
         component={LostAndFoundDetail}
-        options={{
-          headerRight: () => {
-            return <PopupMenu />;
-          },
-        }}
+        options={({ navigation }) => ({
+          headerRight: () => <PopupMenu navigation={navigation} />,
+        })}
       />
+      <Stack.Screen name="알림" component={NotificationList} />
     </Stack.Navigator>
   );
 };

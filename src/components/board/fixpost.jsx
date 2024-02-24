@@ -19,23 +19,20 @@ import {
   pickImage,
   getPhotoPermission,
 } from "../../components/common/communityImage";
-import { writePost, updatePost } from "../../server/board";
-import { writeCouncilPost } from "../../server/notice";
-import { useFocusEffect } from "@react-navigation/native";
+import { updatePost } from "../../server/board";
 
-export default function fixPost({ navigation, postId }) {
+export default function FixPost({ navigation, post }) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [image, setImage] = useState([]);
-  const [existedImage, setExistedImage] = useState([]);
+  const [existedImage, setExistedImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const onChangeTitle = (inputTitle) => {
-    setTitle(inputTitle);
-  };
-  const onChangeContent = (inputContent) => {
-    setContent(inputContent);
-  };
+  useEffect(() => {
+    setTitle(post.title);
+    setContent(post.body);
+    setExistedImage(post.post_image);
+  }, []);
 
   const onPressPhoto = async () => {
     const permission = await getPhotoPermission();
@@ -62,123 +59,20 @@ export default function fixPost({ navigation, postId }) {
   };
 
   const handleClose = () => {
-    if (!title && !content) {
-      setTitle("");
-      setContent("");
-      setImage([]);
-      setIsTitleFocused(false);
-      setIsContentFocused(false);
-      setIsLoading(false);
-      onClose();
-      return;
-    }
     Alert.alert(
       "작성을 취소하시겠습니까?",
       "",
       [
+        { text: "아니오", style: "cancel" },
         {
           text: "네",
           onPress: () => {
-            setTitle("");
-            setContent("");
-            setImage([]);
-            setIsTitleFocused(false);
-            setIsContentFocused(false);
-            setIsLoading(false);
-            onClose();
+            navigation.pop();
           },
         },
-        { text: "아니오", style: "cancel" },
       ],
       { cancelable: false }
     );
-  };
-
-  const handleSubmit = async () => {
-    // if (image.length + existedImage.length >= 5) {
-    //   Alert.alert("5개 이상의 사진은 업로드가 불가능합니다!");
-    //   return;
-    // }
-    Alert.alert("업로드 하시겠습니까?", "", [
-      { text: "아니오", style: "cancel" },
-      {
-        text: "네",
-        onPress: async () => {
-          setIsLoading(true);
-          const formData = new FormData();
-
-          // 사진, 제목, 내용을 FormData에 추가
-          if (image) {
-            image.forEach((img) => {
-              formData.append("images", {
-                uri: img.uri,
-                type: img.mimeType,
-                name: img.uri.split("/").pop(),
-              });
-            });
-          }
-          formData.append("title", title);
-          formData.append("body", content);
-
-          let result;
-          try {
-            if (council === "true") {
-              result = await writeCouncilPost(formData);
-              if (result.success) {
-                console.log("자율회 게시글이 성공적으로 작성되었습니다.");
-                setTitle("");
-                setContent("");
-                setImage([]);
-                onClose();
-                onSuccess();
-                setIsLoading(false);
-              } else {
-                console.error("자율회 게시글 작성에 실패했습니다:", result);
-                Alert.alert(
-                  "오류",
-                  "자율회 게시글 작성에 실패했습니다. 다시 시도해주세요."
-                );
-              }
-            } else {
-              result = await writePost(boardId, formData);
-              if (result.success) {
-                Alert.alert("게시글이 작성되었습니다.");
-                setTitle("");
-                setContent("");
-                setImage([]);
-                onClose();
-                onPostSubmit();
-                setIsLoading(false);
-              } else {
-                console.error("게시글 작성에 실패했습니다:");
-                Alert.alert(
-                  "오류",
-                  "게시글 작성에 실패했습니다. 다시 시도해주세요."
-                );
-                setIsLoading(false);
-              }
-            }
-          } catch (error) {
-            Alert.alert(
-              "오류",
-              "게시글 작성에 실패했습니다. 다시 시도해주세요."
-            );
-            setIsLoading(false);
-
-            // 스택 추적 로깅
-            if (error.stack) {
-              console.error("Stack trace:", error.stack);
-            }
-
-            // 오류 메시지를 Alert로 표시
-            Alert.alert(
-              "오류",
-              error.message || "게시글 전송 중 오류가 발생했습니다."
-            );
-          }
-        },
-      },
-    ]);
   };
 
   const handleUpdateSubmit = async () => {
@@ -215,29 +109,15 @@ export default function fixPost({ navigation, postId }) {
               });
             });
           }
-
-          try {
-            const result = await updatePost(post.id, formData);
-            if (result && result.success) {
-              Alert.alert("게시글이 성공적으로 수정되었습니다.");
-              onClose();
-              onPostSubmit();
-              setIsLoading(false);
-            } else {
-              console.error(
-                "게시글 작성에 실패했습니다:",
-                result ? result.data : "Unknown error"
-              );
-              Alert.alert(
-                "오류",
-                "게시글 작성에 실패했습니다. 다시 시도해주세요."
-              );
-              setIsLoading(false);
-            }
-          } catch (error) {
+          const { success } = await updatePost(post.id, formData);
+          if (success) {
+            Alert.alert("게시글이 성공적으로 수정되었습니다.");
+            setIsLoading(false);
+            navigation.pop();
+          } else {
             Alert.alert(
               "오류",
-              "게시글 작성에 실패했습니다. 다시 시도해주세요."
+              "게시글 수정에 실패했습니다. 다시 시도해주세요."
             );
             setIsLoading(false);
           }
@@ -245,23 +125,6 @@ export default function fixPost({ navigation, postId }) {
       },
     ]);
   };
-
-  useFocusEffect(
-    useCallback(() => {
-      if (post) {
-        setTitle(post.title);
-        setContent(post.body);
-        setExistedImage(post.post_image || []);
-        setIsLoading(false);
-      } else {
-        setTitle("");
-        setContent("");
-        setImage([]);
-        setIsLoading(false);
-      }
-      console.log("baaaam");
-    }, [])
-  );
 
   // 완료 버튼 활성화 조건 변경
   const isButtonDisabled = title === "" || content === "";
@@ -307,110 +170,102 @@ export default function fixPost({ navigation, postId }) {
     );
   };
   return (
-    <Modal
-      animationType="slide"
-      transparent={false}
-      visible={isVisible}
-      onRequestClose={handleClose}
-    >
-      <SafeAreaView style={styles.safeArea}>
-        <TouchableWithoutFeedback onPress={dismissKeyboard}>
-          <View style={styles.container}>
-            <View style={styles.header}>
-              <TouchableOpacity onPress={handleClose}>
-                <AntDesign name="close" size={22} />
-              </TouchableOpacity>
-              <Text style={styles.headerText}>
-                {post ? "게시글 수정" : "새 글 작성"}
-              </Text>
-            </View>
-            {/* 제목 */}
-            <TextInput
-              style={
-                isTitleFocused ? styles.titleFocused : styles.titleNotFocused
-              }
-              spellCheck={false}
-              autoCorrect={false}
-              onFocus={() => setIsTitleFocused(true)}
-              onBlur={() => setIsTitleFocused(false)}
-              selectionColor="#ffa551dc"
-              onChangeText={onChangeTitle}
-              value={title}
-              placeholder={"제목"}
-              placeholderTextColor={"#959595"}
-              multiline={true}
-            />
-            {/* 내용 */}
-            <TextInput
-              spellCheck={false}
-              autoCorrect={false}
-              style={isContentFocused ? styles.focused : styles.inputContent}
-              onFocus={() => setIsContentFocused(true)}
-              onBlur={() => setIsContentFocused(false)}
-              selectionColor="#ffa551dc"
-              onChangeText={onChangeContent}
-              value={content}
-              placeholder={"내용"}
-              placeholderTextColor={"#959595"}
-              multiline={true}
-            />
-            {/* 카메라, 완료버튼 */}
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity onPress={onPressPhoto}>
-                <Entypo name="camera" style={styles.camera} />
-              </TouchableOpacity>
+    <SafeAreaView style={styles.safeArea}>
+      <TouchableWithoutFeedback onPress={dismissKeyboard}>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <TouchableOpacity onPress={handleClose}>
+              <AntDesign name="close" size={22} />
+            </TouchableOpacity>
+            <Text style={styles.headerText}>게시글 수정</Text>
+          </View>
+          {/* 제목 */}
+          <TextInput
+            style={
+              isTitleFocused ? styles.titleFocused : styles.titleNotFocused
+            }
+            spellCheck={false}
+            autoCorrect={false}
+            onFocus={() => setIsTitleFocused(true)}
+            onBlur={() => setIsTitleFocused(false)}
+            selectionColor="#ffa551dc"
+            onChangeText={(text) => setTitle(text)}
+            value={title}
+            placeholder={"제목"}
+            placeholderTextColor={"#959595"}
+            multiline={true}
+          />
+          {/* 내용 */}
+          <TextInput
+            spellCheck={false}
+            autoCorrect={false}
+            style={isContentFocused ? styles.focused : styles.inputContent}
+            onFocus={() => setIsContentFocused(true)}
+            onBlur={() => setIsContentFocused(false)}
+            selectionColor="#ffa551dc"
+            onChangeText={(text) => setContent(text)}
+            value={content}
+            placeholder={"내용"}
+            placeholderTextColor={"#959595"}
+            multiline={true}
+          />
+          {/* 카메라, 완료버튼 */}
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity onPress={onPressPhoto}>
+              <Entypo name="camera" style={styles.camera} />
+            </TouchableOpacity>
 
-              <TouchableOpacity
-                disabled={isButtonDisabled || isLoading}
-                style={styles.button}
-                onPress={post ? handleUpdateSubmit : handleSubmit}
-              >
-                {isLoading ? (
-                  <ActivityIndicator color="crimson" />
-                ) : (
-                  <Text style={styles.buttonText}>완료</Text>
-                )}
-              </TouchableOpacity>
-            </View>
-            <ScrollView
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-              style={styles.imagePreviewContainer}
+            <TouchableOpacity
+              disabled={isButtonDisabled || isLoading}
+              style={styles.button}
+              onPress={post ? handleUpdateSubmit : handleSubmit}
             >
-              {existedImage.length > 0 &&
-                existedImage.map((img, index) => (
-                  <View key={index} style={styles.imagePreviewWrapper}>
-                    <Image
-                      source={{
-                        uri: img.image_url,
-                      }}
-                      style={styles.imagePreview}
-                    />
-                    <TouchableOpacity
-                      onPress={() => handleRemoveImage(img.id, index)}
-                    >
-                      <AntDesign name="closecircleo" size={17} color="gray" />
-                    </TouchableOpacity>
-                  </View>
-                ))}
-              {image.map((img, index) => (
+              {isLoading ? (
+                <ActivityIndicator color="crimson" />
+              ) : (
+                <Text style={styles.buttonText}>완료</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+          <ScrollView
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            style={styles.imagePreviewContainer}
+          >
+            {existedImage &&
+              existedImage.length > 0 &&
+              existedImage.map((img, index) => (
                 <View key={index} style={styles.imagePreviewWrapper}>
                   <Image
                     source={{
-                      uri: img.uri,
+                      uri: img.image_url,
                     }}
                     style={styles.imagePreview}
                   />
-                  <TouchableOpacity onPress={() => handleRemoveNewImage(index)}>
+                  <TouchableOpacity
+                    onPress={() => handleRemoveImage(img.id, index)}
+                  >
                     <AntDesign name="closecircleo" size={17} color="gray" />
                   </TouchableOpacity>
                 </View>
               ))}
-            </ScrollView>
-          </View>
-        </TouchableWithoutFeedback>
-      </SafeAreaView>
-    </Modal>
+            {image.map((img, index) => (
+              <View key={index} style={styles.imagePreviewWrapper}>
+                <Image
+                  source={{
+                    uri: img.uri,
+                  }}
+                  style={styles.imagePreview}
+                />
+                <TouchableOpacity onPress={() => handleRemoveNewImage(index)}>
+                  <AntDesign name="closecircleo" size={17} color="gray" />
+                </TouchableOpacity>
+              </View>
+            ))}
+          </ScrollView>
+        </View>
+      </TouchableWithoutFeedback>
+    </SafeAreaView>
   );
 }
 

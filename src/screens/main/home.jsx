@@ -10,9 +10,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import messaging from "@react-native-firebase/messaging";
 import React from "react";
 import { apiBe } from "../../server";
-import { Notifications } from "expo";
 import * as Notification from "expo-notifications";
-
+import { useAuth } from "../../store/AuthContext";
+import { requestUserPermission } from "../../utils/firebase/firebaseSetting";
+import * as SecureStore from "expo-secure-store";
+import { pushCheckUpdate } from "../../server/notifications";
 // import * as SplashScreen from "expo-splash-screen";
 
 Notification.setNotificationHandler({
@@ -32,49 +34,115 @@ const board = {
 };
 
 export default function Home({ navigation }) {
-  const notificationListener = useRef();
-  const responseListener = useRef();
+  const { authState, setAuthState } = useAuth();
+  let isMessageHandlerRegistered = false;
 
   //개별 알림이 사용가능한지 확인
   useEffect(() => {
-    messaging()
-      .getInitialNotification()
-      .then(async (remoteMessage) => {
-        if (remoteMessage.data) {
-          const { postId, boardId } = remoteMessage.data;
-          navigation.navigate(board[boardId], { postId: postId });
+    const notificationCheck = async () => {
+      const { AuthorizationSuccess } = await requestUserPermission();
+      if (AuthorizationSuccess && authState.pushTokenActive === "NO") {
+        const token = await messaging().getToken();
+        setAuthState((prev) => ({ ...prev, pushToken: token }));
+        await SecureStore.setItemAsync("PUSH_TOKEN", token);
+        if (token) {
+          console.log("Push Token: ", token);
+          try {
+            const data = {
+              pushToken: token,
+            };
+            await apiBe.post("/push/token/", data);
+            await SecureStore.setItemAsync("PUSHTOKEN_ACTIVE", "YES");
+          } catch (error) {
+            console.log("Sending Push Token error", error);
+          }
+        } else {
+          console.log("getToken Failed");
+        }
+      } else {
+        console.log("already registered");
+      }
+    };
+
+    const fetchData = async () => {
+      await notificationCheck();
+
+      messaging()
+        .getInitialNotification()
+        .then(async (remoteMessage) => {
+          if (remoteMessage && remoteMessage.data) {
+            const { postId, boardId, pushedAt } = remoteMessage.data;
+            if (postId && boardId && pushedAt) {
+              const { success } = await pushCheckUpdate(authState.id, pushedAt);
+              if (success) {
+                navigation.navigate(board[boardId], { postId: postId });
+              } else {
+                navigation.navigate(board[boardId], { postId: postId });
+              }
+            } else {
+              console.log("푸시 알림 데이터가 부족합니다.");
+            }
+          } else {
+            console.log("푸시 알림 데이터가 없습니다.");
+          }
+        });
+
+      messaging().onNotificationOpenedApp(async (remoteMessage) => {
+        if (remoteMessage && remoteMessage.data) {
+          const { postId, boardId, pushedAt } = remoteMessage.data;
+          if (postId && boardId && pushedAt) {
+            const { success } = await pushCheckUpdate(authState.id, pushedAt);
+            if (success) {
+              navigation.navigate(board[boardId], { postId: postId });
+            } else {
+              navigation.navigate(board[boardId], { postId: postId });
+            }
+          } else {
+            console.log("푸시 알림 데이터가 부족합니다.");
+          }
+        } else {
+          console.log("푸시 알림 데이터가 없습니다.");
         }
       });
 
-    messaging().onNotificationOpenedApp((remoteMessage) => {
-      console.log("백그라운드에서 열었을 때", remoteMessage);
-      if (remoteMessage.data) {
-        const { postId, boardId } = remoteMessage.data;
-        navigation.navigate(board[boardId], { postId: postId });
-      }
-    });
+      messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+        console.log("백그라운드 메세지 받기", remoteMessage);
+      });
+    };
 
-    messaging().setBackgroundMessageHandler(async (remoteMessage) => {
-      console.log("백그라운드 메세지 받기", remoteMessage);
-    });
-
+    fetchData();
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
       console.log("포어그라운드", remoteMessage);
-      if (remoteMessage.data.postId && remoteMessage.data.boardId) {
-        const { postId, boardId } = remoteMessage.data;
-        Alert.alert(
-          remoteMessage.notification.title,
-          remoteMessage.notification.body,
-          [
-            { text: "취소", style: "cancel" },
-            {
-              text: "보러가기",
-              onPress: () => {
-                navigation.navigate(board[boardId], { postId: postId });
+      if (remoteMessage && remoteMessage.data) {
+        const { postId, boardId, pushedAt } = remoteMessage.data;
+        if (postId && boardId && pushedAt) {
+          Alert.alert(
+            remoteMessage.notification.title,
+            remoteMessage.notification.body,
+            [
+              { text: "취소", style: "cancel" },
+              {
+                text: "보러가기",
+                onPress: async () => {
+                  const { success } = await pushCheckUpdate(
+                    authState.id,
+                    pushedAt
+                  );
+                  if (success) {
+                    navigation.navigate(board[boardId], { postId: postId });
+                  } else {
+                    navigation.navigate(board[boardId], { postId: postId });
+                  }
+                },
               },
-            },
-          ]
-        );
+            ]
+          );
+        } else {
+          Alert.alert(
+            remoteMessage.notification.title,
+            remoteMessage.notification.body
+          );
+        }
       } else {
         Alert.alert(
           remoteMessage.notification.title,
@@ -82,9 +150,9 @@ export default function Home({ navigation }) {
         );
       }
     });
-
     return unsubscribe;
   }, []);
+
   return (
     <View>
       <ScrollView style={styles.container}>

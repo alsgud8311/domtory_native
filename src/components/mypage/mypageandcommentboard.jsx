@@ -155,11 +155,11 @@ const styles = StyleSheet.create({
   commentIcon: {
     fontSize: 15,
     marginRight: 5,
-    color: "#666666",
+    color: "crimson",
   },
   comment_cnt: {
     fontSize: 12,
-    color: "#5a5a5a",
+    color: "crimson",
   },
   title: {
     paddingRight: 10,

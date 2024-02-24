@@ -55,7 +55,13 @@ export default function NoticeCard({ navigation }) {
               style={index !== noticeData.length - 1 ? styles.postItem : null} // Apply borderBottom only to non-last items
             >
               <Text style={styles.postDate}>{notice.date}</Text>
-              <Text style={styles.postText}>{notice.title}</Text>
+              <Text
+                style={styles.postText}
+                ellipsizeMode="tail"
+                numberOfLines={1}
+              >
+                {notice.title}
+              </Text>
             </TouchableOpacity>
           ))
         ) : (
@@ -117,6 +123,7 @@ const styles = StyleSheet.create({
     borderColor: "orange",
   },
   postText: {
+    width: "100%",
     fontSize: 16,
     paddingTop: 5,
     paddingBottom: 15,

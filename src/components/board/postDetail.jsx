@@ -16,7 +16,7 @@ import {
   RefreshControl,
   Keyboard,
 } from "react-native";
-import { Octicons, Feather } from "@expo/vector-icons";
+import { Octicons, Feather, FontAwesome5 } from "@expo/vector-icons";
 import domtory from "../../assets/icon.png";
 import {
   postComment,
@@ -25,9 +25,10 @@ import {
   deleteReply,
   updatePost,
   report,
+  block,
 } from "../../server/board";
 import { useAuth } from "../../store/AuthContext";
-import { useFocusEffect } from "@react-navigation/native";
+import ImageModal from "react-native-image-modal";
 
 export const handleReport = async (type, id) => {
   const result = await report(type, id);
@@ -200,8 +201,8 @@ export default function PostDetail({ data, reloadData, postId }) {
   // 신고 확인 및 처리
   const confirmAndReport = (type, id) => {
     Alert.alert(
-      "신고",
-      "이 게시글/댓글을 신고하시겠습니까?",
+      "댓글 신고",
+      "해당 댓글을 신고하시겠습니까?\n신고된 게시글은 1차적으로 판별 시스템에 의해 삭제조치되며, 삭제 조치가 이루어지지 않은 게시글은 자율회에서 검토 후 삭제되거나 커뮤니티 이용 규칙에 위반되지 않는다고 판단할 시 보존됩니다.",
       [
         {
           text: "취소",
@@ -224,6 +225,36 @@ export default function PostDetail({ data, reloadData, postId }) {
     } else {
       console.error("신고 실패:", result.data);
       Alert.alert("오류", "신고에 실패했습니다. 다시 시도해주세요.");
+    }
+  };
+
+  // 댓글차단
+  const handleBlock = (commentId) => {
+    Alert.alert(
+      "댓글 차단",
+      "해당 댓글을 차단하시겠습니까? 차단하면 해당 댓글은 모두에게 보이지 않습니다.",
+      [
+        {
+          text: "취소",
+          style: "cancel",
+        },
+        {
+          text: "예",
+          onPress: () => commentBlock(commentId),
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  const commentBlock = async (commentId) => {
+    const { success } = await block(commentId, "comment");
+    if (success) {
+      Alert.alert("대댓글이 차단 및 숨김처리 되었습니다.");
+      reloadData();
+    } else {
+      console.error("대댓글 차단에 실패했습니다:", result.data);
+      Alert.alert("댓글/대댓글 차단에 실패했습니다. 다시 시도해주세요.");
     }
   };
 
@@ -255,7 +286,8 @@ export default function PostDetail({ data, reloadData, postId }) {
           data.post_image.map((img, index) => {
             if (!img.is_deleted) {
               return (
-                <Image
+                <ImageModal
+                  resizeMode="contain"
                   key={img.id}
                   source={{ uri: img.image_url }}
                   style={{
@@ -310,10 +342,10 @@ export default function PostDetail({ data, reloadData, postId }) {
                           alignItems: "center",
                         }}
                       />
-                      <Text style={styles.commentMember}>신고당한 도토리</Text>
+                      <Text style={styles.commentMember}>유배당한 도토리</Text>
                     </View>
                     <Text style={styles.commentDeleted}>
-                      신고당한 댓글입니다.
+                      해당 댓글은 신고되거나 관리자에 의해 숨김처리 되었습니다.
                     </Text>
                   </>
                 ) : (
@@ -333,7 +365,15 @@ export default function PostDetail({ data, reloadData, postId }) {
                             borderRadius: 3,
                           }}
                         />
-                        <Text style={styles.commentMember}>익명의 도토리</Text>
+                        {comment.anonymous_number === 0 ? (
+                          <Text style={styles.commentMember}>
+                            글쓴이 도토리
+                          </Text>
+                        ) : (
+                          <Text style={styles.commentMember}>
+                            익명의 도토리{comment.anonymous_number}
+                          </Text>
+                        )}
                       </View>
                       <View style={styles.commentOption}>
                         <Octicons
@@ -350,6 +390,21 @@ export default function PostDetail({ data, reloadData, postId }) {
                               style={styles.commnetDelete}
                             />
                           </TouchableOpacity>
+                        ) : authState.staff === "YES" ? (
+                          <>
+                            <Octicons
+                              name="stop"
+                              style={styles.commnetReport}
+                              onPress={() =>
+                                confirmAndReport("comment", comment.id)
+                              }
+                            />
+                            <FontAwesome5
+                              name="ban"
+                              style={styles.commnetReport}
+                              onPress={() => handleBlock(comment.id)}
+                            />
+                          </>
                         ) : (
                           <Octicons
                             name="stop"
@@ -371,7 +426,7 @@ export default function PostDetail({ data, reloadData, postId }) {
                   <View style={styles.replyContainer}>
                     {comment.reply.map((reply, index) =>
                       reply.is_deleted ? (
-                        <View style={styles.reply}>
+                        <View style={styles.reply} key={index}>
                           <View style={{ flexDirection: "row" }}>
                             <Image
                               source={domtory}
@@ -419,9 +474,15 @@ export default function PostDetail({ data, reloadData, postId }) {
                                   borderRadius: 3,
                                 }}
                               />
-                              <Text style={styles.commentMember}>
-                                익명의 도토리
-                              </Text>
+                              {reply.anonymous_number === 0 ? (
+                                <Text style={styles.commentMember}>
+                                  글쓴이 도토리
+                                </Text>
+                              ) : (
+                                <Text style={styles.commentMember}>
+                                  익명의 도토리{reply.anonymous_number}
+                                </Text>
+                              )}
                             </View>
                             <View style={styles.commentOption}>
                               {parseInt(authState.id) === reply.member ? (
@@ -431,13 +492,19 @@ export default function PostDetail({ data, reloadData, postId }) {
                                   onPress={() => confirmReplyDelete(reply.id)}
                                 />
                               ) : (
-                                <Octicons
-                                  name="stop"
-                                  style={styles.commnetReport}
-                                  onPress={() =>
-                                    confirmAndReport("comment", reply.id)
-                                  }
-                                />
+                                <>
+                                  <Octicons
+                                    name="stop"
+                                    style={styles.commnetReport}
+                                    onPress={() =>
+                                      confirmAndReport("comment", reply.id)
+                                    }
+                                  />
+                                  <FontAwesome5
+                                    name="ban"
+                                    style={styles.commnetReport}
+                                  />
+                                </>
                               )}
                             </View>
                           </View>

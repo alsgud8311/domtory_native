@@ -16,8 +16,9 @@ import {
 import { useAuth } from "../../store/AuthContext";
 import logo from "../../assets/domtory_icon.png";
 import { useFocusEffect } from "@react-navigation/native";
-import { requestUserPermission } from "../../utils/firebase/firebaseSetting";
 import messaging from "@react-native-firebase/messaging";
+import { CheckBox } from "react-native-elements";
+import { openBrowserAsync } from "expo-web-browser";
 
 export default function LoginForm({ navigation }) {
   const [username, setUsername] = useState("");
@@ -26,6 +27,7 @@ export default function LoginForm({ navigation }) {
   const { onLogin, onRegister } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [loginValid, setLoginValid] = useState(false);
+  const [checkTerms, SetCheckTerms] = useState(false);
   //다른 스택 컴포넌트로 갔다가 돌아오는 상태를 관찰하는 훅
   useFocusEffect(
     useCallback(() => {
@@ -35,12 +37,12 @@ export default function LoginForm({ navigation }) {
     }, [])
   );
   useEffect(() => {
-    if (username.includes("-") && password.length > 5) {
+    if (username.includes("-") && password.length > 5 && checkTerms) {
       setLoginValid(true);
     } else {
       setLoginValid(false);
     }
-  }, [username, password]);
+  }, [username, password, checkTerms]);
 
   const login = async () => {
     setIsLoading(true);
@@ -111,6 +113,27 @@ export default function LoginForm({ navigation }) {
             <View>
               <Text>🔒초기 비밀번호는 생년월일 8자리입니다.🔒</Text>
             </View>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <CheckBox
+                style={{ padding: 0 }}
+                checked={checkTerms}
+                checkedColor="orange"
+                onPress={() => SetCheckTerms(!checkTerms)}
+              />
+              <Text style={{ fontSize: 15 }}>
+                Domtory(돔토리)의 이용 약관에 동의합니다.
+              </Text>
+            </View>
+            <Text
+              onPress={() =>
+                openBrowserAsync(
+                  "https://luxurious-share-af6.notion.site/9ed580ee5cc242cab12a1131a9da8b97?pvs=4"
+                )
+              }
+              style={{ textAlign: "right", color: "orange", fontSize: 15 }}
+            >
+              이용 약관 보기
+            </Text>
           </View>
           {isLoading ? (
             <TouchableOpacity style={styles.loginButton}>
@@ -171,7 +194,7 @@ const styles = StyleSheet.create({
     padding: 20,
     textAlign: "center",
     flexDirection: "column",
-    gap: 20,
+    gap: 15,
   },
   loginFormTextInput: {
     width: "90%",

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import PostDetail from "../../../components/board/postDetail";
 import { getPostDetail } from "../../../server/board";
-import { useRoute } from "@react-navigation/native";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
 
 export default function GeneralDetail() {
   const [data, setData] = useState({});
@@ -13,15 +13,16 @@ export default function GeneralDetail() {
       const result = await getPostDetail(postId);
       console.log(result);
       setData(result.data);
-      console.log("reload");
     } catch (error) {
       console.error("Failed to reload data:", error);
     }
   };
 
-  useEffect(() => {
-    reloadData();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      reloadData();
+    }, [postId])
+  );
 
   return <PostDetail data={data} reloadData={reloadData} postId={postId} />;
 }
