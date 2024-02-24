@@ -54,7 +54,13 @@ export default function CouncilNoticeCard({ navigation }) {
                 navigation.navigate("자율회 공지사항", { postId: notice.id })
               }
             >
-              <Text style={styles.postText}>{notice.title}</Text>
+              <Text
+                style={styles.postText}
+                ellipsizeMode="tail"
+                numberOfLines={1}
+              >
+                {notice.title}
+              </Text>
               <Text
                 style={{ fontSize: 14, marginBottom: 10 }}
                 ellipsizeMode="tail"

@@ -35,6 +35,7 @@ const board = {
 
 export default function Home({ navigation }) {
   const { authState, setAuthState } = useAuth();
+  let isMessageHandlerRegistered = false;
 
   //개별 알림이 사용가능한지 확인
   useEffect(() => {
@@ -107,51 +108,49 @@ export default function Home({ navigation }) {
       messaging().setBackgroundMessageHandler(async (remoteMessage) => {
         console.log("백그라운드 메세지 받기", remoteMessage);
       });
+    };
 
-      const unsubscribe = messaging().onMessage(async (remoteMessage) => {
-        console.log("포어그라운드", remoteMessage);
-        if (remoteMessage && remoteMessage.data) {
-          const { postId, boardId, pushedAt } = remoteMessage.data;
-          if (postId && boardId && pushedAt) {
-            Alert.alert(
-              remoteMessage.notification.title,
-              remoteMessage.notification.body,
-              [
-                { text: "취소", style: "cancel" },
-                {
-                  text: "보러가기",
-                  onPress: async () => {
-                    const { success } = await pushCheckUpdate(
-                      authState.id,
-                      pushedAt
-                    );
-                    if (success) {
-                      navigation.navigate(board[boardId], { postId: postId });
-                    } else {
-                      navigation.navigate(board[boardId], { postId: postId });
-                    }
-                  },
+    fetchData();
+    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+      console.log("포어그라운드", remoteMessage);
+      if (remoteMessage && remoteMessage.data) {
+        const { postId, boardId, pushedAt } = remoteMessage.data;
+        if (postId && boardId && pushedAt) {
+          Alert.alert(
+            remoteMessage.notification.title,
+            remoteMessage.notification.body,
+            [
+              { text: "취소", style: "cancel" },
+              {
+                text: "보러가기",
+                onPress: async () => {
+                  const { success } = await pushCheckUpdate(
+                    authState.id,
+                    pushedAt
+                  );
+                  if (success) {
+                    navigation.navigate(board[boardId], { postId: postId });
+                  } else {
+                    navigation.navigate(board[boardId], { postId: postId });
+                  }
                 },
-              ]
-            );
-          } else {
-            Alert.alert(
-              remoteMessage.notification.title,
-              remoteMessage.notification.body
-            );
-          }
+              },
+            ]
+          );
         } else {
           Alert.alert(
             remoteMessage.notification.title,
             remoteMessage.notification.body
           );
         }
-      });
-
-      return unsubscribe;
-    };
-
-    fetchData();
+      } else {
+        Alert.alert(
+          remoteMessage.notification.title,
+          remoteMessage.notification.body
+        );
+      }
+    });
+    return unsubscribe;
   }, []);
 
   return (

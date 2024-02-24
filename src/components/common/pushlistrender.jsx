@@ -1,5 +1,5 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { pushCheckUpdate } from "../../server/notifications";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { pushCheckUpdate, pushDelete } from "../../server/notifications";
 
 export const pushRenderItems = ({ item, navigation }) => {
   const board = {

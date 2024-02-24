@@ -71,7 +71,7 @@ export default function Menu() {
       </ScrollView>
       <View style={styles.mealInf}>
         <Text style={styles.timeInf}>
-          조식: 07:00~08:30 (간편식 제공은 06:00부터)
+          조식: 07:00~08:30 {"\n"}간편식 제공은 06:00부터(방학에는 06:30부터)
         </Text>
         <Text style={styles.timeInf}>중식: 12:00~13:00</Text>
         <Text style={styles.timeInf}>
