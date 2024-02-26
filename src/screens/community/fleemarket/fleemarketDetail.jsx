@@ -10,8 +10,8 @@ export default function FleeMarketDetail({ navigation }) {
   const { postId } = route.params;
 
   const reloadData = async () => {
-    const { success } = await getPostDetail(postId);
-    if (success) {
+    const result = await getPostDetail(postId);
+    if (result.success && !result.data.is_blocked && !result.data.is_deleted) {
       console.log(result);
       setData(result.data);
     } else {

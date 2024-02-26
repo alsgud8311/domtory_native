@@ -31,6 +31,7 @@ export const Layout = () => {
   const { authState, onLogout } = useAuth();
   const activeAnalytics = async () => {
     await analytics().setAnalyticsCollectionEnabled(true);
+    console.log("등록됨");
   };
   useEffect(() => {
     if (!authState.authenticated) {
