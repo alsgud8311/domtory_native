@@ -10,6 +10,8 @@ import Signup from "./src/screens/login/signup";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
+import analytics from "@react-native-firebase/analytics";
+
 SplashScreen.preventAutoHideAsync();
 const Stack = createNativeStackNavigator();
 const screenOptions = {
@@ -27,11 +29,14 @@ export default function App() {
 
 export const Layout = () => {
   const { authState, onLogout } = useAuth();
-  console.log(authState);
+  const activeAnalytics = async () => {
+    await analytics().setAnalyticsCollectionEnabled(true);
+  };
   useEffect(() => {
     if (!authState.authenticated) {
       console.log("로그아웃 상태");
     }
+    activeAnalytics();
     setTimeout(async () => {
       await SplashScreen.hideAsync();
     }, 2000);
