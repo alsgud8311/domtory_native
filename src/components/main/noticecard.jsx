@@ -30,10 +30,6 @@ export default function NoticeCard({ navigation }) {
     }, [])
   );
 
-  const navigateToDetailPage = (postId) => {
-    navigation.navigate("학사내 공지사항", { postId });
-  };
-
   return (
     <ScrollView style={styles.container}>
       <View style={styles.description}>
@@ -118,6 +114,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     gap: 10,
   },
+
   postItem: {
     borderBottomWidth: 0.5,
     borderColor: "orange",

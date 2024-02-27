@@ -60,7 +60,7 @@ export default function CouncilNoticeDetail() {
           </Text>
         </View>
       </View>
-      <View style={{ width: "100%", padding: 20 }}>
+      <View style={{ width: "100%", padding: 20, marginBottom: 80 }}>
         <Text style={{ fontSize: 20, paddingBottom: 20 }}>{data.title}</Text>
         <Text style={{ fontSize: 17 }}>{data.body}</Text>
       </View>

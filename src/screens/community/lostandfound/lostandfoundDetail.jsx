@@ -2,19 +2,21 @@ import React, { useState, useEffect, useCallback } from "react";
 import PostDetail from "../../../components/board/postDetail";
 import { getPostDetail } from "../../../server/board";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
+import { Alert } from "react-native";
 
-export default function LostAndFoundDetail() {
+export default function LostAndFoundDetail({ navigation }) {
   const [data, setData] = useState({});
   const route = useRoute();
   const { postId } = route.params;
 
   const reloadData = async () => {
-    try {
-      const result = await getPostDetail(postId);
+    const result = await getPostDetail(postId);
+    if (result.success && !result.data.is_blocked && !result.data.is_deleted) {
       console.log(result);
       setData(result.data);
-    } catch (error) {
-      console.error("Failed to reload data:", error);
+    } else {
+      Alert.alert("삭제되거나 차단 조치된 게시물입니다.");
+      navigation.pop();
     }
   };
 

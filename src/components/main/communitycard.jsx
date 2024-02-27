@@ -15,7 +15,7 @@ export default function CommunityCard({ navigation }) {
   const [communityData, setCommunityData] = useState(null);
 
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       const getData = async () => {
         try {
           const { success, data } = await getLatestPosts("1");

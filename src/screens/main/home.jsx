@@ -15,6 +15,7 @@ import { useAuth } from "../../store/AuthContext";
 import { requestUserPermission } from "../../utils/firebase/firebaseSetting";
 import * as SecureStore from "expo-secure-store";
 import { pushCheckUpdate } from "../../server/notifications";
+
 // import * as SplashScreen from "expo-splash-screen";
 
 Notification.setNotificationHandler({
@@ -150,6 +151,7 @@ export default function Home({ navigation }) {
         );
       }
     });
+
     return unsubscribe;
   }, []);
 
