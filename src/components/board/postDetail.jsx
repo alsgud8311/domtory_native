@@ -29,6 +29,7 @@ import {
 } from "../../server/board";
 import { useAuth } from "../../store/AuthContext";
 import ImageModal from "react-native-image-modal";
+import Hyperlink from "react-native-hyperlink";
 
 export const handleReport = async (type, id) => {
   const result = await report(type, id);
@@ -84,6 +85,7 @@ export default function PostDetail({ data, reloadData, postId }) {
 
   const onChangeComment = (inputComment) => {
     setComment(inputComment);
+    console.log(inputComment);
   };
 
   // 대댓글 작성 확인창
@@ -279,7 +281,9 @@ export default function PostDetail({ data, reloadData, postId }) {
           </View>
         </View>
         <Text style={styles.title}>{data.title}</Text>
-        <Text style={styles.content}>{data.body}</Text>
+        <Hyperlink linkDefault={true} linkStyle={{ color: "mediumblue" }}>
+          <Text style={styles.content}>{data.body}</Text>
+        </Hyperlink>
         {/* 사진 */}
         {data &&
           data.post_image &&
@@ -416,8 +420,12 @@ export default function PostDetail({ data, reloadData, postId }) {
                         )}
                       </View>
                     </View>
-
-                    <Text style={styles.commentContent}>{comment.body}</Text>
+                    <Hyperlink
+                      linkDefault={true}
+                      linkStyle={{ color: "mediumblue" }}
+                    >
+                      <Text style={styles.commentContent}>{comment.body}</Text>
+                    </Hyperlink>
                     <Text style={styles.commentDate}>{comment.created_at}</Text>
                   </>
                 )}
@@ -508,9 +516,14 @@ export default function PostDetail({ data, reloadData, postId }) {
                               )}
                             </View>
                           </View>
-                          <Text style={styles.commentContent}>
-                            {reply.body}
-                          </Text>
+                          <Hyperlink
+                            linkDefault={true}
+                            linkStyle={{ color: "mediumblue" }}
+                          >
+                            <Text style={styles.commentContent}>
+                              {reply.body}
+                            </Text>
+                          </Hyperlink>
                           <Text style={styles.commentDate}>
                             {reply.created_at}
                           </Text>

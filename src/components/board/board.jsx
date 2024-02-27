@@ -14,6 +14,7 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import NewPost from "./newPost";
 import { AntDesign, Octicons } from "@expo/vector-icons";
 import { getPostList } from "../../server/board";
+import Hyperlink from "react-native-hyperlink";
 
 export default function Board({ boardId, navigation }) {
   const [data, setData] = useState([]);

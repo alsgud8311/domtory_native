@@ -12,7 +12,7 @@ export default function JobseekerDetail({ navigation }) {
   const reloadData = async () => {
     const result = await getPostDetail(postId);
     if (result.success && !result.data.is_blocked && !result.data.is_deleted) {
-      console.log(result);
+      console.log(result.data);
       setData(result.data);
     } else {
       Alert.alert("삭제되거나 차단 조치된 게시물입니다.");

@@ -41,7 +41,7 @@ export default function RecentPostCard({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.description}>
-        <Text style={styles.descriptionText}>새로 올라온 글</Text>
+        <Text style={styles.descriptionText}>새로 올라온 글;cry;</Text>
       </View>
       {recentPostData ? (
         recentPostData.map((data, index) => (
@@ -66,10 +66,13 @@ export default function RecentPostCard({ navigation }) {
             >
               <View
                 style={{
+                  width: 110,
                   paddingVertical: 5,
                   borderRightColor: "orange",
                   borderRightWidth: 1,
                   paddingHorizontal: 10,
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
                 <Text>{boardList[data.board]}</Text>
