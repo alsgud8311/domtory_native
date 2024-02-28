@@ -41,7 +41,7 @@ export default function RecentPostCard({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.description}>
-        <Text style={styles.descriptionText}>새로 올라온 글;cry;</Text>
+        <Text style={styles.descriptionText}>새로 올라온 글</Text>
       </View>
       {recentPostData ? (
         recentPostData.map((data, index) => (

@@ -30,6 +30,8 @@ import {
 import { useAuth } from "../../store/AuthContext";
 import ImageModal from "react-native-image-modal";
 import Hyperlink from "react-native-hyperlink";
+import { Entypo } from "@expo/vector-icons";
+import EmojiSelector from "react-native-emoji-selector";
 
 export const handleReport = async (type, id) => {
   const result = await report(type, id);
@@ -44,6 +46,7 @@ export const handleReport = async (type, id) => {
 export default function PostDetail({ data, reloadData, postId }) {
   const { authState } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
+  const [emojiOn, setEmojiOn] = useState(false);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -560,6 +563,7 @@ export default function PostDetail({ data, reloadData, postId }) {
             value={comment}
             style={styles.commentInput}
           />
+
           {/* 작성 버튼 */}
           <TouchableOpacity
             style={styles.submitButton}
@@ -726,6 +730,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     paddingHorizontal: 10,
     alignItems: "center",
+    gap: 10,
     flex: 1,
   },
   commentInput: {
