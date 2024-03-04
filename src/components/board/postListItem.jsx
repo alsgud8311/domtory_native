@@ -1,5 +1,5 @@
 import { Octicons } from "@expo/vector-icons";
-import { Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export const postListItems = ({ item }) => {
   const navigateToDetailScreen = () => {

@@ -15,6 +15,7 @@ import NewPost from "./newPost";
 import { AntDesign, Octicons } from "@expo/vector-icons";
 import { getPostList } from "../../server/board";
 import Hyperlink from "react-native-hyperlink";
+import { postListItems } from "./postListItem";
 
 export default function Board({ boardId, navigation }) {
   const [data, setData] = useState([]);
@@ -63,76 +64,6 @@ export default function Board({ boardId, navigation }) {
     setRefreshFlag(!refreshFlag);
   };
 
-  const renderItem = ({ item }) => {
-    const navigateToDetailScreen = () => {
-      let screenName;
-      switch (boardId) {
-        case 1:
-          screenName = "자유 게시판";
-          break;
-        case 2:
-          screenName = "중고거래게시판";
-          break;
-        case 3:
-          screenName = "취준생게시판";
-          break;
-        case 4:
-          screenName = "번개모임게시판";
-          break;
-        case 5:
-          screenName = "분실물게시판";
-          break;
-        default:
-          screenName = "일치하는 게시판 없음";
-      }
-
-      if (screenName !== "일치하는 게시판 없음") {
-        navigation.navigate(screenName, {
-          postId: item.id,
-          memberId: item.member,
-        });
-      }
-    };
-
-    return (
-      <TouchableOpacity onPress={navigateToDetailScreen}>
-        <View style={styles.item}>
-          {/* 제목, 내용 */}
-          <View style={{ width: "80%" }}>
-            <Text style={styles.title} ellipsizeMode="tail" numberOfLines={1}>
-              {item.title}
-            </Text>
-            <Text style={styles.content} ellipsizeMode="tail" numberOfLines={2}>
-              {item.body}
-            </Text>
-
-            {/* 유저, 작성일 */}
-            <View style={{ flexDirection: "row", marginTop: 7, height: 15 }}>
-              <Text style={styles.date}>{item.created_at}</Text>
-              <Octicons name="comment" style={styles.commentIcon} />
-              <Text style={styles.comment_cnt}>{item.comment_cnt}</Text>
-            </View>
-          </View>
-          {/* 사진 */}
-          {item.thumbnail_url && (
-            <View
-              style={{
-                alignItems: "center",
-                justifyContent: "center",
-                paddingRight: 10,
-              }}
-            >
-              <Image
-                source={{ uri: item.thumbnail_url }}
-                style={styles.image}
-              />
-            </View>
-          )}
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
@@ -140,7 +71,7 @@ export default function Board({ boardId, navigation }) {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         data={data}
-        renderItem={renderItem}
+        renderItem={postListItems}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ paddingVertical: 20 }}
       />
