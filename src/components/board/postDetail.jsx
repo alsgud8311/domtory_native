@@ -461,12 +461,13 @@ export default function PostDetail({ data, reloadData, postId }) {
                               style={{ width: 23, height: 23, borderRadius: 3 }}
                             />
                             <Text style={styles.commentMember}>
-                              신고당한 도토리
+                              유배당한 도토리
                             </Text>
                           </View>
 
                           <Text key={reply.id} style={styles.commentDeleted}>
-                            신고당한 대댓글입니다.
+                            해당 댓글은 신고에 의해 숨김처리되거나 차단조치된
+                            댓글입니다.
                           </Text>
                         </View>
                       ) : (
@@ -515,7 +516,7 @@ export default function PostDetail({ data, reloadData, postId }) {
                                   <FontAwesome5
                                     name="ban"
                                     style={styles.commnetReport}
-                                    onPress={() => commentBlock(reply.id)}
+                                    onPress={() => handleBlock(reply.id)}
                                   />
                                 </>
                               )}
