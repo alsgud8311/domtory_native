@@ -67,6 +67,7 @@ export default function PostDetail({ data, reloadData, postId }) {
   const [imageHeights, setImageHeights] = useState([]);
   const screenWidth = Dimensions.get("window").width - 40;
   useEffect(() => {
+    console.log(authState);
     if (data && data.post_image) {
       const heights = data.post_image.map(() => 0);
       data.post_image.forEach((img, index) => {
@@ -236,8 +237,8 @@ export default function PostDetail({ data, reloadData, postId }) {
   // 댓글차단
   const handleBlock = (commentId) => {
     Alert.alert(
-      "댓글 차단",
-      "해당 댓글을 차단하시겠습니까? 차단하면 해당 댓글은 모두에게 보이지 않습니다.",
+      "댓글/대댓글 차단",
+      "해당 댓글/대댓글을 차단하시겠습니까? 차단하면 해당 댓글은 모두에게 보이지 않습니다.",
       [
         {
           text: "취소",
@@ -514,6 +515,7 @@ export default function PostDetail({ data, reloadData, postId }) {
                                   <FontAwesome5
                                     name="ban"
                                     style={styles.commnetReport}
+                                    onPress={() => commentBlock(reply.id)}
                                   />
                                 </>
                               )}

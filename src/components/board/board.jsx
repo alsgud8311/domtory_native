@@ -15,7 +15,7 @@ import NewPost from "./newPost";
 import { AntDesign, Octicons } from "@expo/vector-icons";
 import { getPostList } from "../../server/board";
 import Hyperlink from "react-native-hyperlink";
-import { postListItems } from "./postListItem";
+import PostListItems, { postListItems } from "./postListItem";
 
 export default function Board({ boardId, navigation }) {
   const [data, setData] = useState([]);
@@ -71,7 +71,9 @@ export default function Board({ boardId, navigation }) {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         data={data}
-        renderItem={postListItems}
+        renderItem={({ item }) => (
+          <PostListItems item={item} navigation={navigation} />
+        )}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ paddingVertical: 20 }}
       />

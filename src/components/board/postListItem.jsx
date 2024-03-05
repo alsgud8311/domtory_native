@@ -1,10 +1,11 @@
 import { Octicons } from "@expo/vector-icons";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-export const postListItems = ({ item }) => {
+export default function PostListItems({ item, navigation }) {
   const navigateToDetailScreen = () => {
     let screenName;
-    switch (boardId) {
+    switch (item.board) {
       case 1:
         screenName = "자유 게시판";
         break;
@@ -60,7 +61,7 @@ export const postListItems = ({ item }) => {
       </View>
     </TouchableOpacity>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
