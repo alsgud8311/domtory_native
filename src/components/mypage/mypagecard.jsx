@@ -69,7 +69,7 @@ export default function MypageCard({ navigation }) {
           style={styles.card}
           onPress={() => navigation.navigate("알림 설정")}
         >
-          <AntDesign name="lock" size={24} color="black" />
+          <MaterialIcons name="notifications-on" size={24} color="black" />
           <Text style={styles.cardText}>알림 설정</Text>
         </TouchableOpacity>
       </View>

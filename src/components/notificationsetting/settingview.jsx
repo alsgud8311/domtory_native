@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
 
@@ -12,6 +12,21 @@ const SettingView = () => {
     impromptu: false,
     comment: false,
   });
+
+  const handleMealChange = (key, value) => {
+    setSetting((prev) => ({
+      ...prev,
+      meal: {
+        ...prev.meal,
+        [key]: value,
+      },
+    }));
+  };
+
+  useEffect(() => {
+    console.log(setting);
+  }, [setting]);
+
   return (
     <View style={styles.container}>
       <View style={styles.card}>
@@ -19,6 +34,22 @@ const SettingView = () => {
         <Text style={styles.subtitle}>
           매일 아침, 점심, 저녁 식단을 알려드려요
         </Text>
+        <View style={styles.selectCard}>
+          <Text>아침</Text>
+          <RNPickerSelect
+            value={setting.meal.breakfast}
+            fixAndroidTouchableBug={true}
+            useNativeAndroidPickerStyle={false}
+            placeholder={{}}
+            onValueChange={(itemValue) =>
+              handleMealChange("breakfast", itemValue)
+            }
+            items={[
+              { label: "ON", value: true },
+              { label: "OFF", value: false },
+            ]}
+          />
+        </View>
       </View>
     </View>
   );
