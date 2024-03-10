@@ -9,6 +9,7 @@ import Mypage from "./mypage";
 import Header from "../../components/common/header";
 import { useAuth } from "../../store/AuthContext";
 import { useEffect } from "react";
+import NotificationSetting from "./notification";
 
 export default function SettingStack() {
   const Stack = createNativeStackNavigator();
@@ -34,6 +35,7 @@ export default function SettingStack() {
         }}
       />
       <Stack.Screen name="비밀번호 변경" component={PasswordChange} />
+      <Stack.Screen name="알림 설정" component={NotificationSetting} />
     </Stack.Navigator>
   );
 }

@@ -34,7 +34,7 @@ export default function PostListItems({ item, navigation }) {
   };
 
   return (
-    <TouchableOpacity onPress={navigateToDetailScreen}>
+    <TouchableOpacity onPress={navigateToDetailScreen} key={item.id}>
       <View style={styles.item}>
         {/* 제목, 내용 */}
         <View style={{ width: "80%" }}>
