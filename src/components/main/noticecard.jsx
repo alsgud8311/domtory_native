@@ -33,7 +33,7 @@ export default function NoticeCard({ navigation }) {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.description}>
-        <Text style={styles.descriptionText}>학사 공지사항</Text>
+        <Text style={styles.descriptionText}>📢학사 공지사항</Text>
         <TouchableOpacity
           style={styles.moreButton}
           onPress={() => navigation.navigate("공지사항", { div: "cbhs" })}
