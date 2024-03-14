@@ -15,6 +15,7 @@ import { useAuth } from "../../store/AuthContext";
 import { requestUserPermission } from "../../utils/firebase/firebaseSetting";
 import * as SecureStore from "expo-secure-store";
 import { pushCheckUpdate } from "../../server/notifications";
+import PopularPostCard from "../../components/main/popularpostcard";
 
 // import * as SplashScreen from "expo-splash-screen";
 
@@ -162,6 +163,7 @@ export default function Home({ navigation }) {
         <Shortcuts navigation={navigation} />
         <RecentPostCard navigation={navigation} />
         <CommunityCard navigation={navigation} />
+        <PopularPostCard navigation={navigation} />
         <NoticeCard navigation={navigation} />
         <CouncilNoticeCard navigation={navigation} />
       </ScrollView>

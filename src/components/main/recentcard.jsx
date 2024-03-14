@@ -66,10 +66,13 @@ export default function RecentPostCard({ navigation }) {
             >
               <View
                 style={{
+                  width: 110,
                   paddingVertical: 5,
                   borderRightColor: "orange",
                   borderRightWidth: 1,
                   paddingHorizontal: 10,
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
                 <Text>{boardList[data.board]}</Text>

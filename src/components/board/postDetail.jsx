@@ -29,6 +29,9 @@ import {
 } from "../../server/board";
 import { useAuth } from "../../store/AuthContext";
 import ImageModal from "react-native-image-modal";
+import Hyperlink from "react-native-hyperlink";
+import { Entypo } from "@expo/vector-icons";
+import EmojiSelector from "react-native-emoji-selector";
 
 export const handleReport = async (type, id) => {
   const result = await report(type, id);
@@ -43,6 +46,7 @@ export const handleReport = async (type, id) => {
 export default function PostDetail({ data, reloadData, postId }) {
   const { authState } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
+  const [emojiOn, setEmojiOn] = useState(false);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -63,6 +67,7 @@ export default function PostDetail({ data, reloadData, postId }) {
   const [imageHeights, setImageHeights] = useState([]);
   const screenWidth = Dimensions.get("window").width - 40;
   useEffect(() => {
+    console.log(authState);
     if (data && data.post_image) {
       const heights = data.post_image.map(() => 0);
       data.post_image.forEach((img, index) => {
@@ -84,6 +89,7 @@ export default function PostDetail({ data, reloadData, postId }) {
 
   const onChangeComment = (inputComment) => {
     setComment(inputComment);
+    console.log(inputComment);
   };
 
   // 대댓글 작성 확인창
@@ -231,8 +237,8 @@ export default function PostDetail({ data, reloadData, postId }) {
   // 댓글차단
   const handleBlock = (commentId) => {
     Alert.alert(
-      "댓글 차단",
-      "해당 댓글을 차단하시겠습니까? 차단하면 해당 댓글은 모두에게 보이지 않습니다.",
+      "댓글/대댓글 차단",
+      "해당 댓글/대댓글을 차단하시겠습니까? 차단하면 해당 댓글은 모두에게 보이지 않습니다.",
       [
         {
           text: "취소",
@@ -279,7 +285,9 @@ export default function PostDetail({ data, reloadData, postId }) {
           </View>
         </View>
         <Text style={styles.title}>{data.title}</Text>
-        <Text style={styles.content}>{data.body}</Text>
+        <Hyperlink linkDefault={true} linkStyle={{ color: "mediumblue" }}>
+          <Text style={styles.content}>{data.body}</Text>
+        </Hyperlink>
         {/* 사진 */}
         {data &&
           data.post_image &&
@@ -416,8 +424,12 @@ export default function PostDetail({ data, reloadData, postId }) {
                         )}
                       </View>
                     </View>
-
-                    <Text style={styles.commentContent}>{comment.body}</Text>
+                    <Hyperlink
+                      linkDefault={true}
+                      linkStyle={{ color: "mediumblue" }}
+                    >
+                      <Text style={styles.commentContent}>{comment.body}</Text>
+                    </Hyperlink>
                     <Text style={styles.commentDate}>{comment.created_at}</Text>
                   </>
                 )}
@@ -449,12 +461,13 @@ export default function PostDetail({ data, reloadData, postId }) {
                               style={{ width: 23, height: 23, borderRadius: 3 }}
                             />
                             <Text style={styles.commentMember}>
-                              신고당한 도토리
+                              유배당한 도토리
                             </Text>
                           </View>
 
                           <Text key={reply.id} style={styles.commentDeleted}>
-                            신고당한 대댓글입니다.
+                            해당 댓글은 신고에 의해 숨김처리되거나 차단조치된
+                            댓글입니다.
                           </Text>
                         </View>
                       ) : (
@@ -503,14 +516,20 @@ export default function PostDetail({ data, reloadData, postId }) {
                                   <FontAwesome5
                                     name="ban"
                                     style={styles.commnetReport}
+                                    onPress={() => handleBlock(reply.id)}
                                   />
                                 </>
                               )}
                             </View>
                           </View>
-                          <Text style={styles.commentContent}>
-                            {reply.body}
-                          </Text>
+                          <Hyperlink
+                            linkDefault={true}
+                            linkStyle={{ color: "mediumblue" }}
+                          >
+                            <Text style={styles.commentContent}>
+                              {reply.body}
+                            </Text>
+                          </Hyperlink>
                           <Text style={styles.commentDate}>
                             {reply.created_at}
                           </Text>
@@ -547,6 +566,7 @@ export default function PostDetail({ data, reloadData, postId }) {
             value={comment}
             style={styles.commentInput}
           />
+
           {/* 작성 버튼 */}
           <TouchableOpacity
             style={styles.submitButton}
@@ -713,6 +733,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     paddingHorizontal: 10,
     alignItems: "center",
+    gap: 10,
     flex: 1,
   },
   commentInput: {

@@ -36,12 +36,9 @@
     "preview4": {
       "distribution": "internal"
     },
-    "production": {}
-  },
-  "submit": {
     "production": {
       "android": {
-        "buildType": "apk"
+        "buildType": "app-bundle"
       }
     }
   }

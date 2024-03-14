@@ -3,6 +3,7 @@ import { useRoute } from "@react-navigation/native";
 import { ActivityIndicator, Image, ScrollView, Text, View } from "react-native";
 import { getPostDetail } from "../../server/board";
 import kingDomtory from "../../assets/council_domtory.png";
+import Hyperlink from "react-native-hyperlink";
 
 export default function CouncilNoticeDetail() {
   const [data, setData] = useState(null);
@@ -62,7 +63,9 @@ export default function CouncilNoticeDetail() {
       </View>
       <View style={{ width: "100%", padding: 20, marginBottom: 80 }}>
         <Text style={{ fontSize: 20, paddingBottom: 20 }}>{data.title}</Text>
-        <Text style={{ fontSize: 17 }}>{data.body}</Text>
+        <Hyperlink linkDefault={true} linkStyle={{ color: "mediumblue" }}>
+          <Text style={{ fontSize: 17 }}>{data.body}</Text>
+        </Hyperlink>
       </View>
     </ScrollView>
   );

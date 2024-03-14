@@ -99,10 +99,11 @@ const PasswordChangeView = () => {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
+    height: "100%",
     alignItems: "center",
-    justifyContent: "center",
     padding: 20,
     marginBottom: 50,
+    backgroundColor: "white",
   },
   wrapper: {
     width: "100%",

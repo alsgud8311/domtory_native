@@ -65,6 +65,13 @@ export default function MypageCard({ navigation }) {
           <AntDesign name="lock" size={24} color="black" />
           <Text style={styles.cardText}>비밀번호 변경</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.card}
+          onPress={() => navigation.navigate("알림 설정")}
+        >
+          <MaterialIcons name="notifications-on" size={24} color="black" />
+          <Text style={styles.cardText}>알림 설정</Text>
+        </TouchableOpacity>
       </View>
       <View>
         <TouchableOpacity
