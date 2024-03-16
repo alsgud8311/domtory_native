@@ -260,11 +260,17 @@ export default function CommentBox({ data, setCurrentReplyingTo, reloadData }) {
                 </>
               )}
               {/* 대댓글 렌더링 부분 */}
-              {data.comment.reply && data.comment.reply.length > 0 && (
+              {comment.reply && comment.reply.length > 0 && (
                 <View style={styles.replyContainer}>
                   <ReplyCommentBox
-                    comment={data.comment}
+                    comment={comment}
                     reloadData={reloadData}
+                    commentBlock={commentBlock}
+                    handleBlock={handleBlock}
+                    handleReport={handleReport}
+                    handleReplyDelete={handleReplyDelete}
+                    confirmAndReport={confirmAndReport}
+                    confirmReplyDelete={confirmReplyDelete}
                   />
                 </View>
               )}
