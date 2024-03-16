@@ -66,7 +66,7 @@ export default function RecentPostCard({ navigation }) {
             >
               <View
                 style={{
-                  width: 110,
+                  width: 115,
                   paddingVertical: 5,
                   borderRightColor: "orange",
                   borderRightWidth: 1,
