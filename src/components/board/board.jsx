@@ -19,6 +19,8 @@ import PostListItems, { postListItems } from "./postListItem";
 
 export default function Board({ boardId, navigation }) {
   const [data, setData] = useState([]);
+  const [currPage, setcurrPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
   const [refreshFlag, setRefreshFlag] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -36,7 +38,8 @@ export default function Board({ boardId, navigation }) {
         try {
           const result = await getPostList(boardId);
           if (result && result.data) {
-            setData(result.data);
+            setData(result.data.postList);
+            setTotalPage(result.data.pageCnt);
           } else {
             throw new Error("No data");
           }
@@ -46,8 +49,10 @@ export default function Board({ boardId, navigation }) {
         }
       };
 
-      fetchData();
-    }, [boardId, refreshFlag, refreshing])
+      if (currPage <= totalPage) {
+        fetchData();
+      }
+    }, [boardId, refreshFlag, refreshing, currPage])
   );
 
   console.log(data);

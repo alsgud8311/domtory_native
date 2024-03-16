@@ -1,7 +1,10 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { apiBe } from "../server";
 import * as SecureStore from "expo-secure-store";
-import { requestUserPermission } from "../utils/firebase/firebaseSetting";
+import {
+  checkApplticationPermission,
+  requestUserPermission,
+} from "../utils/firebase/firebaseSetting";
 import messaging from "@react-native-firebase/messaging";
 import { Alert } from "react-native";
 
@@ -80,7 +83,7 @@ export const AuthProvider = ({ children }) => {
       apiBe.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${data.accessToken}`;
-
+      checkApplticationPermission();
       const { AuthorizationSuccess } = await requestUserPermission();
       if (AuthorizationSuccess) {
         const token = await messaging().getToken();

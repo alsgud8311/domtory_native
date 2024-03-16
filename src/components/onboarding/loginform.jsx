@@ -24,7 +24,7 @@ export default function LoginForm({ navigation }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState({ email: null, detail: "" });
-  const { onLogin, onRegister } = useAuth();
+  const { onLogin } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [loginValid, setLoginValid] = useState(false);
   const [checkTerms, SetCheckTerms] = useState(false);
@@ -62,10 +62,6 @@ export default function LoginForm({ navigation }) {
       );
       setIsLoading(false);
     }
-  };
-
-  const onSignupPress = () => {
-    navigation.navigate("회원가입");
   };
 
   return (
