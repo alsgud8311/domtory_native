@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 export default function PopularPostCard({ navigation }) {
   return (
     <View style={{ marginTop: 10 }}>
-      <Text style={styles.title}>🔥실시간 인기글</Text>
+      <Text style={styles.title}>🔥 실시간 인기글</Text>
       <View style={styles.container}>
         <Text>PopularPostCard</Text>
       </View>
