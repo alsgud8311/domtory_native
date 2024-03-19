@@ -4,13 +4,12 @@ import RNPickerSelect from "react-native-picker-select";
 
 const SettingView = () => {
   const [setting, setSetting] = useState({
-    meal: {
-      breakfast: false,
-      lunch: false,
-      dinner: false,
-    },
-    impromptu: false,
+    breakfast: false,
+    lunch: false,
+    dinner: false,
+    lightning: false,
     comment: false,
+    reply: false,
   });
 
   const handleMealChange = (key, value) => {
