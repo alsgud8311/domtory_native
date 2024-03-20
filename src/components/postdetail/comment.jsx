@@ -1,38 +1,19 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React from "react";
 import {
-  SafeAreaView,
   View,
   Text,
   Image,
-  Dimensions,
   StyleSheet,
-  ScrollView,
-  KeyboardAvoidingView,
-  TextInput,
   Platform,
   TouchableOpacity,
   Alert,
-  Button,
-  RefreshControl,
-  Keyboard,
 } from "react-native";
-import { Octicons, Feather, FontAwesome5 } from "@expo/vector-icons";
+import { Octicons, FontAwesome5 } from "@expo/vector-icons";
 import domtory from "../../assets/icon.png";
-import {
-  postComment,
-  deleteComment,
-  postReply,
-  deleteReply,
-  updatePost,
-  report,
-  block,
-} from "../../server/board";
+import { deleteComment, deleteReply, report, block } from "../../server/board";
 import { useAuth } from "../../store/AuthContext";
-import ImageModal from "react-native-image-modal";
 import Hyperlink from "react-native-hyperlink";
-import { Entypo } from "@expo/vector-icons";
-import EmojiSelector from "react-native-emoji-selector";
-import CommentBox from "../postdetail/comment";
+import ReplyCommentBox from "./replyComment";
 
 export const handleReport = async (type, id) => {
   const result = await report(type, id);
@@ -44,54 +25,8 @@ export const handleReport = async (type, id) => {
   }
 };
 
-export default function PostDetail({ data, reloadData, postId }) {
+export default function CommentBox({ data, setCurrentReplyingTo, reloadData }) {
   const { authState } = useAuth();
-  const [refreshing, setRefreshing] = useState(false);
-  const [emojiOn, setEmojiOn] = useState(false);
-
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    reloadData();
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 1000);
-  }, []);
-
-  if (!data) {
-    return (
-      <View>
-        <Text>Loading...</Text>
-      </View>
-    );
-  }
-
-  const [imageHeights, setImageHeights] = useState([]);
-  const screenWidth = Dimensions.get("window").width - 40;
-  useEffect(() => {
-    console.log(authState);
-    if (data && data.post_image) {
-      const heights = data.post_image.map(() => 0);
-      data.post_image.forEach((img, index) => {
-        if (!img.is_deleted) {
-          Image.getSize(img.image_url, (width, height) => {
-            const scaleFactor = width / screenWidth;
-            const imageHeight = height / scaleFactor;
-            heights[index] = imageHeight;
-            setImageHeights([...heights]);
-          });
-        }
-      });
-    }
-  }, [data]);
-
-  // 댓글
-  const [comment, setComment] = useState("");
-  const [currentReplyingTo, setCurrentReplyingTo] = useState(null);
-
-  const onChangeComment = (inputComment) => {
-    setComment(inputComment);
-    console.log(inputComment);
-  };
 
   // 대댓글 작성 확인창
   const promptForReply = (commentId) => {
@@ -112,35 +47,6 @@ export default function PostDetail({ data, reloadData, postId }) {
       ],
       { cancelable: false }
     );
-  };
-
-  // 댓글 POST
-  const handleCommentSubmit = async () => {
-    const { success } = await postComment(postId, comment);
-    if (success) {
-      Alert.alert("댓글이 작성되었습니다.");
-      setComment("");
-      reloadData();
-    } else {
-      console.error("댓글 작성에 실패했습니다:", result.data);
-      Alert.alert("오류", "댓글 작성에 실패했습니다. 다시 시도해주세요.");
-    }
-  };
-
-  // 대댓글 POST
-  const handleReplySubmit = async () => {
-    if (!currentReplyingTo) return;
-
-    const { success } = await postReply(currentReplyingTo, comment);
-    if (success) {
-      Alert.alert("댓글이 작성되었습니다.");
-      setComment("");
-      setCurrentReplyingTo(null);
-      reloadData();
-    } else {
-      console.error("대댓글 작성에 실패했습니다:", result.data);
-      Alert.alert("오류", "대댓글 작성에 실패했습니다. 다시 시도해주세요.");
-    }
   };
 
   // 댓글 삭제 확인창
@@ -254,6 +160,7 @@ export default function PostDetail({ data, reloadData, postId }) {
     );
   };
 
+  //댓글 차단 -> 댓글 차단 후 reload
   const commentBlock = async (commentId) => {
     const { success } = await block(commentId, "comment");
     if (success) {
@@ -266,141 +173,115 @@ export default function PostDetail({ data, reloadData, postId }) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        style={styles.scrollView}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
-        {/* 글내용 */}
-        <View style={styles.header}>
-          <Image
-            source={domtory}
-            style={{ width: 45, height: 45, borderRadius: 10 }}
-          />
-          <View style={{ flexDirection: "column", marginLeft: 8 }}>
-            <Text style={styles.user}>익명의 도토리</Text>
-            <Text style={styles.date}>{data.created_at}</Text>
-          </View>
-        </View>
-        <Text style={styles.title}>{data.title}</Text>
-        <Hyperlink linkDefault={true} linkStyle={{ color: "mediumblue" }}>
-          <Text style={styles.content}>{data.body}</Text>
-        </Hyperlink>
-        {/* 사진 */}
-        {data &&
-          data.post_image &&
-          data.post_image.map((img, index) => {
-            if (!img.is_deleted) {
-              return (
-                <ImageModal
-                  resizeMode="contain"
-                  key={img.id}
-                  source={{ uri: img.image_url }}
-                  style={{
-                    width: screenWidth,
-                    height: imageHeights[index],
-                    resizeMode: "contain",
-                    borderRadius: 3,
-                    marginBottom: 10,
-                  }}
-                />
-              );
-            }
-          })}
-        <View style={styles.comment}>
-          <Octicons name="comment" style={styles.commentIcon} />
-          <Text style={styles.commentNum}>{data.comment_cnt}</Text>
-        </View>
-        <CommentBox
-          data={data}
-          setCurrentReplyingTo={setCurrentReplyingTo}
-          reloadData={reloadData}
-        />
-      </ScrollView>
-      {/* 댓글 작성 */}
-      <KeyboardAvoidingView
-        style={styles.writeComment}
-        behavior={Platform.OS === "ios" ? "padding" : null}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : -500} // iOS 외 플랫폼에서는 원하는 값으로 설정
-      >
-        {/* <ScrollView
-          style={{ flex: 1 }}
-          contentContainerStyle={{ flexGrow: 1 }}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-        > */}
-        <View style={styles.inputBox}>
-          <TextInput
-            placeholder={
-              currentReplyingTo ? "대댓글을 입력하세요" : "댓글을 입력하세요"
-            }
-            placeholderTextColor={"#848484"}
-            multiline={true}
-            scrollEnabled={true}
-            onChangeText={onChangeComment}
-            value={comment}
-            style={styles.commentInput}
-          />
-
-          {/* 작성 버튼 */}
-          <TouchableOpacity
-            style={styles.submitButton}
-            onPress={
-              currentReplyingTo ? handleReplySubmit : handleCommentSubmit
-            }
-          >
-            <Feather name="edit-3" size={23} color="#ffa451" />
-          </TouchableOpacity>
-        </View>
-        {/* </ScrollView> */}
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+    <>
+      {data.comment &&
+        data.comment.length > 0 &&
+        data.comment.map((comment) =>
+          comment.is_deleted && comment.reply.length === 0 ? null : (
+            <View key={comment.id} style={styles.commentContainer}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <View style={{ flexDirection: "row" }}>
+                  <Image
+                    source={domtory}
+                    style={{
+                      width: 23,
+                      height: 23,
+                      borderRadius: 3,
+                      alignItems: "center",
+                    }}
+                  />
+                  {/* 댓글의 상태 검사 후 필터링 */}
+                  {comment.is_deleted ? (
+                    <Text style={styles.commentMember}>삭제된 도토리</Text>
+                  ) : comment.is_blocked ? (
+                    <Text style={styles.commentMember}>유배당한 도토리</Text>
+                  ) : comment.anonymous_number === 0 ? (
+                    <Text style={styles.commentMember}>글쓴이 도토리</Text>
+                  ) : (
+                    <Text style={styles.commentMember}>
+                      익명의 도토리{comment.anonymous_number}
+                    </Text>
+                  )}
+                </View>
+                {/* 옵션 버튼 (답글, 삭제, 신고 등) */}
+                <View style={styles.commentOption}>
+                  <Octicons
+                    name="comment-discussion"
+                    style={styles.commnetReply}
+                    onPress={() => promptForReply(comment.id)}
+                  />
+                  {parseInt(authState.id) === comment.member ? (
+                    <TouchableOpacity onPress={() => confirmDelete(comment.id)}>
+                      <Octicons name="trash" style={styles.commnetDelete} />
+                    </TouchableOpacity>
+                  ) : authState.staff === "YES" ? (
+                    <>
+                      <Octicons
+                        name="stop"
+                        style={styles.commnetReport}
+                        onPress={() => confirmAndReport("comment", comment.id)}
+                      />
+                      <FontAwesome5
+                        name="ban"
+                        style={styles.commnetReport}
+                        onPress={() => handleBlock(comment.id)}
+                      />
+                    </>
+                  ) : (
+                    <Octicons
+                      name="stop"
+                      style={styles.commnetReport}
+                      onPress={() => confirmAndReport("comment", comment.id)}
+                    />
+                  )}
+                </View>
+              </View>
+              {comment.is_deleted || comment.is_blocked ? (
+                <Text style={styles.commentDeleted}>
+                  {comment.is_deleted
+                    ? "삭제된 댓글입니다."
+                    : "해당 댓글은 신고되거나 관리자에 의해 숨김처리 되었습니다."}
+                </Text>
+              ) : (
+                <>
+                  {/* 내용, 날짜 등을 표시하는 부분 */}
+                  <Hyperlink
+                    linkDefault={true}
+                    linkStyle={{ color: "mediumblue" }}
+                  >
+                    <Text style={styles.commentContent}>{comment.body}</Text>
+                  </Hyperlink>
+                  <Text style={styles.commentDate}>{comment.created_at}</Text>
+                </>
+              )}
+              {/* 대댓글 렌더링 부분 */}
+              {comment.reply && comment.reply.length > 0 && (
+                <View style={styles.replyContainer}>
+                  <ReplyCommentBox
+                    comment={comment}
+                    reloadData={reloadData}
+                    commentBlock={commentBlock}
+                    handleBlock={handleBlock}
+                    handleReport={handleReport}
+                    handleReplyDelete={handleReplyDelete}
+                    confirmAndReport={confirmAndReport}
+                    confirmReplyDelete={confirmReplyDelete}
+                  />
+                </View>
+              )}
+            </View>
+          )
+        )}
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  scrollView: {
-    marginHorizontal: 20,
-    marginTop: 25,
-    marginBottom: 5,
-    flex: 1,
-  },
-  // 내용
-  header: {
-    flexDirection: "row",
-    marginBottom: 15,
-    alignItems: "center",
-  },
-  user: {
-    fontSize: 16,
-    fontWeight: "700",
-    marginBottom: 2,
-  },
-  date: {
-    fontSize: 12,
-    color: "grey",
-  },
-  image: {
-    borderRadius: 3,
-    marginBottom: 10,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "700",
-    marginBottom: 5,
-  },
-  content: {
-    fontSize: 15,
-    marginBottom: 13,
-  },
-
   // 댓글 아이콘, 댓글수
   comment: {
     flexDirection: "row",
@@ -458,16 +339,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#66666675",
     paddingHorizontal: 13,
-    borderRightWidth: 1,
-    borderRightColor: "#6666665e",
   },
   // 댓글 삭제 아이콘
   commnetDelete: {
     fontSize: 14,
     color: "#66666675",
     paddingHorizontal: 13,
-    borderRightWidth: 1,
-    borderRightColor: "#6666665e",
   },
   // 댓글 신고 아이콘
   commnetReport: {

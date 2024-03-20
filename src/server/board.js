@@ -58,7 +58,7 @@ export const deletePost = async (postId) => {
 //특정 게시판 게시글 리스트 받기
 export const getPostList = async (boardId) => {
   try {
-    const { data } = await apiBe.get(`/board/post/list/${boardId}/`);
+    const { data } = await apiBe.get(`/board/post/paged/list/${boardId}/`);
     if (data) {
       return { success: true, data: data };
     }
