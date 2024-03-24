@@ -39,6 +39,7 @@ export default function Board({ boardId, navigation }) {
           const result = await getPostList(boardId);
           if (result && result.data) {
             setData(result.data.postList);
+            console.log("data");
             setTotalPage(result.data.pageCnt);
           } else {
             throw new Error("No data");
@@ -48,14 +49,9 @@ export default function Board({ boardId, navigation }) {
           navigation.pop();
         }
       };
-
-      if (currPage <= totalPage) {
-        fetchData();
-      }
+      fetchData();
     }, [boardId, refreshFlag, refreshing, currPage])
   );
-
-  console.log(data);
 
   const handleOpenNewPost = () => {
     setModalVisible(true);
