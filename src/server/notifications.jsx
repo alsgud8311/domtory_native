@@ -38,3 +38,23 @@ export const pushDelete = async (memberId, pushedAt) => {
     return { success: false };
   }
 };
+
+export const getPushDetail = async () => {
+  try {
+    const response = await apiBe.get("/push/notification-detail/");
+    return { success: true, data: response.data };
+  } catch (error) {
+    return { success: false, data: error.response };
+  }
+};
+
+export const putPushDetail = async (detailData) => {
+  try {
+    console.log(detailData);
+    const response = await apiBe.put("/push/notification-detail/", detailData);
+    return { success: true };
+  } catch (error) {
+    console.log(error);
+    return { success: false };
+  }
+};
