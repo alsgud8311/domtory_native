@@ -193,3 +193,14 @@ export const block = async (postOrCommentId, type) => {
     return { success: false };
   }
 };
+
+// 인기게시글 가져오기
+export const getPopularpost = async (page) => {
+  try {
+    const response = await apiBe.get(`/board/post/paged/list/popular/`);
+    return { success: true, data: response.data };
+  } catch {
+    console.log(error);
+    return { success: false };
+  }
+};
