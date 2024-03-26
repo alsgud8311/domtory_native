@@ -23,7 +23,7 @@ export default function PopularPostCard({ navigation }) {
 
   return (
     <View style={{ marginTop: 10 }}>
-      <Text style={styles.title}>🔥 실시간 인기글</Text>
+      <Text style={styles.title}>🔥 핫도토리 게시판</Text>
       <View style={styles.container}>
         {data ? (
           data.postList.map((post, key) => (
