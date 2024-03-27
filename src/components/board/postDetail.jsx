@@ -264,6 +264,7 @@ export default function PostDetail({ data, reloadData, postId }) {
   };
 
   // 좋아요 POST
+  const [likesCount, setLikesCount] = useState(null);
   const [isLiked, setIsLiked] = useState(null);
 
   const handlePostLike = async () => {

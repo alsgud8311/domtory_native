@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -10,7 +10,9 @@ import {
 } from "react-native";
 import { Octicons, FontAwesome5 } from "@expo/vector-icons";
 import domtory from "../../assets/icon.png";
-import { deleteComment, deleteReply, report, block } from "../../server/board";
+import like from "../../assets/like_icon.png";
+import unlike from "../../assets/unlike_icon.png";
+import { deleteComment, deleteReply, report, block, postCommentLike } from "../../server/board";
 import { useAuth } from "../../store/AuthContext";
 import Hyperlink from "react-native-hyperlink";
 
@@ -25,6 +27,20 @@ export default function ReplyCommentBox({
   confirmReplyDelete,
 }) {
   const { authState } = useAuth();
+
+  // 좋아요 POST
+  const [likesCount, setLikesCount] = useState(null);
+
+  const handlePostLike = (commentId) => async () => {
+    try {
+      const { success, data } = await postCommentLike(commentId);
+      if (success) {
+        setLikesCount(data.likes_cnt);
+      }
+    } catch (error) {
+      console.error("좋아요를 처리하는 중 에러 발생:", error);
+    }
+  };
 
   return (
     <>
@@ -43,10 +59,10 @@ export default function ReplyCommentBox({
                 {reply.is_deleted
                   ? "삭제된 도토리"
                   : reply.is_blocked
-                  ? "유배당한 도토리"
-                  : reply.anonymous_number === 0
-                  ? "글쓴이 도토리"
-                  : `익명의 도토리 ${reply.anonymous_number}`}
+                    ? "유배당한 도토리"
+                    : reply.anonymous_number === 0
+                      ? "글쓴이 도토리"
+                      : `익명의 도토리 ${reply.anonymous_number}`}
               </Text>
             </View>
             {/* 대댓글의 옵션 버튼 (삭제, 신고 등) */}
@@ -71,6 +87,9 @@ export default function ReplyCommentBox({
                   />
                 </>
               )}
+              <TouchableOpacity onPress={handlePostLike(reply.id)} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                <Image source={unlike} style={{ width: 15, height: 15 }} />
+              </TouchableOpacity>
             </View>
           </View>
           {reply.is_deleted || reply.is_blocked ? (
@@ -85,7 +104,13 @@ export default function ReplyCommentBox({
               <Hyperlink linkDefault={true} linkStyle={{ color: "mediumblue" }}>
                 <Text style={styles.commentContent}>{reply.body}</Text>
               </Hyperlink>
-              <Text style={styles.commentDate}>{reply.created_at}</Text>
+              <View style={{ display: 'flex', flexDirection: 'row' }}>
+                <Text style={styles.commentDate}>{reply.created_at}</Text>
+                <Image source={like} style={{ width: 15, height: 15 }} />
+                <Text>
+                  {likesCount === null ? reply.likes_cnt : likesCount}
+                </Text>
+              </View>
             </>
           )}
         </View>
@@ -139,6 +164,7 @@ const styles = StyleSheet.create({
   commentDate: {
     fontSize: 13,
     color: "#666666",
+    marginRight: 7
   },
   // 댓글 옵션
   commentOption: {

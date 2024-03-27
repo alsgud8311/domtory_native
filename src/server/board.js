@@ -206,3 +206,16 @@ export const block = async (postOrCommentId, type) => {
     return { success: false };
   }
 };
+
+// 댓글 좋아요 POST
+export const postCommentLike = async (commentId) => {
+  try {
+    const { data } = await apiBe.post(`/board/comment/like/${commentId}/`);
+    if (data) {
+      return { success: true, data: data };
+    }
+    return { success: false, data: "정보를 가져오는 중에 오류가 발생했습니다" };
+  } catch (error) {
+    return { success: false, data: error.response.data };
+  }
+};
