@@ -36,7 +36,7 @@ export default function PopularPostCard({ navigation }) {
             </TouchableOpacity>
           ))
         ) : (
-          <Text>null</Text>
+          <Text>정보를 불러올 수 없습니다.</Text>
         )}
       </View>
     </View>

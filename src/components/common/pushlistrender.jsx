@@ -8,6 +8,7 @@ export const pushRenderItems = ({ item, navigation }) => {
     3: "취준생게시판",
     4: "번개모임게시판",
     5: "분실물게시판",
+    6: "자율회 공지사항",
   };
   const navigateToDetailScreen = async () => {
     if (item.boardId && item.postId) {
