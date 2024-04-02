@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Modal } from "react-native";
 import CommunityShortCuts from "./shortcuts/communityShortcuts";
 //게시판
+import Popular from './popular/popular'
 import General from "./general/general";
 import GeneralDetail from "./general/generalDetail";
 import FleeMarket from "./fleemarket/fleemarket";
@@ -29,7 +30,7 @@ import {
   stackscreenOptions,
 } from "../../constants/screenoptions";
 
-import { AntDesign, Entypo } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import Popup from "../../components/board/popup";
 import CouncilNoticeDetail from "../notice/CouncilNoticeDetail";
 import MyComment from "./mypost/mycomment";
@@ -75,6 +76,24 @@ const CommunityStack = ({ navigation }) => {
                 color="black"
                 onPress={() =>
                   navigation.navigate("검색", { board: "자유게시판" })
+                }
+              />
+            );
+          },
+        }}
+      />
+      <Stack.Screen
+        name="핫도토리 게시판"
+        component={Popular}
+        options={{
+          headerRight: () => {
+            return (
+              <AntDesign
+                name="search1"
+                size={30}
+                color="black"
+                onPress={() =>
+                  navigation.navigate("검색", { board: "핫도토리게시판" })
                 }
               />
             );

@@ -29,6 +29,19 @@ export const getPostDetail = async (postId) => {
   }
 };
 
+// 좋아요 POST
+export const postLike = async (postId) => {
+  try {
+    const { data } = await apiBe.post(`/board/post/like/${postId}/`);
+    if (data) {
+      return { success: true, data: data };
+    }
+    return { success: false, data: "정보를 가져오는 중에 오류가 발생했습니다" };
+  } catch (error) {
+    return { success: false, data: error.response.data };
+  }
+};
+
 // 게시글 수정
 export const updatePost = async (postId, formData) => {
   try {
@@ -56,9 +69,9 @@ export const deletePost = async (postId) => {
 };
 
 //특정 게시판 게시글 리스트 받기
-export const getPostList = async (boardId) => {
+export const getPostList = async (boardId, page) => {
   try {
-    const { data } = await apiBe.get(`/board/post/paged/list/${boardId}/`);
+    const { data } = await apiBe.get(`/board/post/paged/list/${boardId}?page=${page}`);
     if (data) {
       return { success: true, data: data };
     }
@@ -68,7 +81,7 @@ export const getPostList = async (boardId) => {
   }
 };
 
-//특정 게시판 게시글 리스트 받기
+//자율회 게시판 리스트 받기
 export const getCouncilNoticeList = async (pageId) => {
   try {
     const { data } = await apiBe.get(`/board/post/list/6/?page=${pageId}`);
@@ -191,5 +204,18 @@ export const block = async (postOrCommentId, type) => {
     return { success: true };
   } catch (error) {
     return { success: false };
+  }
+};
+
+// 댓글 좋아요 POST
+export const postCommentLike = async (commentId) => {
+  try {
+    const { data } = await apiBe.post(`/board/comment/like/${commentId}/`);
+    if (data) {
+      return { success: true, data: data };
+    }
+    return { success: false, data: "정보를 가져오는 중에 오류가 발생했습니다" };
+  } catch (error) {
+    return { success: false, data: error.response.data };
   }
 };
