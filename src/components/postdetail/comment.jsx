@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -10,7 +10,9 @@ import {
 } from "react-native";
 import { Octicons, FontAwesome5 } from "@expo/vector-icons";
 import domtory from "../../assets/icon.png";
-import { deleteComment, deleteReply, report, block } from "../../server/board";
+import like from "../../assets/like_icon.png";
+import unlike from "../../assets/unlike_icon.png";
+import { deleteComment, deleteReply, report, block, postCommentLike } from "../../server/board";
 import { useAuth } from "../../store/AuthContext";
 import Hyperlink from "react-native-hyperlink";
 import ReplyCommentBox from "./replyComment";
@@ -172,6 +174,20 @@ export default function CommentBox({ data, setCurrentReplyingTo, reloadData }) {
     }
   };
 
+  // 좋아요 POST
+  const [likesCount, setLikesCount] = useState(null);
+
+  const handlePostLike = (commentId) => async () => {
+    try {
+      const { success, data } = await postCommentLike(commentId);
+      if (success) {
+        setLikesCount(data.likes_cnt);
+      }
+    } catch (error) {
+      console.error("좋아요를 처리하는 중 에러 발생:", error);
+    }
+  };
+
   return (
     <>
       {data.comment &&
@@ -208,13 +224,16 @@ export default function CommentBox({ data, setCurrentReplyingTo, reloadData }) {
                     </Text>
                   )}
                 </View>
-                {/* 옵션 버튼 (답글, 삭제, 신고 등) */}
+                {/* 옵션 버튼 (답글, 삭제, 신고, 좋아요) */}
                 <View style={styles.commentOption}>
                   <Octicons
                     name="comment-discussion"
                     style={styles.commnetReply}
                     onPress={() => promptForReply(comment.id)}
                   />
+                  <TouchableOpacity onPress={handlePostLike(comment.id)} style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}> 
+                    <Image source={unlike} style={{ width: 15, height: 15 }} />
+                  </TouchableOpacity>
                   {parseInt(authState.id) === comment.member ? (
                     <TouchableOpacity onPress={() => confirmDelete(comment.id)}>
                       <Octicons name="trash" style={styles.commnetDelete} />
@@ -250,13 +269,16 @@ export default function CommentBox({ data, setCurrentReplyingTo, reloadData }) {
               ) : (
                 <>
                   {/* 내용, 날짜 등을 표시하는 부분 */}
-                  <Hyperlink
-                    linkDefault={true}
-                    linkStyle={{ color: "mediumblue" }}
-                  >
+                  <Hyperlink linkDefault={true} linkStyle={{ color: "mediumblue" }}>
                     <Text style={styles.commentContent}>{comment.body}</Text>
                   </Hyperlink>
-                  <Text style={styles.commentDate}>{comment.created_at}</Text>
+                  <View style={{ display: 'flex', flexDirection: 'row' }}>
+                    <Text style={styles.commentDate}>{comment.created_at}</Text>
+                    <Image source={like} style={{ width: 15, height: 15 }} />
+                    <Text style={styles.commentDate}>
+                      {likesCount === null ? comment.likes_cnt : likesCount}
+                    </Text>
+                  </View>
                 </>
               )}
               {/* 대댓글 렌더링 부분 */}
@@ -326,6 +348,7 @@ const styles = StyleSheet.create({
   commentDate: {
     fontSize: 13,
     color: "#666666",
+    marginRight: 7
   },
   // 댓글 옵션
   commentOption: {

@@ -1,30 +1,24 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {
-  View,
-  Text,
-  Image,
   StyleSheet,
   FlatList,
   TouchableOpacity,
   SafeAreaView,
-  Platform,
   RefreshControl,
 } from "react-native";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import NewPost from "./newPost";
-import { AntDesign, Octicons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import { getPostList } from "../../server/board";
-import Hyperlink from "react-native-hyperlink";
-import PostListItems, { postListItems } from "./postListItem";
+import PostListItems from "./postListItem";
 
 export default function Board({ boardId, navigation }) {
   const [data, setData] = useState([]);
-  const [currPage, setcurrPage] = useState(1);
+  const [currPage, setCurrPage] = useState(1);
   const [totalPage, setTotalPage] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
-  const [refreshFlag, setRefreshFlag] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
+<<<<<<< HEAD
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     setTimeout(() => {
@@ -53,6 +47,27 @@ export default function Board({ boardId, navigation }) {
     }, [boardId, refreshFlag, refreshing, currPage])
   );
 
+=======
+  const fetchData = useCallback(async () => {
+    try {
+      const result = await getPostList(boardId, currPage);
+      if (result && result.data) {
+        setData(prevData => [...prevData, ...result.data.postList]);
+        setTotalPage(result.data.pageCnt);
+      } else {
+        throw new Error("No data");
+      }
+    } catch (error) {
+      Alert.alert("정보를 가져오는데 실패했습니다.");
+      navigation.pop();
+    }
+  }, [boardId, currPage, navigation]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+>>>>>>> 56e4f2074f485303da2e92edef3111e4c054e2c6
   const handleOpenNewPost = () => {
     setModalVisible(true);
   };
@@ -62,21 +77,37 @@ export default function Board({ boardId, navigation }) {
   };
 
   const handleNewPostSubmit = () => {
-    setRefreshFlag(!refreshFlag);
+    setData([]);
+    setCurrPage(1);
+    fetchData();
   };
+
+  const handleLoadMore = () => {
+    if (currPage < totalPage) {
+      setCurrPage(prevPage => prevPage + 1);
+    }
+  };
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchData();
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  }, [fetchData]);
 
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         data={data}
         renderItem={({ item }) => (
           <PostListItems item={item} navigation={navigation} />
         )}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ paddingVertical: 20 }}
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.5}
       />
       <TouchableOpacity onPress={handleOpenNewPost} style={styles.writeButton}>
         <AntDesign name="form" size={24} color={"#fff"} />
