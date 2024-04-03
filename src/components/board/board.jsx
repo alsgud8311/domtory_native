@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   RefreshControl,
+  Alert,
 } from "react-native";
 import NewPost from "./newPost";
 import { AntDesign } from "@expo/vector-icons";
@@ -18,41 +19,12 @@ export default function Board({ boardId, navigation }) {
   const [isModalVisible, setModalVisible] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
-<<<<<<< HEAD
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 1000);
-  }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      const fetchData = async () => {
-        try {
-          const result = await getPostList(boardId);
-          if (result && result.data) {
-            setData(result.data.postList);
-            console.log("data");
-            setTotalPage(result.data.pageCnt);
-          } else {
-            throw new Error("No data");
-          }
-        } catch (error) {
-          Alert.alert("정보를 가져오는데 실패했습니다.");
-          navigation.pop();
-        }
-      };
-      fetchData();
-    }, [boardId, refreshFlag, refreshing, currPage])
-  );
-
-=======
   const fetchData = useCallback(async () => {
     try {
       const result = await getPostList(boardId, currPage);
-      if (result && result.data) {
-        setData(prevData => [...prevData, ...result.data.postList]);
+      if (success) {
+        console.log(result.data);
+        setData((prevData) => [...prevData, ...result.data.postList]);
         setTotalPage(result.data.pageCnt);
       } else {
         throw new Error("No data");
@@ -67,7 +39,6 @@ export default function Board({ boardId, navigation }) {
     fetchData();
   }, [fetchData]);
 
->>>>>>> 56e4f2074f485303da2e92edef3111e4c054e2c6
   const handleOpenNewPost = () => {
     setModalVisible(true);
   };
@@ -84,7 +55,7 @@ export default function Board({ boardId, navigation }) {
 
   const handleLoadMore = () => {
     if (currPage < totalPage) {
-      setCurrPage(prevPage => prevPage + 1);
+      setCurrPage((prevPage) => prevPage + 1);
     }
   };
 
@@ -99,7 +70,9 @@ export default function Board({ boardId, navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         data={data}
         renderItem={({ item }) => (
           <PostListItems item={item} navigation={navigation} />

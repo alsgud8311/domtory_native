@@ -2,7 +2,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { getPopularpost, popularpost } from "../../server/board";
-import acorn from "../../assets/acorn.png";
+import acorn from "../../assets/like_icon.png";
 
 export default function PopularPostCard({ navigation }) {
   const [data, setData] = useState(null);

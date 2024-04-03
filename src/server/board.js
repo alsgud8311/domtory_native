@@ -1,3 +1,4 @@
+import axios from "axios";
 import { apiBe } from ".";
 
 //게시글 작성
@@ -77,9 +78,10 @@ export const getPostList = async (boardId, page) => {
     if (data) {
       return { success: true, data: data };
     }
-    return { success: false, data: "정보를 가져오는 중에 오류가 발생했습니다" };
   } catch (error) {
-    return { success: false, data: error.response.data };
+    console.log("header:", apiBe.defaults.headers.common["Authorization"]);
+    console.log("error:", error);
+    return { success: false, data: error.response.data.detail };
   }
 };
 
