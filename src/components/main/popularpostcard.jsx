@@ -21,6 +21,14 @@ export default function PopularPostCard({ navigation }) {
     }, [])
   );
 
+  const boardList = {
+    1: "자유 게시판",
+    2: "중고거래게시판",
+    3: "취준생게시판",
+    4: "번개모임게시판",
+    5: "분실물게시판",
+  };
+
   return (
     <View style={{ marginTop: 10 }}>
       <View style={styles.description}>
@@ -36,7 +44,16 @@ export default function PopularPostCard({ navigation }) {
       <View style={styles.container}>
         {data ? (
           data.postList.map((post, key) => (
-            <TouchableOpacity key={key} style={styles.post}>
+            <TouchableOpacity
+              key={key}
+              style={styles.post}
+              onPress={() =>
+                navigation.navigate(boardList[post.board], {
+                  postId: post.id,
+                  memberId: post.member,
+                })
+              }
+            >
               <Text style={styles.postTitle}>{post.title}</Text>
               <View style={styles.likedCnt}>
                 <Image source={acorn} style={{ width: 15, height: 15 }}></Image>

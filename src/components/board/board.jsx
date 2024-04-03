@@ -22,7 +22,6 @@ export default function Board({ boardId, navigation }) {
   const [isPopularBoard, setisPopularBoard] = useState(false);
   const fetchData = useCallback(async () => {
     try {
-      alert(currPage);
       const response = await getPostList(boardId, currPage);
       setTotalPage(response.data.pageCnt);
       console.log("tt", totalPage);
@@ -70,7 +69,8 @@ export default function Board({ boardId, navigation }) {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    fetchData();
+    setData([]);
+    setCurrPage(1);
     setTimeout(() => {
       setRefreshing(false);
     }, 1000);
