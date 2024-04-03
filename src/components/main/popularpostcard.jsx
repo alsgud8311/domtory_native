@@ -3,6 +3,7 @@ import { useCallback, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { getPopularpost, popularpost } from "../../server/board";
 import acorn from "../../assets/like_icon.png";
+import { AntDesign } from "@expo/vector-icons";
 
 export default function PopularPostCard({ navigation }) {
   const [data, setData] = useState(null);
@@ -17,13 +18,21 @@ export default function PopularPostCard({ navigation }) {
   useFocusEffect(
     useCallback(() => {
       getData();
-      console.log(data);
     }, [])
   );
 
   return (
     <View style={{ marginTop: 10 }}>
-      <Text style={styles.title}>🔥 핫도토리 게시판</Text>
+      <View style={styles.description}>
+        <Text style={styles.title}>🔥 핫도토리 게시판</Text>
+        <TouchableOpacity
+          style={styles.moreButton}
+          onPress={() => navigation.navigate("핫도토리 게시판")}
+        >
+          <Text>더 보기</Text>
+          <AntDesign name="right" size={15} />
+        </TouchableOpacity>
+      </View>
       <View style={styles.container}>
         {data ? (
           data.postList.map((post, key) => (
@@ -51,6 +60,22 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 10,
     backgroundColor: "bisque",
+  },
+  description: {
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    paddingTop: 15,
+    paddingRight: 10,
+  },
+  descriptionText: {
+    fontSize: 18,
+    fontWeight: "600",
+  },
+  moreButton: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   title: {
     fontSize: 17,

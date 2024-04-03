@@ -26,6 +26,7 @@ import PostDetail from "../../components/board/postDetail";
 import PopupMenu from "../../components/board/popup";
 import PostFix from "../board/postfix";
 import NotificationList from "./notification";
+import Popular from "../community/popular/popular";
 
 function Logo() {
   return (
@@ -82,6 +83,24 @@ const HomeStack = ({ navigation }) => {
         options={{ headerShown: false }}
       />
       <Stack.Screen name="검색" component={Search} />
+      <Stack.Screen
+        name="핫도토리 게시판"
+        component={Popular}
+        options={{
+          headerRight: () => {
+            return (
+              <AntDesign
+                name="search1"
+                size={30}
+                color="black"
+                onPress={() =>
+                  navigation.navigate("검색", { board: "핫도토리게시판" })
+                }
+              />
+            );
+          },
+        }}
+      />
       <Stack.Screen
         name="자유 게시판"
         component={GeneralDetail}

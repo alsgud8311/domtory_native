@@ -18,7 +18,7 @@ export default function Board({ boardId, navigation }) {
   const [totalPage, setTotalPage] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-
+  const [isPopularBoard, setisPopularBoard] = useState(false);
   const fetchData = useCallback(async () => {
     try {
       const result = await getPostList(boardId, currPage);
@@ -37,6 +37,17 @@ export default function Board({ boardId, navigation }) {
 
   useEffect(() => {
     fetchData();
+    const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+      // 이전 화면에 대한 정보 가져오기
+      const previousRouteName = e.data.action.source;
+      console.log(previousRouteName.substring(0, 8));
+      if (previousRouteName.substring(0, 8) === "핫도토리 게시판") {
+        setisPopularBoard(true);
+      }
+      console.log("이전 화면:", isPopularBoard);
+    });
+
+    return unsubscribe;
   }, [fetchData]);
 
   const handleOpenNewPost = () => {
