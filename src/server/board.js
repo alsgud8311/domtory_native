@@ -73,15 +73,14 @@ export const deletePost = async (postId) => {
 export const getPostList = async (boardId, page) => {
   try {
     const { data } = await apiBe.get(
-      `/board/post/paged/list/${boardId}?page=${page}`
+      `/board/post/paged/list/${boardId}/?page=${page}`
     );
     if (data) {
       return { success: true, data: data };
     }
   } catch (error) {
-    console.log("header:", apiBe.defaults.headers.common["Authorization"]);
-    console.log("error:", error);
-    return { success: false, data: error.response.data.detail };
+    console.log(error.response);
+    return { success: false, data: error.response };
   }
 };
 

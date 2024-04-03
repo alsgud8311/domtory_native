@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   RefreshControl,
   Alert,
+  View,
 } from "react-native";
 import NewPost from "./newPost";
 import { AntDesign } from "@expo/vector-icons";
@@ -21,14 +22,11 @@ export default function Board({ boardId, navigation }) {
   const [isPopularBoard, setisPopularBoard] = useState(false);
   const fetchData = useCallback(async () => {
     try {
-      const result = await getPostList(boardId, currPage);
-      if (success) {
-        console.log(result.data);
-        setData((prevData) => [...prevData, ...result.data.postList]);
-        setTotalPage(result.data.pageCnt);
-      } else {
-        throw new Error("No data");
-      }
+      alert(currPage);
+      const response = await getPostList(boardId, currPage);
+      setTotalPage(response.data.pageCnt);
+      console.log("tt", totalPage);
+      setData((prevData) => [...prevData, ...response.data.postList]);
     } catch (error) {
       Alert.alert("정보를 가져오는데 실패했습니다.");
       navigation.pop();
@@ -37,17 +35,17 @@ export default function Board({ boardId, navigation }) {
 
   useEffect(() => {
     fetchData();
-    const unsubscribe = navigation.addListener("beforeRemove", (e) => {
-      // 이전 화면에 대한 정보 가져오기
-      const previousRouteName = e.data.action.source;
-      console.log(previousRouteName.substring(0, 8));
-      if (previousRouteName.substring(0, 8) === "핫도토리 게시판") {
-        setisPopularBoard(true);
-      }
-      console.log("이전 화면:", isPopularBoard);
-    });
+    // const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+    //   // 이전 화면에 대한 정보 가져오기
+    //   const previousRouteName = e.data.action.source;
+    //   console.log(previousRouteName.substring(0, 8));
+    //   if (previousRouteName.substring(0, 8) === "핫도토리 게시판") {
+    //     setisPopularBoard(true);
+    //   }
+    //   console.log("이전 화면:", isPopularBoard);
+    // });
 
-    return unsubscribe;
+    // return unsubscribe;
   }, [fetchData]);
 
   const handleOpenNewPost = () => {
@@ -66,7 +64,7 @@ export default function Board({ boardId, navigation }) {
 
   const handleLoadMore = () => {
     if (currPage < totalPage) {
-      setCurrPage((prevPage) => prevPage + 1);
+      setCurrPage((prev) => prev + 1);
     }
   };
 
@@ -78,6 +76,13 @@ export default function Board({ boardId, navigation }) {
     }, 1000);
   }, [fetchData]);
 
+  if (!data) {
+    return (
+      <View>
+        <Text>www</Text>
+      </View>
+    );
+  }
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
