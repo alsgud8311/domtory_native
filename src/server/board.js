@@ -71,10 +71,14 @@ export const deletePost = async (postId) => {
 
 //특정 게시판 게시글 리스트 받기
 export const getPostList = async (boardId, page) => {
+  let boardUrl;
+  if (boardId === 6) {
+    boardUrl = `/board/post/bookmark/list/?page=${page}`;
+  } else {
+    boardUrl = `/board/post/paged/list/${boardId}/?page=${page}`;
+  }
   try {
-    const { data } = await apiBe.get(
-      `/board/post/paged/list/${boardId}/?page=${page}`
-    );
+    const { data } = await apiBe.get(boardUrl);
     if (data) {
       return { success: true, data: data };
     }

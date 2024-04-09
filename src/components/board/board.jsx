@@ -24,7 +24,6 @@ export default function Board({ boardId, navigation }) {
     try {
       const response = await getPostList(boardId, currPage);
       setTotalPage(response.data.pageCnt);
-      console.log("tt", totalPage);
       setData((prevData) => [...prevData, ...response.data.postList]);
     } catch (error) {
       Alert.alert("정보를 가져오는데 실패했습니다.");
@@ -34,17 +33,16 @@ export default function Board({ boardId, navigation }) {
 
   useEffect(() => {
     fetchData();
-    // const unsubscribe = navigation.addListener("beforeRemove", (e) => {
-    //   // 이전 화면에 대한 정보 가져오기
-    //   const previousRouteName = e.data.action.source;
-    //   console.log(previousRouteName.substring(0, 8));
-    //   if (previousRouteName.substring(0, 8) === "핫도토리 게시판") {
-    //     setisPopularBoard(true);
-    //   }
-    //   console.log("이전 화면:", isPopularBoard);
-    // });
+    const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+      // 이전 화면에 대한 정보 가져오기
+      const previousRouteName = e.data.action.source;
+      console.log(previousRouteName.substring(0, 8));
+      if (previousRouteName.substring(0, 8) === "핫도토리 게시판") {
+        setisPopularBoard(true);
+      }
+    });
 
-    // return unsubscribe;
+    return unsubscribe;
   }, [fetchData]);
 
   const handleOpenNewPost = () => {
