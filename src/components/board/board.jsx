@@ -22,9 +22,14 @@ export default function Board({ boardId, navigation }) {
   const [isPopularBoard, setisPopularBoard] = useState(false);
   const fetchData = useCallback(async () => {
     try {
+      console.log("몇페이지", currPage);
       const response = await getPostList(boardId, currPage);
       setTotalPage(response.data.pageCnt);
-      setData((prevData) => [...prevData, ...response.data.postList]);
+      if (currPage === 1) {
+        setData(response.data.postList);
+      } else {
+        setData((prevData) => [...prevData, ...response.data.postList]);
+      }
     } catch (error) {
       Alert.alert("정보를 가져오는데 실패했습니다.");
       navigation.pop();
@@ -51,18 +56,19 @@ export default function Board({ boardId, navigation }) {
 
   const handleLoadMore = () => {
     if (currPage < totalPage) {
+      console.log("more?");
       setCurrPage((prev) => prev + 1);
     }
   };
 
-  const onRefresh = useCallback(() => {
+  const onRefresh = () => {
     setRefreshing(true);
-    setData([]);
+
     setCurrPage(1);
     setTimeout(() => {
       setRefreshing(false);
     }, 1000);
-  }, [fetchData]);
+  };
 
   if (!data) {
     return (
@@ -86,16 +92,22 @@ export default function Board({ boardId, navigation }) {
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
       />
-      <TouchableOpacity onPress={handleOpenNewPost} style={styles.writeButton}>
-        <AntDesign name="form" size={24} color={"#fff"} />
-      </TouchableOpacity>
-
-      <NewPost
-        isVisible={isModalVisible}
-        onClose={handleCloseNewPost}
-        boardId={boardId}
-        onPostSubmit={handleNewPostSubmit}
-      />
+      {boardId <= 5 && (
+        <>
+          <TouchableOpacity
+            onPress={handleOpenNewPost}
+            style={styles.writeButton}
+          >
+            <AntDesign name="form" size={24} color={"#fff"} />
+          </TouchableOpacity>
+          <NewPost
+            isVisible={isModalVisible}
+            onClose={handleCloseNewPost}
+            boardId={boardId}
+            onPostSubmit={handleNewPostSubmit}
+          />
+        </>
+      )}
     </SafeAreaView>
   );
 }
