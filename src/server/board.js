@@ -73,7 +73,11 @@ export const deletePost = async (postId) => {
 export const getPostList = async (boardId, page) => {
   let boardUrl;
   if (boardId === 6) {
+    // 북마크
     boardUrl = `/board/post/bookmark/list/?page=${page}`;
+  } else if (boardId === 7) {
+    // 핫도토리 게시판
+    boardUrl = `/board/post/paged/list/popular/?page=${page}`;
   } else {
     boardUrl = `/board/post/paged/list/${boardId}/?page=${page}`;
   }
