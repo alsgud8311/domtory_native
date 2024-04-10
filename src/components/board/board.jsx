@@ -5,6 +5,8 @@ import {
   TouchableOpacity,
   SafeAreaView,
   RefreshControl,
+  Alert,
+  View,
 } from "react-native";
 import NewPost from "./newPost";
 import { AntDesign } from "@expo/vector-icons";
@@ -17,15 +19,16 @@ export default function Board({ boardId, navigation }) {
   const [totalPage, setTotalPage] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-
+  const [isPopularBoard, setisPopularBoard] = useState(false);
   const fetchData = useCallback(async () => {
     try {
-      const result = await getPostList(boardId, currPage);
-      if (result && result.data) {
-        setData(prevData => [...prevData, ...result.data.postList]);
-        setTotalPage(result.data.pageCnt);
+      console.log("몇페이지", currPage);
+      const response = await getPostList(boardId, currPage);
+      setTotalPage(response.data.pageCnt);
+      if (currPage === 1) {
+        setData(response.data.postList);
       } else {
-        throw new Error("No data");
+        setData((prevData) => [...prevData, ...response.data.postList]);
       }
     } catch (error) {
       Alert.alert("정보를 가져오는데 실패했습니다.");
@@ -53,22 +56,33 @@ export default function Board({ boardId, navigation }) {
 
   const handleLoadMore = () => {
     if (currPage < totalPage) {
-      setCurrPage(prevPage => prevPage + 1);
+      console.log("more?");
+      setCurrPage((prev) => prev + 1);
     }
   };
 
-  const onRefresh = useCallback(() => {
+  const onRefresh = () => {
     setRefreshing(true);
-    fetchData();
+
+    setCurrPage(1);
     setTimeout(() => {
       setRefreshing(false);
     }, 1000);
-  }, [fetchData]);
+  };
 
+  if (!data) {
+    return (
+      <View>
+        <Text>www</Text>
+      </View>
+    );
+  }
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         data={data}
         renderItem={({ item }) => (
           <PostListItems item={item} navigation={navigation} />
@@ -78,16 +92,22 @@ export default function Board({ boardId, navigation }) {
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
       />
-      <TouchableOpacity onPress={handleOpenNewPost} style={styles.writeButton}>
-        <AntDesign name="form" size={24} color={"#fff"} />
-      </TouchableOpacity>
-
-      <NewPost
-        isVisible={isModalVisible}
-        onClose={handleCloseNewPost}
-        boardId={boardId}
-        onPostSubmit={handleNewPostSubmit}
-      />
+      {boardId <= 5 && (
+        <>
+          <TouchableOpacity
+            onPress={handleOpenNewPost}
+            style={styles.writeButton}
+          >
+            <AntDesign name="form" size={24} color={"#fff"} />
+          </TouchableOpacity>
+          <NewPost
+            isVisible={isModalVisible}
+            onClose={handleCloseNewPost}
+            boardId={boardId}
+            onPostSubmit={handleNewPostSubmit}
+          />
+        </>
+      )}
     </SafeAreaView>
   );
 }

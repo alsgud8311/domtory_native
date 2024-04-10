@@ -1,35 +1,57 @@
 import { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import {
+  Button,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import RNPickerSelect from "react-native-picker-select";
+import { getPushDetail, putPushDetail } from "../../server/notifications";
 
-const SettingView = () => {
+const SettingView = ({ navigation }) => {
   const [setting, setSetting] = useState({
     breakfast: false,
     lunch: false,
     dinner: false,
-    lightning: false,
+    lightningPost: false,
     comment: false,
     reply: false,
   });
 
-  const handleMealChange = (key, value) => {
+  const getData = async () => {
+    const { success, data } = await getPushDetail();
+    if (success) {
+      setSetting(data);
+    } else {
+      alert("정보를 가져오는 중 오류가 발생했습니다.");
+      navigation.pop();
+    }
+  };
+
+  const valueChange = (key, itemValue) =>
     setSetting((prev) => ({
       ...prev,
-      meal: {
-        ...prev.meal,
-        [key]: value,
-      },
+      [key]: itemValue === "true",
     }));
+
+  const saveChanges = async () => {
+    const { success } = await putPushDetail(setting);
+    if (success) {
+      alert("변경이 완료되었습니다!");
+      navigation.pop();
+    } else {
+      alert("변경 중 오류가 발생했습니다.");
+    }
   };
 
   useEffect(() => {
-    // const getData = () => {
-    //   {data} =
-    // }
-  }, [setting]);
+    getData();
+  }, []);
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.card}>
         <Text style={styles.title}>식단 알림</Text>
         <Text style={styles.subtitle}>
@@ -40,13 +62,11 @@ const SettingView = () => {
           <View style={styles.selectWrapper}>
             <RNPickerSelect
               style={pickerSelectStyles}
-              value={setting.meal.breakfast.toString()}
+              value={setting.breakfast.toString()}
               fixAndroidTouchableBug={true}
               useNativeAndroidPickerStyle={false}
               placeholder={{}}
-              onValueChange={(itemValue) =>
-                handleMealChange("breakfast", itemValue === "true")
-              }
+              onValueChange={(itemValue) => valueChange("breakfast", itemValue)}
               items={[
                 { label: "ON", value: "true" },
                 { label: "OFF", value: "false" },
@@ -59,13 +79,11 @@ const SettingView = () => {
           <View style={styles.selectWrapper}>
             <RNPickerSelect
               style={pickerSelectStyles}
-              value={setting.meal.lunch.toString()}
+              value={setting.lunch.toString()}
               fixAndroidTouchableBug={true}
               useNativeAndroidPickerStyle={false}
               placeholder={{}}
-              onValueChange={(itemValue) =>
-                handleMealChange("lunch", itemValue === "true")
-              }
+              onValueChange={(itemValue) => valueChange("lunch", itemValue)}
               items={[
                 { label: "ON", value: "true" },
                 { label: "OFF", value: "false" },
@@ -78,13 +96,11 @@ const SettingView = () => {
           <View style={styles.selectWrapper}>
             <RNPickerSelect
               style={pickerSelectStyles}
-              value={setting.meal.dinner.toString()}
+              value={setting.dinner.toString()}
               fixAndroidTouchableBug={true}
               useNativeAndroidPickerStyle={false}
               placeholder={{}}
-              onValueChange={(itemValue) =>
-                handleMealChange("dinner", itemValue === "true")
-              }
+              onValueChange={(itemValue) => valueChange("dinner", itemValue)}
               items={[
                 { label: "ON", value: "true" },
                 { label: "OFF", value: "false" },
@@ -104,15 +120,12 @@ const SettingView = () => {
           <View style={styles.selectWrapper}>
             <RNPickerSelect
               style={pickerSelectStyles}
-              value={setting.impromptu.toString()}
+              value={setting.lightningPost.toString()}
               fixAndroidTouchableBug={true}
               useNativeAndroidPickerStyle={false}
               placeholder={{}}
               onValueChange={(itemValue) =>
-                setSetting((prev) => ({
-                  ...prev,
-                  impromptu: itemValue === "true",
-                }))
+                valueChange("lightningPost", itemValue)
               }
               items={[
                 { label: "ON", value: "true" },
@@ -128,7 +141,7 @@ const SettingView = () => {
           내가 쓴 글의 댓글/대댓글이나 내가 쓴 댓글의 대댓글에 알림이 와요
         </Text>
         <View style={styles.selectCard}>
-          <Text style={styles.sectiontitle}>알림</Text>
+          <Text style={styles.sectiontitle}>댓글 알림</Text>
           <View style={styles.selectWrapper}>
             <RNPickerSelect
               style={pickerSelectStyles}
@@ -136,12 +149,24 @@ const SettingView = () => {
               fixAndroidTouchableBug={true}
               useNativeAndroidPickerStyle={false}
               placeholder={{}}
-              onValueChange={(itemValue) =>
-                setSetting((prev) => ({
-                  ...prev,
-                  comment: itemValue === "true",
-                }))
-              }
+              onValueChange={(itemValue) => valueChange("comment", itemValue)}
+              items={[
+                { label: "ON", value: "true" },
+                { label: "OFF", value: "false" },
+              ]}
+            />
+          </View>
+        </View>
+        <View style={styles.selectCard}>
+          <Text style={styles.sectiontitle}>대댓글 알림</Text>
+          <View style={styles.selectWrapper}>
+            <RNPickerSelect
+              style={pickerSelectStyles}
+              value={setting.reply.toString()}
+              fixAndroidTouchableBug={true}
+              useNativeAndroidPickerStyle={false}
+              placeholder={{}}
+              onValueChange={(itemValue) => valueChange("reply", itemValue)}
               items={[
                 { label: "ON", value: "true" },
                 { label: "OFF", value: "false" },
@@ -150,7 +175,10 @@ const SettingView = () => {
           </View>
         </View>
       </View>
-    </View>
+      <TouchableOpacity style={styles.savebutton} onPress={saveChanges}>
+        <Text style={styles.buttonText}>저장하고 나가기</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 };
 
@@ -160,7 +188,7 @@ const styles = StyleSheet.create({
     height: "100%",
     backgroundColor: "white",
     padding: 20,
-    gap: 20,
+    gap: 30,
   },
   card: {
     width: "100%",
@@ -168,6 +196,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 20,
     borderRadius: 10,
+    marginBottom: 20,
   },
   title: {
     fontSize: 17,
@@ -184,7 +213,7 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingVertical: 10,
+    paddingVertical: 5,
   },
   selectWrapper: {
     flex: 1,
@@ -195,6 +224,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     paddingVertical: 10,
     paddingLeft: 10,
+  },
+  savebutton: {
+    padding: 15,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "orange",
+    marginBottom: 150,
+    borderRadius: 10,
+  },
+  buttonText: {
+    fontSize: 15,
+    color: "white",
+    fontWeight: "700",
   },
 });
 

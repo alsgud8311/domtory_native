@@ -25,7 +25,7 @@ import {
   deleteReply,
   report,
   block,
-  postLike
+  postLike,
 } from "../../server/board";
 import { useAuth } from "../../store/AuthContext";
 import ImageModal from "react-native-image-modal";
@@ -271,7 +271,7 @@ export default function PostDetail({ data, reloadData, postId }) {
     try {
       const { success, data } = await postLike(postId);
       if (success) {
-        console.log(data)
+        console.log(data);
         setLikesCount(data.likes_cnt);
         setIsLiked(true);
       }
@@ -326,9 +326,18 @@ export default function PostDetail({ data, reloadData, postId }) {
             }
           })}
         <View style={styles.comment}>
-          <TouchableOpacity onPress={handlePostLike} style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+          <TouchableOpacity
+            onPress={handlePostLike}
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
             <Image source={isLiked ? like : unlike} style={styles.likeIcon} />
-            <Text style={styles.commentNum}>{likesCount === null ? data.likes_cnt : likesCount}</Text>
+            <Text style={styles.commentNum}>
+              {likesCount === null ? data.likes_cnt : likesCount}
+            </Text>
           </TouchableOpacity>
           <Octicons name="comment" style={styles.commentIcon} />
           <Text style={styles.commentNum}>{data.comment_cnt}</Text>
@@ -430,13 +439,15 @@ const styles = StyleSheet.create({
     color: "#666666",
   },
   likeIcon: {
-    width: 25,
-    height: 25
+    width: 20,
+    height: 20,
+    opacity: 0.65,
+    marginRight: 3,
   },
   commentNum: {
     fontSize: 15,
     color: "#666666",
-    marginRight: 15
+    marginRight: 15,
   },
   // 댓글 컨테이너
   commentContainer: {
