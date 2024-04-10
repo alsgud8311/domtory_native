@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Modal } from "react-native";
 import CommunityShortCuts from "./shortcuts/communityShortcuts";
 //게시판
-import Popular from './popular/popular'
+import Popular from "./popular/popular";
 import General from "./general/general";
 import GeneralDetail from "./general/generalDetail";
 import FleeMarket from "./fleemarket/fleemarket";
@@ -35,6 +35,8 @@ import Popup from "../../components/board/popup";
 import CouncilNoticeDetail from "../notice/CouncilNoticeDetail";
 import MyComment from "./mypost/mycomment";
 import PostFix from "../board/postfix";
+import Bookmark from "./bookmark/bookmark";
+import BookmarkDetail from "./bookmark/bookmarkDetail";
 
 const CommunityStack = ({ navigation }) => {
   const Stack = createNativeStackNavigator();
@@ -57,6 +59,14 @@ const CommunityStack = ({ navigation }) => {
       <Stack.Screen name="내가 쓴 글" component={MyPosting} />
       <Stack.Screen name="내가 쓴 댓글" component={Mycomment} />
       <Stack.Screen name="공지사항" component={CbhsNotice} />
+      <Stack.Screen name="내가 스크랩한 글" component={Bookmark} />
+      <Stack.Screen
+        name="스크랩한 글 보기"
+        component={BookmarkDetail}
+        options={({ navigation }) => ({
+          headerRight: () => <Popup navigation={navigation} />,
+        })}
+      />
       <Stack.Screen
         name="자유 게시판"
         component={GeneralDetail}

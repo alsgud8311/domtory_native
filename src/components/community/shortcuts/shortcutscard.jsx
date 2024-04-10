@@ -4,7 +4,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { Octicons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
-import dotory from "../../../assets/like_icon.png";
+import dotory from "../../../assets/unlike_icon.png";
 
 export default function ShortcutCard({ navigation }) {
   return (
@@ -35,7 +35,7 @@ export default function ShortcutCard({ navigation }) {
           style={styles.sortcutButton}
           onPress={() => navigation.navigate("핫도토리 게시판")}
         >
-          <Image source={dotory} style={{width: 25, height: 25}} />
+          <Image source={dotory} style={{ width: 25, height: 25 }} />
           <Text style={styles.sortcutText}>핫도토리 게시판</Text>
         </TouchableOpacity>
         <TouchableOpacity

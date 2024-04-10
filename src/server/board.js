@@ -1,3 +1,4 @@
+import axios from "axios";
 import { apiBe } from ".";
 
 //게시글 작성
@@ -70,14 +71,24 @@ export const deletePost = async (postId) => {
 
 //특정 게시판 게시글 리스트 받기
 export const getPostList = async (boardId, page) => {
+  let boardUrl;
+  if (boardId === 6) {
+    // 북마크
+    boardUrl = `/board/post/bookmark/list/?page=${page}`;
+  } else if (boardId === 7) {
+    // 핫도토리 게시판
+    boardUrl = `/board/post/paged/list/popular/?page=${page}`;
+  } else {
+    boardUrl = `/board/post/paged/list/${boardId}/?page=${page}`;
+  }
   try {
-    const { data } = await apiBe.get(`/board/post/paged/list/${boardId}?page=${page}`);
+    const { data } = await apiBe.get(boardUrl);
     if (data) {
       return { success: true, data: data };
     }
-    return { success: false, data: "정보를 가져오는 중에 오류가 발생했습니다" };
   } catch (error) {
-    return { success: false, data: error.response.data };
+    console.log(error.response);
+    return { success: false, data: error.response };
   }
 };
 
@@ -203,6 +214,17 @@ export const block = async (postOrCommentId, type) => {
     const response = await apiBe.post(`/report/block/`, data);
     return { success: true };
   } catch (error) {
+    return { success: false };
+  }
+};
+
+// 인기게시글 가져오기
+export const getPopularpost = async (page) => {
+  try {
+    const response = await apiBe.get(`/board/post/paged/list/popular/`);
+    return { success: true, data: response.data };
+  } catch {
+    console.log(error);
     return { success: false };
   }
 };

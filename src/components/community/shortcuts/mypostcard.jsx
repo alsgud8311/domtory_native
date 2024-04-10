@@ -13,6 +13,13 @@ export default function MyPostCard({ navigation }) {
       </View>
       <TouchableOpacity
         style={styles.shortcutButton}
+        onPress={() => navigation.navigate("내가 스크랩한 글")}
+      >
+        <FontAwesome5 name="bookmark" size={24} color="black" />
+        <Text style={styles.sortcutText}>내가 스크랩한 글</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.shortcutButton}
         onPress={() => navigation.navigate("내가 쓴 글")}
       >
         <MaterialCommunityIcons
