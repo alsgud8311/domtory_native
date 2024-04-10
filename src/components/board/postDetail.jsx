@@ -14,7 +14,7 @@ import {
   Alert,
   RefreshControl,
 } from "react-native";
-import { Octicons, Feather, AntDesign } from "@expo/vector-icons";
+import { Octicons, Feather } from "@expo/vector-icons";
 import domtory from "../../assets/icon.png";
 import like from "../../assets/like_icon.png";
 import unlike from "../../assets/unlike_icon.png";
@@ -31,7 +31,6 @@ import { useAuth } from "../../store/AuthContext";
 import ImageModal from "react-native-image-modal";
 import Hyperlink from "react-native-hyperlink";
 import CommentBox from "../postdetail/comment";
-import { useFocusEffect } from "@react-navigation/native";
 
 export const handleReport = async (type, id) => {
   const result = await report(type, id);
@@ -266,17 +265,41 @@ export default function PostDetail({ data, reloadData, postId }) {
   // 좋아요 POST
   const [likesCount, setLikesCount] = useState(null);
   const [isLiked, setIsLiked] = useState(null);
+  useEffect(() => {
+    setLikesCount(data.likes_cnt);
+    setIsLiked(data.is_liked);
+  }, [data.is_liked, data.likes_cnt]);
 
   const handlePostLike = async () => {
-    try {
-      const { success, data } = await postLike(postId);
-      if (success) {
-        console.log(data)
-        setLikesCount(data.likes_cnt);
-        setIsLiked(true);
-      }
-    } catch (error) {
-      console.error("좋아요를 처리하는 중 에러 발생:", error);
+    if (isLiked) {
+      Alert.alert('이미 좋아요 한 게시글입니다.')
+    } else {
+      Alert.alert(
+        '좋아요',
+        '이 게시물에 좋아요를 누르시겠습니까?',
+        [
+          {
+            text: '아니요',
+            onPress: () => console.log('좋아요 취소'),
+            style: 'cancel',
+          },
+          {
+            text: '네',
+            onPress: async () => {
+              try {
+                const { success, data } = await postLike(postId);
+                if (success) {
+                  console.log(data)
+                  setLikesCount(data.likes_cnt);
+                  setIsLiked(true);
+                }
+              } catch (error) {
+                console.error("좋아요를 처리하는 중 에러 발생:", error);
+              }
+            },
+          },
+        ],
+      );
     }
   };
 
@@ -326,9 +349,9 @@ export default function PostDetail({ data, reloadData, postId }) {
             }
           })}
         <View style={styles.comment}>
-          <TouchableOpacity onPress={handlePostLike} style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+          <TouchableOpacity onPress={handlePostLike} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <Image source={isLiked ? like : unlike} style={styles.likeIcon} />
-            <Text style={styles.commentNum}>{likesCount === null ? data.likes_cnt : likesCount}</Text>
+            <Text style={styles.likeNum}>{likesCount}</Text>
           </TouchableOpacity>
           <Octicons name="comment" style={styles.commentIcon} />
           <Text style={styles.commentNum}>{data.comment_cnt}</Text>
@@ -427,15 +450,21 @@ const styles = StyleSheet.create({
   commentIcon: {
     fontSize: 17,
     marginRight: 5,
-    color: "#666666",
+    color: "crimson",
   },
   likeIcon: {
-    width: 25,
-    height: 25
+    width: 22,
+    height: 22,
+    marginRight: 2,
+    marginBottom: 3
+  },
+  likeNum: {
+    fontSize: 15,
+    marginRight: 15
   },
   commentNum: {
     fontSize: 15,
-    color: "#666666",
+    color: "crimson",
     marginRight: 15
   },
   // 댓글 컨테이너
