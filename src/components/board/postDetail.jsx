@@ -437,12 +437,14 @@ const styles = StyleSheet.create({
     fontSize: 17,
     marginRight: 5,
     color: "#666666",
+    marginTop: 2,
   },
   likeIcon: {
     width: 20,
     height: 20,
     opacity: 0.65,
     marginRight: 3,
+    marginBottom: 2,
   },
   commentNum: {
     fontSize: 15,
