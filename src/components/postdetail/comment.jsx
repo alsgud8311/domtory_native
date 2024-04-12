@@ -175,16 +175,44 @@ export default function CommentBox({ data, setCurrentReplyingTo, reloadData }) {
   };
 
   // 좋아요 POST
-  const [likesCount, setLikesCount] = useState(null);
+  const [likesCounts, setLikesCounts] = useState({});
+  const [isLiked, setIsLiked] = useState({});
 
-  const handlePostLike = (commentId) => async () => {
-    try {
-      const { success, data } = await postCommentLike(commentId);
-      if (success) {
-        setLikesCount(data.likes_cnt);
-      }
-    } catch (error) {
-      console.error("좋아요를 처리하는 중 에러 발생:", error);
+  const handlePostLike = (comment) => async () => {
+    if (comment.is_liked || isLiked[comment.id]) {
+      Alert.alert('이미 좋아요 한 댓글입니다.');
+    } else {
+      Alert.alert(
+        '좋아요',
+        '이 댓글에 좋아요를 누르시겠습니까?',
+        [
+          {
+            text: '아니요',
+            onPress: () => console.log('좋아요 취소'),
+            style: 'cancel',
+          },
+          {
+            text: '네',
+            onPress: async () => {
+              try {
+                const { success, data } = await postCommentLike(comment.id);
+                if (success) {
+                  setLikesCounts(prevCounts => ({
+                    ...prevCounts,
+                    [comment.id]: data.likes_cnt
+                  }));
+                  setIsLiked((prevIsLiked) => ({
+                    ...prevIsLiked,
+                    [comment.id]: true,
+                  }));
+                }
+              } catch (error) {
+                console.error("좋아요를 처리하는 중 에러 발생:", error);
+              }
+            },
+          },
+        ],
+      );
     }
   };
 
@@ -231,8 +259,8 @@ export default function CommentBox({ data, setCurrentReplyingTo, reloadData }) {
                     style={styles.commnetReply}
                     onPress={() => promptForReply(comment.id)}
                   />
-                  <TouchableOpacity onPress={handlePostLike(comment.id)} style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}> 
-                    <Image source={unlike} style={{ width: 15, height: 15 }} />
+                  <TouchableOpacity onPress={handlePostLike(comment)} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                    <Image source={unlike} style={{ width: 15, height: 15, opacity: 0.45 }} />
                   </TouchableOpacity>
                   {parseInt(authState.id) === comment.member ? (
                     <TouchableOpacity onPress={() => confirmDelete(comment.id)}>
@@ -276,7 +304,7 @@ export default function CommentBox({ data, setCurrentReplyingTo, reloadData }) {
                     <Text style={styles.commentDate}>{comment.created_at}</Text>
                     <Image source={like} style={{ width: 15, height: 15 }} />
                     <Text style={styles.commentDate}>
-                      {likesCount === null ? comment.likes_cnt : likesCount}
+                      {likesCounts[comment.id] !== undefined ? likesCounts[comment.id] : comment.likes_cnt}
                     </Text>
                   </View>
                 </>

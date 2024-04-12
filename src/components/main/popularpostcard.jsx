@@ -3,7 +3,7 @@ import { useCallback, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { getPopularpost, popularpost } from "../../server/board";
 import acorn from "../../assets/like_icon.png";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, Octicons } from "@expo/vector-icons";
 
 export default function PopularPostCard({ navigation }) {
   const [data, setData] = useState(null);
@@ -55,9 +55,24 @@ export default function PopularPostCard({ navigation }) {
               }
             >
               <Text style={styles.postTitle}>{post.title}</Text>
-              <View style={styles.likedCnt}>
-                <Image source={acorn} style={{ width: 15, height: 15 }}></Image>
-                <Text>{post.likes_cnt}</Text>
+              <View style={{ flexDirection: "row", gap: 10 }}>
+                <View style={styles.likedCnt}>
+                  <Image
+                    source={acorn}
+                    style={{ width: 15, height: 15 }}
+                  ></Image>
+                  <Text>{post.likes_cnt}</Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 5,
+                  }}
+                >
+                  <Octicons name="comment" style={{ color: "crimson" }} />
+                  <Text style={{ color: "crimson" }}>{post.comment_cnt}</Text>
+                </View>
               </View>
             </TouchableOpacity>
           ))
