@@ -1,6 +1,7 @@
 import { Octicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import acorn from "../../assets/like_icon.png";
 
 export default function PostListItems({ item, navigation }) {
   const navigateToDetailScreen = () => {
@@ -48,8 +49,14 @@ export default function PostListItems({ item, navigation }) {
           {/* 유저, 작성일 */}
           <View style={styles.commentWrapper}>
             <Text style={styles.date}>{item.created_at}</Text>
-            <Octicons name="comment" style={styles.commentIcon} />
-            <Text style={styles.comment_cnt}>{item.comment_cnt}</Text>
+            <View style={styles.likedCnt}>
+              <Image source={acorn} style={{ width: 15, height: 15 }}></Image>
+              <Text style={{ fontSize: 12 }}>{item.likes_cnt}</Text>
+            </View>
+            <View style={styles.comment}>
+              <Octicons name="comment" style={styles.commentIcon} />
+              <Text style={styles.comment_cnt}>{item.comment_cnt}</Text>
+            </View>
           </View>
         </View>
         {/* 사진 */}
@@ -90,8 +97,6 @@ const styles = StyleSheet.create({
   date: {
     fontSize: 11,
     color: "#5a5a5a",
-    marginRight: 6,
-    paddingRight: 5,
     borderRightWidth: 1,
     borderRightColor: "#5a5a5abf",
   },
@@ -99,9 +104,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginTop: 7,
     height: 15,
+    gap: 10,
   },
   commentIcon: {
-    fontSize: 15,
+    fontSize: 13,
     marginRight: 5,
     color: "crimson",
   },
@@ -146,5 +152,14 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 6,
+  },
+  likedCnt: {
+    flexDirection: "row",
+    gap: 5,
+    alignItems: "center",
+  },
+  comment: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 });
