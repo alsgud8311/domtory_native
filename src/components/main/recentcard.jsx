@@ -13,6 +13,7 @@ import { getLatestPosts } from "../../server/board";
 import { Octicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import domtory from "../../assets/domtory_icon.png";
+import acorn from "../../assets/like_icon.png";
 
 export default function RecentPostCard({ navigation }) {
   const [recentPostData, setRecentPostData] = useState(null);
@@ -85,21 +86,30 @@ export default function RecentPostCard({ navigation }) {
                 }}
               >
                 <Text
-                  style={{ padding: 5, width: "90%" }}
+                  style={{ padding: 5, width: "75%" }}
                   ellipsizeMode="tail"
                   numberOfLines={1}
                 >
                   {data.title}
                 </Text>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: 5,
-                  }}
-                >
-                  <Octicons name="comment" style={{ color: "crimson" }} />
-                  <Text style={{ color: "crimson" }}>{data.comment_cnt}</Text>
+                <View style={styles.likeAndCommentsWrapper}>
+                  <View style={styles.likedCnt}>
+                    <Image
+                      source={acorn}
+                      style={{ width: 15, height: 15 }}
+                    ></Image>
+                    <Text>{data.likes_cnt}</Text>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 5,
+                    }}
+                  >
+                    <Octicons name="comment" style={{ color: "crimson" }} />
+                    <Text style={{ color: "crimson" }}>{data.comment_cnt}</Text>
+                  </View>
                 </View>
               </View>
             </View>
@@ -163,5 +173,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  likedCnt: {
+    flexDirection: "row",
+    gap: 5,
+    alignItems: "center",
+  },
+  likeAndCommentsWrapper: {
+    flexDirection: "row",
+    gap: 10,
   },
 });
