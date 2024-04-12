@@ -14,7 +14,7 @@ import {
   Alert,
   RefreshControl,
 } from "react-native";
-import { Octicons, Feather } from "@expo/vector-icons";
+import { Octicons, Feather, FontAwesome5 } from "@expo/vector-icons";
 import domtory from "../../assets/icon.png";
 import like from "../../assets/like_icon.png";
 import unlike from "../../assets/unlike_icon.png";
@@ -26,6 +26,7 @@ import {
   report,
   block,
   postLike,
+  postBookmark
 } from "../../server/board";
 import { useAuth } from "../../store/AuthContext";
 import ImageModal from "react-native-image-modal";
@@ -299,6 +300,62 @@ export default function PostDetail({ data, reloadData, postId }) {
     }
   };
 
+  // 북마크 POST
+  const [bookmarkCount, setBookmarkCount] = useState(null);
+  const [isBookmarked, setIsBookmarked] = useState(null);
+  useEffect(() => {
+    setBookmarkCount(data.bookmark_cnt);
+    setIsBookmarked(data.is_bookmarked);
+  }, [data.is_bookmarked, data.bookmark_cnt]);
+
+  const handlePostBookmark = async () => {
+    if (isBookmarked) {
+      Alert.alert("북마크 취소", "북마크를 취소하시겠습니까?", [
+        {
+          text: "아니요",
+          style: "cancel",
+        },
+        {
+          text: "네",
+          onPress: async () => {
+            try {
+              const { success, data } = await postBookmark(postId);
+              if (success) {
+                console.log(data);
+                setBookmarkCount(data.bookmark_cnt);
+                setIsBookmarked(false);
+              }
+            } catch (error) {
+              console.error("북마크 취소를 처리하는 중 에러 발생:", error);
+            }
+          },
+        },
+      ]);
+    } else {
+      Alert.alert("북마크", "이 게시물을 북마크 하시겠습니까?", [
+        {
+          text: "아니요",
+          style: "cancel",
+        },
+        {
+          text: "네",
+          onPress: async () => {
+            try {
+              const { success, data } = await postBookmark(postId);
+              if (success) {
+                console.log(data);
+                setBookmarkCount(data.bookmark_cnt);
+                setIsBookmarked(true);
+              }
+            } catch (error) {
+              console.error("북마크를 처리하는 중 에러 발생:", error);
+            }
+          },
+        },
+      ]);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -358,6 +415,18 @@ export default function PostDetail({ data, reloadData, postId }) {
           </TouchableOpacity>
           <Octicons name="comment" style={styles.commentIcon} />
           <Text style={styles.commentNum}>{data.comment_cnt}</Text>
+          <TouchableOpacity
+            onPress={handlePostBookmark}
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <FontAwesome5 name="bookmark" size={16} color={isBookmarked ? "blue" : "gray"}
+              style={{ marginRight: 4, paddingTop: 2 }}/>
+            <Text style={{ fontSize: 15, color: isBookmarked ? "blue" : "gray" }}>{bookmarkCount}</Text>
+          </TouchableOpacity>
         </View>
         <CommentBox
           data={data}
@@ -453,22 +522,14 @@ const styles = StyleSheet.create({
   commentIcon: {
     fontSize: 17,
     marginRight: 5,
-    color: "#666666",
+    color: "crimson",
     marginTop: 2,
   },
   likeIcon: {
     width: 20,
     height: 20,
-    opacity: 0.65,
     marginRight: 3,
     marginBottom: 2,
-    color: "crimson",
-  },
-  likeIcon: {
-    width: 22,
-    height: 22,
-    marginRight: 2,
-    marginBottom: 3,
   },
   likeNum: {
     fontSize: 15,
