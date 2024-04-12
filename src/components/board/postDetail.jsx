@@ -25,7 +25,7 @@ import {
   deleteReply,
   report,
   block,
-  postLike
+  postLike,
 } from "../../server/board";
 import { useAuth } from "../../store/AuthContext";
 import ImageModal from "react-native-image-modal";
@@ -272,34 +272,30 @@ export default function PostDetail({ data, reloadData, postId }) {
 
   const handlePostLike = async () => {
     if (isLiked) {
-      Alert.alert('이미 좋아요 한 게시글입니다.')
+      Alert.alert("이미 좋아요 한 게시글입니다.");
     } else {
-      Alert.alert(
-        '좋아요',
-        '이 게시물에 좋아요를 누르시겠습니까?',
-        [
-          {
-            text: '아니요',
-            onPress: () => console.log('좋아요 취소'),
-            style: 'cancel',
-          },
-          {
-            text: '네',
-            onPress: async () => {
-              try {
-                const { success, data } = await postLike(postId);
-                if (success) {
-                  console.log(data)
-                  setLikesCount(data.likes_cnt);
-                  setIsLiked(true);
-                }
-              } catch (error) {
-                console.error("좋아요를 처리하는 중 에러 발생:", error);
+      Alert.alert("좋아요", "이 게시물에 좋아요를 누르시겠습니까?", [
+        {
+          text: "아니요",
+          onPress: () => console.log("좋아요 취소"),
+          style: "cancel",
+        },
+        {
+          text: "네",
+          onPress: async () => {
+            try {
+              const { success, data } = await postLike(postId);
+              if (success) {
+                console.log(data);
+                setLikesCount(data.likes_cnt);
+                setIsLiked(true);
               }
-            },
+            } catch (error) {
+              console.error("좋아요를 처리하는 중 에러 발생:", error);
+            }
           },
-        ],
-      );
+        },
+      ]);
     }
   };
 
@@ -349,7 +345,14 @@ export default function PostDetail({ data, reloadData, postId }) {
             }
           })}
         <View style={styles.comment}>
-          <TouchableOpacity onPress={handlePostLike} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <TouchableOpacity
+            onPress={handlePostLike}
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
             <Image source={isLiked ? like : unlike} style={styles.likeIcon} />
             <Text style={styles.likeNum}>{likesCount}</Text>
           </TouchableOpacity>
@@ -450,22 +453,31 @@ const styles = StyleSheet.create({
   commentIcon: {
     fontSize: 17,
     marginRight: 5,
+    color: "#666666",
+    marginTop: 2,
+  },
+  likeIcon: {
+    width: 20,
+    height: 20,
+    opacity: 0.65,
+    marginRight: 3,
+    marginBottom: 2,
     color: "crimson",
   },
   likeIcon: {
     width: 22,
     height: 22,
     marginRight: 2,
-    marginBottom: 3
+    marginBottom: 3,
   },
   likeNum: {
     fontSize: 15,
-    marginRight: 15
+    marginRight: 15,
   },
   commentNum: {
     fontSize: 15,
     color: "crimson",
-    marginRight: 15
+    marginRight: 15,
   },
   // 댓글 컨테이너
   commentContainer: {
