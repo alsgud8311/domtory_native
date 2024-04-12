@@ -72,14 +72,18 @@ export const deletePost = async (postId) => {
 //특정 게시판 게시글 리스트 받기
 export const getPostList = async (boardId, page) => {
   let boardUrl;
-  if (boardId === 6) {
-    // 북마크
-    boardUrl = `/board/post/bookmark/list/?page=${page}`;
-  } else if (boardId === 7) {
-    // 핫도토리 게시판
-    boardUrl = `/board/post/paged/list/popular/?page=${page}`;
-  } else {
-    boardUrl = `/board/post/paged/list/${boardId}/?page=${page}`;
+  switch (boardId) {
+    case 6:
+      // 북마크
+      boardUrl = `/board/post/bookmark/list/?page=${page}`;
+      break;
+    case 7:
+      // 핫도토리 게시판
+      boardUrl = `/board/post/paged/list/popular/?page=${page}`;
+      break;
+    default:
+      boardUrl = `/board/post/paged/list/${boardId}/?page=${page}`;
+      break;
   }
   try {
     const { data } = await apiBe.get(boardUrl);
