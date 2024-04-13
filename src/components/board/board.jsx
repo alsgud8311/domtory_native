@@ -7,6 +7,7 @@ import {
   RefreshControl,
   Alert,
   View,
+  Text,
 } from "react-native";
 import NewPost from "./newPost";
 import { AntDesign } from "@expo/vector-icons";
@@ -20,12 +21,14 @@ export default function Board({ boardId, navigation }) {
   const [isModalVisible, setModalVisible] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [isPopularBoard, setisPopularBoard] = useState(false);
+  const [goBackRefresh, setGoBackRefresh] = useState(false);
   const fetchData = useCallback(async () => {
     try {
       console.log("몇페이지", currPage);
       const response = await getPostList(boardId, currPage);
       setTotalPage(response.data.pageCnt);
       if (currPage === 1) {
+        setGoBackRefresh(false);
         setData(response.data.postList);
       } else {
         setData((prevData) => [...prevData, ...response.data.postList]);
@@ -37,7 +40,12 @@ export default function Board({ boardId, navigation }) {
   }, [boardId, currPage, navigation]);
 
   useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      setCurrPage(1);
+      setGoBackRefresh(false);
+    });
     fetchData();
+    return unsubscribe;
   }, [fetchData]);
 
   const handleOpenNewPost = () => {
@@ -55,7 +63,8 @@ export default function Board({ boardId, navigation }) {
   };
 
   const handleLoadMore = () => {
-    if (currPage < totalPage) {
+    console.log(goBackRefresh);
+    if (currPage < totalPage && !goBackRefresh) {
       console.log("more?");
       setCurrPage((prev) => prev + 1);
     }
@@ -72,8 +81,8 @@ export default function Board({ boardId, navigation }) {
 
   if (!data) {
     return (
-      <View>
-        <Text>www</Text>
+      <View style={styles.nodata}>
+        <Text style={styles.nodataText}>현재 정보가 없습니다.</Text>
       </View>
     );
   }
@@ -85,7 +94,11 @@ export default function Board({ boardId, navigation }) {
         }
         data={data}
         renderItem={({ item }) => (
-          <PostListItems item={item} navigation={navigation} />
+          <PostListItems
+            item={item}
+            navigation={navigation}
+            setGoBackRefresh={setGoBackRefresh}
+          />
         )}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ paddingVertical: 20 }}
@@ -185,5 +198,16 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 6,
+  },
+  nodata: {
+    width: "100%",
+    height: "100%",
+    backgroundColor: "white",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  nodataText: {
+    fontSize: 20,
+    color: "gray",
   },
 });
