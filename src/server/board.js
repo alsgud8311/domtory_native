@@ -43,6 +43,19 @@ export const postLike = async (postId) => {
   }
 };
 
+// 북마크 POST
+export const postBookmark = async (postId) => {
+  try {
+    const { data } = await apiBe.post(`/board/post/bookmark/${postId}/`);
+    if (data) {
+      return { success: true, data: data };
+    }
+    return { success: false, data: "정보를 가져오는 중에 오류가 발생했습니다" };
+  } catch (error) {
+    return { success: false, data: error.response.data };
+  }
+};
+
 // 게시글 수정
 export const updatePost = async (postId, formData) => {
   try {
