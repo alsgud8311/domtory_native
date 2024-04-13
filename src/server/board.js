@@ -94,6 +94,13 @@ export const getPostList = async (boardId, page) => {
       // 핫도토리 게시판
       boardUrl = `/board/post/paged/list/popular/?page=${page}`;
       break;
+    case 8:
+      // 내가 쓴 글 게시판
+      boardUrl = `/board/mypage/paged/post/?page=${page}`;
+      break;
+    case 9:
+      // 내가 댓글 쓴 글 게시판
+      boardUrl = `/board/mypage/paged/comment/?page=${page}`;
     default:
       boardUrl = `/board/post/paged/list/${boardId}/?page=${page}`;
       break;
