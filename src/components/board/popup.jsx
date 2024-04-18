@@ -20,7 +20,7 @@ const PopupMenu = ({ navigation }) => {
   const route = useRoute();
   const { postId, memberId } = route.params;
   const [options, setOptions] = useState([]);
-  console.log("뭐가문젠겨", postId, memberId);
+  // console.log("뭐가문젠겨", postId, memberId);
   const handleDeleteButton = async (postId) => {
     try {
       const { success } = await deletePost(postId);

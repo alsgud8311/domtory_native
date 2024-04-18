@@ -86,7 +86,7 @@ export default function RecentPostCard({ navigation }) {
                 }}
               >
                 <Text
-                  style={{ padding: 5, width: "75%" }}
+                  style={{ padding: 5, width: "70%" }}
                   ellipsizeMode="tail"
                   numberOfLines={1}
                 >
@@ -181,6 +181,6 @@ const styles = StyleSheet.create({
   },
   likeAndCommentsWrapper: {
     flexDirection: "row",
-    gap: 10,
+    gap: 8,
   },
 });

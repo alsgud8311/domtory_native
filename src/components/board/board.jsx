@@ -13,6 +13,7 @@ import NewPost from "./newPost";
 import { AntDesign } from "@expo/vector-icons";
 import { getPostList } from "../../server/board";
 import PostListItems from "./postListItem";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 
 export default function Board({ boardId, navigation }) {
   const [data, setData] = useState([]);
@@ -20,33 +21,52 @@ export default function Board({ boardId, navigation }) {
   const [totalPage, setTotalPage] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [isPopularBoard, setisPopularBoard] = useState(false);
   const [goBackRefresh, setGoBackRefresh] = useState(false);
-  const fetchData = useCallback(async () => {
+  const [lastCall, setLastCall] = useState(null);
+  const [newRefresh, setNewRefresh] = useState(true);
+
+  const fetchData = async () => {
     try {
       console.log("몇페이지", currPage);
+      if (currPage === 0) {
+        console.log("0 return");
+        return;
+      }
       const response = await getPostList(boardId, currPage);
       setTotalPage(response.data.pageCnt);
       if (currPage === 1) {
-        setGoBackRefresh(false);
         setData(response.data.postList);
       } else {
-        setData((prevData) => [...prevData, ...response.data.postList]);
+        setData((prevData) => {
+          // 새로운 데이터에서 중복을 제거한 데이터를 가져옴
+          const newData = response.data.postList.filter(
+            (newItem) =>
+              !prevData.some((prevItem) => prevItem.id === newItem.id)
+          );
+
+          // 이전 데이터와 새로운 데이터를 합침
+          return [...prevData, ...newData];
+        });
       }
     } catch (error) {
       Alert.alert("정보를 가져오는데 실패했습니다.");
       navigation.pop();
     }
-  }, [boardId, currPage, navigation]);
+  };
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      setCurrPage(1);
-      setGoBackRefresh(false);
-    });
-    fetchData();
-    return unsubscribe;
-  }, [fetchData]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [boardId, currPage, navigation])
+  );
+  // useEffect(() => {
+  //   fetchData();
+  // const unsubscribe = navigation.addListener("focus", () => {
+  //   setCurrPage(1);
+  //   setGoBackRefresh(false);
+  // });
+  // return unsubscribe;
+  // }, [fetchData, goBackRefresh]);
 
   const handleOpenNewPost = () => {
     setModalVisible(true);
@@ -58,22 +78,24 @@ export default function Board({ boardId, navigation }) {
 
   const handleNewPostSubmit = () => {
     setData([]);
-    setCurrPage(1);
+    setCurrPage(0);
     fetchData();
   };
 
   const handleLoadMore = () => {
-    console.log(goBackRefresh);
-    if (currPage < totalPage && !goBackRefresh) {
+    if (currPage < totalPage && newRefresh) {
       console.log("more?");
+      setNewRefresh(true);
       setCurrPage((prev) => prev + 1);
     }
   };
 
   const onRefresh = () => {
+    console.log("refresh");
     setRefreshing(true);
-
-    setCurrPage(1);
+    setData([]);
+    setCurrPage(0);
+    fetchData();
     setTimeout(() => {
       setRefreshing(false);
     }, 1000);
