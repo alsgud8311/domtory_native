@@ -11,7 +11,7 @@ export default function PopularPostCard({ navigation }) {
   const getData = async () => {
     const { success, data } = await getPopularpost();
     if (success) {
-      setData(data);
+      setData(data.postList.slice(0, 5));
     }
   };
 
@@ -43,7 +43,7 @@ export default function PopularPostCard({ navigation }) {
       </View>
       <View style={styles.container}>
         {data ? (
-          data.postList.map((post, key) => (
+          data.map((post, key) => (
             <TouchableOpacity
               key={key}
               style={styles.post}

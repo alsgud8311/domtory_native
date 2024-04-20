@@ -3,9 +3,8 @@ import { useNavigation } from "@react-navigation/native";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import acorn from "../../assets/like_icon.png";
 
-export default function PostListItems({ item, navigation, setGoBackRefresh }) {
+export default function PostListItems({ item, navigation }) {
   const navigateToDetailScreen = () => {
-    setGoBackRefresh(true);
     let screenName;
     switch (item.board) {
       case 1:

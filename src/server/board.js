@@ -243,7 +243,7 @@ export const block = async (postOrCommentId, type) => {
 };
 
 // 인기게시글 가져오기
-export const getPopularpost = async (page) => {
+export const getPopularpost = async () => {
   try {
     const response = await apiBe.get(`/board/post/paged/list/popular/`);
     return { success: true, data: response.data };
