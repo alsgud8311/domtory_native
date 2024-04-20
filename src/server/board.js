@@ -94,6 +94,13 @@ export const getPostList = async (boardId, page) => {
       // 핫도토리 게시판
       boardUrl = `/board/post/paged/list/popular/?page=${page}`;
       break;
+    case 8:
+      // 내가 쓴 글 게시판
+      boardUrl = `/board/mypage/paged/post/?page=${page}`;
+      break;
+    case 9:
+      // 내가 댓글 쓴 글 게시판
+      boardUrl = `/board/mypage/paged/comment/?page=${page}`;
     default:
       boardUrl = `/board/post/paged/list/${boardId}/?page=${page}`;
       break;
@@ -236,7 +243,7 @@ export const block = async (postOrCommentId, type) => {
 };
 
 // 인기게시글 가져오기
-export const getPopularpost = async (page) => {
+export const getPopularpost = async () => {
   try {
     const response = await apiBe.get(`/board/post/paged/list/popular/`);
     return { success: true, data: response.data };
