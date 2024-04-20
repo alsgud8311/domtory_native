@@ -81,6 +81,7 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#fff",
     marginBottom: 10,
+    marginTop: 10,
   },
   description: {
     flexDirection: "row",

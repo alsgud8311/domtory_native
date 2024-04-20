@@ -90,7 +90,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "orange",
     borderRadius: 10,
-    marginTop: 10,
     backgroundColor: "bisque",
   },
   description: {
@@ -99,6 +98,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: "100%",
     paddingTop: 15,
+    paddingBottom: 5,
     paddingRight: 10,
   },
   descriptionText: {
