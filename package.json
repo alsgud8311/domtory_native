@@ -51,12 +51,16 @@
     "react-native-vector-icons": "^10.0.3",
     "react-native-version-check": "^3.4.7",
     "react-native-web": "~0.19.6",
-    "react-native-webview": "13.6.4"
+    "react-native-webview": "13.6.4",
+    "typescript": "^5.4.5"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@expo/config-plugins": "^7.8.4",
-    "@react-native/gradle-plugin": "^0.73.4"
+    "@react-native/gradle-plugin": "^0.73.4",
+    "@types/expo": "^33.0.1",
+    "@types/react": "^18.3.1",
+    "@types/react-native": "^0.73.0"
   },
   "private": true
 }
