@@ -97,8 +97,6 @@ const styles = StyleSheet.create({
   date: {
     fontSize: 11,
     color: "#5a5a5a",
-    borderRightWidth: 1,
-    borderRightColor: "#5a5a5abf",
   },
   commentWrapper: {
     flexDirection: "row",
