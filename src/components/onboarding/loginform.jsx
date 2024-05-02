@@ -50,6 +50,7 @@ export default function LoginForm({ navigation }) {
     if (success) {
       console.log("login success");
     } else {
+      console.log('로그인 에라땄음',data)
       setLoginError(data);
       if (loginError.detail) {
         Alert.alert(loginError.detail);
@@ -61,6 +62,7 @@ export default function LoginForm({ navigation }) {
         "로그인 중에 오류가 발생했습니다. 다시 시도해 주시겠어요?"
       );
       setIsLoading(false);
+      }
     }
   };
 
@@ -84,7 +86,7 @@ export default function LoginForm({ navigation }) {
               value={username}
               autoCapitalize="none"
             />
-            {loginError.username ? (
+            {loginError?.username ? (
               <Text style={{ color: "red" }}>{loginError.username}</Text>
             ) : null}
             <View
