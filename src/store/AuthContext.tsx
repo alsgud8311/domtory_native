@@ -19,6 +19,14 @@ type UserInfo = {
   id: string | null;
   pushTokenActive: string | null;
 };
+
+interface CustomError extends Error {
+  response?: {
+    data: any;
+    status: number;
+    headers: string;
+  };
+}
 //AuthContext + SecureStore을 이용한 로그인
 const AuthContext = createContext();
 export const useAuth = () => {
@@ -82,7 +90,8 @@ export const AuthProvider = ({ children }) => {
       });
       return { success: true };
     } catch (error) {
-      return { success: false, data: error.response.data };
+      const customErr = error as CustomError;
+      return { success: false, data: customErr.response?.data };
     }
   };
 
@@ -224,8 +233,8 @@ export const AuthProvider = ({ children }) => {
       const response = await apiBe.post("/member/password/change/", data);
       return { success: true, data: response.data };
     } catch (error) {
-      console.log(error.response.data);
-      return { success: false, data: error.response.data };
+      const customErr = error as CustomError;
+      return { success: false, data: customErr.response?.data };
     }
   };
 
@@ -234,7 +243,8 @@ export const AuthProvider = ({ children }) => {
       const response = await apiBe.post("/member/withdrawal/");
       return { success: true, data: response.data };
     } catch (error) {
-      return { success: false, data: error.response.data };
+      const customErr = error as CustomError;
+      return { success: false, data: customErr.response?.data };
     }
   };
 

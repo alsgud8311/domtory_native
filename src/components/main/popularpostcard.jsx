@@ -54,7 +54,13 @@ export default function PopularPostCard({ navigation }) {
                 })
               }
             >
-              <Text style={styles.postTitle}>{post.title}</Text>
+              <Text
+                style={styles.postTitle}
+                ellipsizeMode="tail"
+                numberOfLines={1}
+              >
+                {post.title}
+              </Text>
               <View style={{ flexDirection: "row", gap: 10 }}>
                 <View style={styles.likedCnt}>
                   <Image
