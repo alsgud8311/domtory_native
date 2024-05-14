@@ -10,16 +10,12 @@ import { Alert } from "react-native";
 import { CustomError, ProviderType, UserInfo } from "./authmodel";
 
 //AuthContext + SecureStore을 이용한 로그인
-const AuthContext = createContext<UserInfo | undefined>(undefined);
+const AuthContext = createContext<ProviderType | undefined>(undefined);
 export const useAuth = () => {
   return useContext(AuthContext);
 };
 
-export const AuthProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}): React.FC => {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [authState, setAuthState] = useState<UserInfo>({
     accessToken: null,
     refreshToken: null,
