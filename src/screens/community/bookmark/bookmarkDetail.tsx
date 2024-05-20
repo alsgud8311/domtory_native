@@ -1,12 +1,13 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import PostDetail from "../../../components/board/postDetail";
 import { getPostDetail } from "../../../server/board";
-import { useFocusEffect, useRoute } from "@react-navigation/native";
+import { RouteProp, useFocusEffect, useRoute } from "@react-navigation/native";
 import { Alert } from "react-native";
+import { ParamList } from "../../../models/route";
 
 export default function BookmarkDetail({ navigation }) {
   const [data, setData] = useState({});
-  const route = useRoute();
+  const route = useRoute<RouteProp<ParamList, "sampleType">>();
   const { postId } = route.params;
 
   const reloadData = async () => {
