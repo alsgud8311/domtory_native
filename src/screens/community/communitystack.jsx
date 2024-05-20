@@ -35,7 +35,7 @@ import Popup from "../../components/board/popup";
 import CouncilNoticeDetail from "../notice/CouncilNoticeDetail";
 import MyComment from "./mypost/mycomment";
 import PostFix from "../board/postfix";
-import Bookmark from "./bookmark/bookmark";
+import Bookmark from "./bookmark/bookmark.tsx";
 import BookmarkDetail from "./bookmark/bookmarkDetail";
 
 const CommunityStack = ({ navigation }) => {

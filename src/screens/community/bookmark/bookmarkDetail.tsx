@@ -6,7 +6,7 @@ import { Alert } from "react-native";
 import { ParamList } from "../../../models/route";
 
 export default function BookmarkDetail({ navigation }) {
-  const [data, setData] = useState({});
+  const [data, setData] = useState<PostDetailType | null>(null);
   const route = useRoute<RouteProp<ParamList, "sampleType">>();
   const { postId } = route.params;
 
