@@ -16,6 +16,7 @@ import { requestUserPermission } from "../../utils/firebase/firebaseSetting";
 import * as SecureStore from "expo-secure-store";
 import { pushCheckUpdate } from "../../server/notifications";
 import PopularPostCard from "../../components/main/popularpostcard";
+import { ProviderType } from "../../store/authmodel";
 
 // import * as SplashScreen from "expo-splash-screen";
 
@@ -36,8 +37,7 @@ const board = {
 };
 
 export default function Home({ navigation }) {
-  const { authState, setAuthState } = useAuth();
-  let isMessageHandlerRegistered = false;
+  const { authState, setAuthState } = useAuth<ProviderType>();
 
   //개별 알림이 사용가능한지 확인
   useEffect(() => {
@@ -77,9 +77,9 @@ export default function Home({ navigation }) {
             if (postId && boardId && pushedAt) {
               const { success } = await pushCheckUpdate(authState.id, pushedAt);
               if (success) {
-                navigation.navigate(board[boardId], { postId: postId });
+                navigation.navigate(board[`${boardId}`], { postId: postId });
               } else {
-                navigation.navigate(board[boardId], { postId: postId });
+                navigation.navigate(board[`${boardId}`], { postId: postId });
               }
             } else {
               console.log("푸시 알림 데이터가 부족합니다.");
@@ -95,9 +95,9 @@ export default function Home({ navigation }) {
           if (postId && boardId && pushedAt) {
             const { success } = await pushCheckUpdate(authState.id, pushedAt);
             if (success) {
-              navigation.navigate(board[boardId], { postId: postId });
+              navigation.navigate(board[`${boardId}`], { postId: postId });
             } else {
-              navigation.navigate(board[boardId], { postId: postId });
+              navigation.navigate(board[`${boardId}`], { postId: postId });
             }
           } else {
             console.log("푸시 알림 데이터가 부족합니다.");
@@ -119,8 +119,8 @@ export default function Home({ navigation }) {
         const { postId, boardId, pushedAt } = remoteMessage.data;
         if (postId && boardId && pushedAt) {
           Alert.alert(
-            remoteMessage.notification.title,
-            remoteMessage.notification.body,
+            remoteMessage.notification?.title,
+            remoteMessage.notification?.body,
             [
               { text: "취소", style: "cancel" },
               {
@@ -131,9 +131,13 @@ export default function Home({ navigation }) {
                     pushedAt
                   );
                   if (success) {
-                    navigation.navigate(board[boardId], { postId: postId });
+                    navigation.navigate(board[`${boardId}`], {
+                      postId: postId,
+                    });
                   } else {
-                    navigation.navigate(board[boardId], { postId: postId });
+                    navigation.navigate(board[`${boardId}`], {
+                      postId: postId,
+                    });
                   }
                 },
               },
@@ -142,7 +146,7 @@ export default function Home({ navigation }) {
         } else {
           Alert.alert(
             remoteMessage.notification.title,
-            remoteMessage.notification.body
+            remoteMessage.notification?.body
           );
         }
       } else {

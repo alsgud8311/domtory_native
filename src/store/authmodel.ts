@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from "react";
+
 export type UserInfo = {
   accessToken?: string | null;
   refreshToken?: string | null;
@@ -39,6 +41,7 @@ export type ProviderType = {
     newPassword: string
   ): Promise<DataReturn | ErrorReturn>;
   onWithdrawal(): Promise<DataReturn | ErrorReturn>;
+  setAuthState: Dispatch<SetStateAction<ProviderType["authState"]>>; // 여기서 함수 호출을 제거했습니다
   authState: {
     accessToken?: string | null;
     refreshToken?: string | null;

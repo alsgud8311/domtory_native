@@ -232,16 +232,32 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     onLogout: signout,
     onPasswordChange: changePassword,
     onWithdrawal: withdrawal,
+    setAuthState: setAuthState,
     authState: authState,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-export function useAuth<T>(): T | null {
+const defaultAuthState = {
+  authState: {
+    accessToken: null,
+    refreshToken: null,
+    pushToken: null,
+    authenticated: false,
+    staff: null,
+    username: null,
+    name: null,
+    id: null,
+    pushTokenActive: null,
+  },
+  setAuthState: () => {}, // 기본값 또는 함수 구현
+};
+
+export function useAuth<T>(): T {
   const context = useContext(AuthContext);
-  if (context) {
-    return context as T;
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
   }
-  return null;
+  return context as T;
 }
