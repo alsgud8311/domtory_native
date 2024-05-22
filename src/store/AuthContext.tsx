@@ -11,9 +11,6 @@ import { CustomError, ProviderType, UserInfo } from "./authmodel";
 
 //AuthContext + SecureStore을 이용한 로그인
 const AuthContext = createContext<ProviderType | undefined>(undefined);
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [authState, setAuthState] = useState<UserInfo>({
@@ -240,3 +237,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
+
+export function useAuth<T>(): T | null {
+  const context = useContext(AuthContext);
+  if (context) {
+    return context as T;
+  }
+  return null;
+}

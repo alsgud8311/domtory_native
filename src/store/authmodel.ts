@@ -39,17 +39,15 @@ export type ProviderType = {
     newPassword: string
   ): Promise<DataReturn | ErrorReturn>;
   onWithdrawal(): Promise<DataReturn | ErrorReturn>;
-  authState:
-    | {
-        accessToken?: string | null;
-        refreshToken?: string | null;
-        pushToken?: string | null;
-        authenticated?: boolean | null;
-        staff?: string | null;
-        username?: string | null;
-        name?: string | null;
-        id?: string | null;
-        pushTokenActive?: string | null;
-      }
-    | undefined;
+  authState: {
+    accessToken?: string | null;
+    refreshToken?: string | null;
+    pushToken?: string | null;
+    authenticated?: boolean | null;
+    staff?: string | null;
+    username?: string | null;
+    name?: string | null;
+    id?: string | null;
+    pushTokenActive?: string | null;
+  };
 };
