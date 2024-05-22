@@ -6,7 +6,7 @@ import CommunityCard from "../../components/main/communitycard";
 import NoticeCard from "../../components/main/noticecard";
 import RecentPostCard from "../../components/main/recentcard";
 import CouncilNoticeCard from "../../components/main/councilnoticecard";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import messaging from "@react-native-firebase/messaging";
 import React from "react";
 import { apiBe } from "../../server";
@@ -119,8 +119,8 @@ export default function Home({ navigation }) {
         const { postId, boardId, pushedAt } = remoteMessage.data;
         if (postId && boardId && pushedAt) {
           Alert.alert(
-            remoteMessage.notification?.title,
-            remoteMessage.notification?.body,
+            remoteMessage.notification?.title ?? "알림",
+            remoteMessage.notification?.body ?? "새로운 알림이 도착했습니다",
             [
               { text: "취소", style: "cancel" },
               {
@@ -145,14 +145,14 @@ export default function Home({ navigation }) {
           );
         } else {
           Alert.alert(
-            remoteMessage.notification.title,
-            remoteMessage.notification?.body
+            remoteMessage.notification?.title ?? "알림",
+            remoteMessage.notification?.body ?? "새로운 알림이 도착했습니다"
           );
         }
       } else {
         Alert.alert(
-          remoteMessage.notification.title,
-          remoteMessage.notification.body
+          remoteMessage.notification?.title ?? "알림",
+          remoteMessage.notification?.body ?? "새로운 알림이 도착했습니다"
         );
       }
     });
