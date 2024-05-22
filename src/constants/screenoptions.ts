@@ -14,7 +14,7 @@ export const stackscreenOptions = {
 export const stackScreenOptionsWithTitle: NativeStackNavigationOptions = {
   headerShown: true,
   headerStyle: {
-    backgroundColor: "transparent",
+    backgroundColor: "white",
     ...Platform.select({
       android: {
         elevation: 0,
