@@ -1,5 +1,5 @@
 export type ParamList = {
   sampleType: {
-    postId: string;
+    postId: number;
   };
 };

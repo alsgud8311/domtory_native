@@ -1,12 +1,15 @@
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import { Platform } from "react-native";
 
-export const stackscreenOptions = {
-  headerShowLabel: false,
+export const stackscreenOptions: NativeStackNavigationOptions = {
   headerShown: true,
   headerStyle: {
-    elevation: 0,
-    shadowColor: "transparent",
+    backgroundColor: "white",
+    ...Platform.select({
+      android: {
+        elevation: 0,
+      },
+    }),
   },
   headerTintColor: "black",
 };

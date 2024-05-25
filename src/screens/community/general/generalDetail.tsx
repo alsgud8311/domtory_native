@@ -6,15 +6,21 @@ import { Alert } from "react-native";
 import { ParamList } from "../../../models/route";
 
 export default function GeneralDetail({ navigation }) {
-  const [data, setData] = useState<PostDetailType | null>(null);
+  const [data, setData] = useState<PostDetailType | object>({});
   const route = useRoute<RouteProp<ParamList, "sampleType">>();
   const { postId } = route.params;
 
   const reloadData = async () => {
     const result = await getPostDetail(postId);
-    if (result.success && !result.data.is_blocked && !result.data.is_deleted) {
-      // console.log(result);
-      setData(result.data);
+    if (
+      result.success &&
+      !result.data?.is_blocked &&
+      !result.data?.is_deleted
+    ) {
+      console.log(result.data);
+      setData(result.data as PostDetailType);
+      console.log("wwwwww");
+      console.log("wwwwww", data);
     } else {
       Alert.alert("삭제되거나 차단 조치된 게시물입니다.");
       navigation.pop();
@@ -23,6 +29,7 @@ export default function GeneralDetail({ navigation }) {
 
   useFocusEffect(
     useCallback(() => {
+      console.log("?????", postId, data);
       reloadData();
     }, [postId])
   );
