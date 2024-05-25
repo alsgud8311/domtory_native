@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { useRoute } from "@react-navigation/native";
+import { RouteProp, useRoute } from "@react-navigation/native";
 import { ActivityIndicator, Image, ScrollView, Text, View } from "react-native";
 import { getPostDetail } from "../../server/board";
 import kingDomtory from "../../assets/council_domtory.png";
 import Hyperlink from "react-native-hyperlink";
+import { ParamList } from "../../models/route";
 
 export default function CouncilNoticeDetail() {
-  const [data, setData] = useState(null);
-  const route = useRoute();
+  const [data, setData] = useState<PostDetailType | null>(null);
+  const route = useRoute<RouteProp<ParamList, "sampleType">>();
   const { postId } = route.params;
 
   const reloadData = async () => {
     try {
       const result = await getPostDetail(postId);
       console.log(result);
-      setData(result.data);
+      setData(result.data as PostDetailType);
     } catch (error) {
       console.error("Failed to reload data:", error);
     }
