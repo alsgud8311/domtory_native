@@ -17,11 +17,11 @@ import LostAndFoundDetail from "./lostandfound/lostandfoundDetail";
 //공지사항
 import CbhsNotice from "../notice/cbhsNotice";
 import CbhsNoticeDetail from "../notice/cbhsNoticeDetail";
-
 //내가 쓴 글, 댓글
 import MyPosting from "./mypost/mypost";
 import Mycomment from "./mypost/mycomment";
-
+// 쪽지방
+import MessageDetail from '../message/messageDetail';
 import Search from "../search/search";
 
 import Header from "../../components/common/header";
@@ -30,7 +30,7 @@ import {
   stackscreenOptions,
 } from "../../constants/screenoptions";
 
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, Feather } from "@expo/vector-icons";
 import Popup from "../../components/board/popup";
 import CouncilNoticeDetail from "../notice/CouncilNoticeDetail";
 import MyComment from "./mypost/mycomment";

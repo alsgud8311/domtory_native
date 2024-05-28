@@ -13,7 +13,8 @@ import {
   Dimensions
 } from "react-native";
 import { Entypo } from "@expo/vector-icons";
-import { block, deletePost, getPostDetail, report } from "../../server/board";
+import { block, deletePost, report } from "../../server/board";
+import { createMessage } from "../../server/message";
 import { useAuth } from "../../store/AuthContext";
 
 const PopupMenu = ({ navigation }) => {
@@ -59,6 +60,21 @@ const PopupMenu = ({ navigation }) => {
       console.error("차단 실패:", result.data);
       Alert.alert("차단 오류", "차단에 실패했습니다. 다시 시도해주세요.");
       navigation.pop();
+    }
+  };
+
+  const handleCreateMessage = async (postId) => {
+    try {
+      console.log("Creating message with postId:", postId);
+      const response = await createMessage(postId, 0);
+      if (response.success) {
+        console.log("쪽지방 생성 성공", response.data);
+        navigation.navigate('쪽지방', { messageId: response.data.message_room_id });
+      } else {
+        console.error("쪽지방 생성 실패:", response.data);
+      }
+    } catch (error) {
+      console.error("쪽지방 생성 오류:", error);
     }
   };
 
@@ -172,7 +188,22 @@ const PopupMenu = ({ navigation }) => {
         },
         {
           title: "쪽지 보내기",
-          action: () => navigation.navigate("쪽지방", { messageId: memberId })
+          action: () =>
+            Alert.alert(
+              "쪽지 보내기",
+              "해당 게시물을 작성한 상대방에게 쪽지를 보내시겠습니까?",
+              [
+                {
+                  text: "취소",
+                  style: "cancel",
+                },
+                {
+                  text: "예",
+                  onPress: () => handleCreateMessage(postId),
+                },
+              ],
+              { cancelable: false }
+            )
         },
       ]);
     }
@@ -187,6 +218,7 @@ const PopupMenu = ({ navigation }) => {
       easing: Easing.linear,
     }).start(() => to === 0 && setVisible(false));
   }
+
   return (
     <>
       <TouchableOpacity onPress={() => resizeBox(1)}>

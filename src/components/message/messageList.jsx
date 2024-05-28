@@ -4,73 +4,35 @@ import { getMessageList, deleteMessage, blockMessage } from "../../server/messag
 import Swipeable from "react-native-swipeable-row";
 
 export default function MessageList({ navigation }) {
-    const [messageDetail, setMessageDetail] = useState([]);
+    console.log("쪽지 목록");
+    const [messageList, setMessageList] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
 
-    // useEffect(() => {
-    //     fetchMessageDetail();
-    // }, []);
-
-    // const fetchMessageDetail = async () => {
-    //     try {
-    //         const response = await getMessageDetail();
-    //         if (response.success) {
-    //             setMessageDetail(response.data);
-    //         } else {
-    //             console.error("Failed to fetch message list:", response.data);
-    //         }
-    //     } catch (error) {
-    //         console.error("Failed to fetch message list:", error);
-    //     } finally {
-    //         setRefreshing(false);
-    //     }
-    // };
-
-    // const handleRefresh = () => {
-    //     setRefreshing(true);
-    //     fetchMessageDetail();
-    // };
-
-    const dummyData = [
-        {
-            id: '1',
-            send_id: 242,
-            recv_id: 1,
-            body: '안녕하세요.zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz',
-            created_at: '24/04/30 09:00',
-            is_read: false,
-            is_received: true,
-            message_cnt: 1
-        },
-        {
-            id: '2',
-            send_id: 242,
-            recv_id: 1,
-            body: '하이',
-            created_at: '24/04/30 09:10',
-            is_read: true,
-            is_received: false
-        },
-        {
-            id: '3',
-            send_id: 242,
-            recv_id: 1,
-            body: '안녕안녕ㅇㅇㅇㅇ',
-            created_at: '24/04/30 09:20',
-            is_read: false,
-            is_received: true,
-            message_cnt: 2
-        },
-        {
-            id: '4',
-            send_id: 242,
-            recv_id: 1,
-            body: '반갑',
-            created_at: '24/04/30 09:20',
-            is_read: false,
-            is_received: false
+    const fetchMessageList = async () => {
+        try {
+            const response = await getMessageList();
+            console.log('API Response:', response);
+            if (response.success) {
+                setMessageList(response.data);
+                console.log(response.date);
+            } else {
+                console.error("Failed to fetch message list:", response.data);
+            }
+        } catch (error) {
+            console.error("Failed to fetch message list:", error);
+        } finally {
+            setRefreshing(false);
         }
-    ];
+    };
+
+    useEffect(() => {
+        fetchMessageList();
+    }, []);
+
+    const handleRefresh = () => {
+        setRefreshing(true);
+        fetchMessageList();
+    };
 
     const renderItem = ({ item }) => {
         return (
@@ -123,10 +85,10 @@ export default function MessageList({ navigation }) {
     };
 
     const handleDelete = async (id) => {
-        const { success } = await deleteMessage(id);
+        const { success } = await deleteMessage(9);
         if (success) {
             Alert.alert("쪽지가 삭제되었습니다.");
-            reloadData();
+            handleRefresh();
         } else {
             console.error("쪽지 삭제에 실패했습니다:", result.data);
             Alert.alert("쪽지 삭제에 실패했습니다. 다시 시도해주세요.");
@@ -152,27 +114,27 @@ export default function MessageList({ navigation }) {
     };
 
     const handleBlock = async (id, req_id, tar_id) => {
-        const { success } = await blockMessage(id, req_id, tar_id);
+        const { success } = await blockMessage(9, req_id, tar_id);
         if (success) {
             Alert.alert("해당 쪽지 상대방이 차단되었습니다.");
         } else {
-            console.error("차단에 실패했습니다:", result.data);
-            Alert.alert("차단에 실패했습니다. 다시 시도해주세요.");
+            console.error("차단에 실패했습니다:");
+            Alert.alert("이미 차단된 이용자입니다.");
         }
     };
 
     return (
         <SafeAreaView style={styles.container}>
             <FlatList
-                data={dummyData}
+                data={messageList}
                 renderItem={renderItem}
                 keyExtractor={item => item.id}
-            // refreshControl={
-            //     <RefreshControl
-            //         refreshing={refreshing}
-            //         onRefresh={handleRefresh}
-            //     />
-            // }
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={handleRefresh}
+                    />
+                }
             />
         </SafeAreaView>
     );

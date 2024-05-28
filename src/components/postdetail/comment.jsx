@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useNavigation } from '@react-navigation/native';
 import {
   View,
   Text,
@@ -8,11 +9,12 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import { Octicons, FontAwesome5 } from "@expo/vector-icons";
+import { Octicons, FontAwesome5, Feather } from "@expo/vector-icons";
 import domtory from "../../assets/icon.png";
 import like from "../../assets/like_icon.png";
 import unlike from "../../assets/unlike_icon.png";
 import { deleteComment, deleteReply, report, block, postCommentLike } from "../../server/board";
+import { createMessage } from "../../server/message";
 import { useAuth } from "../../store/AuthContext";
 import Hyperlink from "react-native-hyperlink";
 import ReplyCommentBox from "./replyComment";
@@ -27,7 +29,7 @@ export const handleReport = async (type, id) => {
   }
 };
 
-export default function CommentBox({ data, setCurrentReplyingTo, reloadData }) {
+export default function CommentBox({ data, setCurrentReplyingTo, reloadData, navigation }) {
   const { authState } = useAuth();
 
   // 대댓글 작성 확인창
@@ -216,6 +218,42 @@ export default function CommentBox({ data, setCurrentReplyingTo, reloadData }) {
     }
   };
 
+  // 쪽지방 생성 확인
+  const promptForCreateMessage = (userId) => {
+    Alert.alert(
+      "쪽지 보내기",
+      "해당 댓글을 작성한 상대방에게 쪽지를 보내시겠습니까?",
+      [
+        {
+          text: "취소",
+          style: "cancel",
+        },
+        {
+          text: "예",
+          onPress: () => {
+            handleCreateMessage(userId);
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  // 쪽지방 생성
+  const handleCreateMessage = async (userId) => {
+    try {
+      const response = await createMessage(data.id, userId);
+      if (response.success) {
+        console.log("쪽지방 생성 성공", response.data);
+        navigation.navigate('쪽지방', { messageId: response.data.message_room_id });
+      } else {
+        console.error("쪽지방 생성 실패:", response.data);
+      }
+    } catch (error) {
+      console.error("쪽지방 생성 오류:", error);
+    }
+  };
+
   return (
     <>
       {data.comment &&
@@ -259,26 +297,21 @@ export default function CommentBox({ data, setCurrentReplyingTo, reloadData }) {
                     style={styles.commnetReply}
                     onPress={() => promptForReply(comment.id)}
                   />
+                  <Feather name="send" style={styles.messageIcon} onPress={() => promptForCreateMessage(comment.anonymous_number)} />
                   <TouchableOpacity onPress={handlePostLike(comment)} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                    <Image source={unlike} style={{ width: 15, height: 15, opacity: 0.45 }} />
+                    <Image source={unlike} style={styles.likeIcon} />
                   </TouchableOpacity>
+
                   {parseInt(authState.id) === comment.member ? (
                     <TouchableOpacity onPress={() => confirmDelete(comment.id)}>
                       <Octicons name="trash" style={styles.commnetDelete} />
                     </TouchableOpacity>
                   ) : authState.staff === "YES" ? (
-                    <>
-                      <Octicons
-                        name="stop"
-                        style={styles.commnetReport}
-                        onPress={() => confirmAndReport("comment", comment.id)}
-                      />
-                      <FontAwesome5
-                        name="ban"
-                        style={styles.commnetReport}
-                        onPress={() => handleBlock(comment.id)}
-                      />
-                    </>
+                    <FontAwesome5
+                      name="ban"
+                      style={styles.commnetReport}
+                      onPress={() => handleBlock(comment.id)}
+                    />
                   ) : (
                     <Octicons
                       name="stop"
@@ -314,13 +347,11 @@ export default function CommentBox({ data, setCurrentReplyingTo, reloadData }) {
                 <View style={styles.replyContainer}>
                   <ReplyCommentBox
                     comment={comment}
-                    reloadData={reloadData}
-                    commentBlock={commentBlock}
                     handleBlock={handleBlock}
-                    handleReport={handleReport}
-                    handleReplyDelete={handleReplyDelete}
                     confirmAndReport={confirmAndReport}
                     confirmReplyDelete={confirmReplyDelete}
+                    promptForCreateMessage={promptForCreateMessage}
+                    //navigation={navigation}
                   />
                 </View>
               )}
@@ -389,7 +420,22 @@ const styles = StyleSheet.create({
   commnetReply: {
     fontSize: 14,
     color: "#66666675",
-    paddingHorizontal: 13,
+    paddingHorizontal: 10,
+  },
+  // 쪽지 보내기 아이콘
+  messageIcon: {
+    fontSize: 15,
+    color: "#66666675",
+    marginTop: 0.5,
+    paddingHorizontal: 10,
+  },
+  // 좋아요 아이콘
+  likeIcon: {
+    width: 15.5,
+    height: 15,
+    opacity: 0.33,
+    marginBottom: 2.5,
+    marginHorizontal: 8
   },
   // 댓글 삭제 아이콘
   commnetDelete: {
@@ -401,7 +447,8 @@ const styles = StyleSheet.create({
   commnetReport: {
     fontSize: 13,
     color: "#66666675",
-    paddingHorizontal: 15,
+    paddingTop: 1.3,
+    paddingHorizontal: 10,
   },
   // 삭제된 댓글
   commentDeleted: {

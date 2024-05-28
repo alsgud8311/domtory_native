@@ -7,7 +7,7 @@ import {
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { postMessage } from '../../server/message';
 
-const SendMessage = ({ onClose }) => {
+const SendMessage = ({ onClose, roomId }) => {
     const [content, setContent] = useState("");
     const [isContentFocused, setIsContentFocused] = useState(false);
 
@@ -37,18 +37,19 @@ const SendMessage = ({ onClose }) => {
         );
     };
 
-    // const handleSendMessage = async () => {
-    //     try {
-    //         const response = await postMessage(userId, { body: content });
-    //         if (response.success) {
-    //             console.log("메시지 전송 성공");
-    //         } else {
-    //             console.error("메시지 전송 실패:", response.data);
-    //         }
-    //     } catch (error) {
-    //         console.error("메시지 전송 오류:", error);
-    //     }
-    // };
+    const handleSendMessage = async () => {
+        try {
+            const response = await postMessage(9, { body: content });
+            if (response.success) {
+                console.log("메시지 전송 성공");
+                onClose();
+            } else {
+                console.error("메시지 전송 실패:", response.data);
+            }
+        } catch (error) {
+            console.error("메시지 전송 오류:", error);
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -57,12 +58,10 @@ const SendMessage = ({ onClose }) => {
                     <TouchableOpacity onPress={handleCancel}>
                         <AntDesign name="close" size={22} />
                     </TouchableOpacity>
-                    <Text style={styles.headerText} 
-                    //onPress={handleSendMessage}
-                    >
+                    <Text style={styles.headerText}>
                         쪽지 보내기
                     </Text>
-                    <Feather name="send" style={styles.sendIcon} />
+                    <Feather onPress={handleSendMessage} name="send" style={styles.sendIcon} />
                 </View>
                 <TouchableWithoutFeedback onPress={dismissKeyboard} style={styles.contentContainer}>
                     <TextInput

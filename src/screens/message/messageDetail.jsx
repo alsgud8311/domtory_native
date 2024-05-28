@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { ImageBackground, View, StyleSheet, Text, SafeAreaView, FlatList, Dimensions, 
-    RefreshControl, KeyboardAvoidingView, Platform, TextInput, TouchableOpacity,
-    Button, Modal } from "react-native";
-import { getMessageDetail, postMessage, patchReadMessage } from "../../server/message";
-import { Feather } from "@expo/vector-icons";
-import { BackgroundImage } from "react-native-elements/dist/config";
+    RefreshControl, Platform, Modal } from "react-native";
+import { getMessageDetail, patchReadMessage, getMessageInfo } from "../../server/message";
 import img from '../../assets/messageBackground.png';
 import SendMessage from "../../components/message/sendMessage"
 
 export default function MessageDetail({ route, navigation }) {
     const { messageId, showModal } = route.params || {};
-    const [messageList, setMessageList] = useState([]);
+    const [messageDetail, setMessageDetail] = useState([]);
+    const [messageInfo, setMessageInfo] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
+
+    console.log(messageId)
 
     const [isModalVisible, setModalVisible] = useState(showModal || false);    
     useEffect(() => {
@@ -23,84 +23,66 @@ export default function MessageDetail({ route, navigation }) {
 
     const handleCloseNewPost = () => {
         setModalVisible(false);
+        fetchMessageDetail();
     };
 
-    // useEffect(() => {
-    //     fetchMessageList();
-    // }, []);
-
-    // const fetchMessageList = async () => {
-    //     try {
-    //         const response = await getMessageDetail(messageId);
-    //         if (response.success) {
-    //             setMessageList(response.data);
-    //         } else {
-    //             console.error("Failed to fetch message list:", response.data);
-    //         }
-    //     } catch (error) {
-    //         console.error("Failed to fetch message list:", error);
-    //     } finally {
-    //         setRefreshing(false);
-    //     }
-    // };
-
-    // const handleRefresh = () => {
-    //     setRefreshing(true);
-    //     fetchMessageList();
-    // };
-
-    // useEffect(() => {
-    //     patchReadMessage(messageId)
-    //         .then(response => {
-    //             if (response.success) {
-    //                 console.log("메시지 읽음 처리 성공");
-    //             } else {
-    //                 console.error("메시지 읽음 처리 실패:", response.data);
-    //             }
-    //         })
-    //         .catch(error => {
-    //             console.error("메시지 읽음 처리 오류:", error);
-    //         });
-    // }, [messageId]);
-
-    const dummyData = [
-        {
-            id: '1',
-            send_id: 242,
-            recv_id: 1,
-            body: '안녕하세요.zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz',
-            created_at: '24/04/30 09:00',
-            is_read: false,
-            is_received: true
-        },
-        {
-            id: '2',
-            send_id: 242,
-            recv_id: 1,
-            body: '안녕하세요.',
-            created_at: '24/04/30 09:10',
-            is_read: true,
-            is_received: false
-        },
-        {
-            id: '3',
-            send_id: 242,
-            recv_id: 1,
-            body: '안녕하세요.',
-            created_at: '24/04/30 09:20',
-            is_read: true,
-            is_received: true
-        },
-        {
-            id: '4',
-            send_id: 242,
-            recv_id: 1,
-            body: '안녕하세요.',
-            created_at: '24/04/30 09:21',
-            is_read: false,
-            is_received: false
+    const fetchMessageDetail = async () => {
+        try {
+            const response = await getMessageDetail(messageId);
+            if (response.success) {
+                setMessageDetail(response.data);
+                console.log(response.data);
+            } else {
+                console.error("Failed to fetch message list:", response.data);
+            }
+        } catch (error) {
+            console.error("Failed to fetch message list:", error);
+        } finally {
+            setRefreshing(false);
         }
-    ];
+    };
+
+    const fetchMessageInfo = async () => {
+        try {
+            const response = await getMessageInfo(messageId);
+            if (response.success) {
+                setMessageInfo(response.data);
+                console.log(response.data);
+            } else {
+                console.error("Failed to fetch message list:", response.data);
+            }
+        } catch (error) {
+            console.error("Failed to fetch message list:", error);
+        } finally {
+            setRefreshing(false);
+        }
+    };
+
+    console.log(messageInfo)
+
+    useEffect(() => {
+        fetchMessageDetail();
+        fetchMessageInfo();
+    }, []);
+
+    const handleRefresh = () => {
+        setRefreshing(true);
+        fetchMessageDetail();
+    };
+
+    useEffect(() => {
+        patchReadMessage(9)
+            .then(response => {
+                if (response.success) {
+                    console.log("메시지 읽음 처리 성공");
+                } else {
+                    console.error("메시지 읽음 처리 실패:", response.data);
+                }
+            })
+            .catch(error => {
+                console.error("메시지 읽음 처리 오류:", error);
+            });
+    }, [messageId]);
 
     const renderItem = ({ item }) => (
         <>
@@ -126,31 +108,22 @@ export default function MessageDetail({ route, navigation }) {
         </>
     );
 
-    const [comment, setComment] = useState("");
-    const handleSendMessage = async (userId, message) => {
-        const { success } = await postMessage(userId, message);
-        if (success) {
-            setComment("");
-            handleRefresh();
-        } else {
-            console.error("메세지 전송에 실패했습니다:", result.data);
-            Alert.alert("오류", "메세지 전송에 실패했습니다. 다시 시도해주세요.");
-        }
-    };
-
     return (
         <SafeAreaView style={styles.container}>
             <ImageBackground source={img} resizeMode="cover" style={styles.image}>
+                <View style={styles.info}>
+                    <Text style={styles.infoText}>해당 쪽지는 {messageInfo.board}의 "{messageInfo.post_title}" 이라는 글에서 시작된 쪽지입니다.</Text>
+                </View>
                 <FlatList
-                    data={dummyData}
+                    data={messageDetail}
                     renderItem={renderItem}
                     keyExtractor={item => item.id}
-                // refreshControl={
-                //     <RefreshControl
-                //         refreshing={refreshing}
-                //         onRefresh={handleRefresh}
-                //     />
-                // }
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={handleRefresh}
+                    />
+                }
                 />
             </ImageBackground>
             <Modal
@@ -160,7 +133,7 @@ export default function MessageDetail({ route, navigation }) {
                 onRequestClose={handleCloseNewPost}
             >
                 <View style={styles.modalView}>
-                    <SendMessage onClose={handleCloseNewPost} />
+                    <SendMessage onClose={handleCloseNewPost} roomId={messageId}/>
                 </View>
             </Modal>
         </SafeAreaView>
@@ -179,6 +152,17 @@ const styles = StyleSheet.create({
     image: {
         flex: 1,
         justifyContent: "center",
+    },
+    info: {
+        marginHorizontal: 25,
+        marginBottom: 10,
+        paddingVertical: 8,
+        borderBottomWidth: 1,
+        borderBottomColor: '#9b9b9bdc'
+    },
+    infoText: {
+        color: '#797979dc',
+        paddingHorizontal: 4
     },
     receivedContainer: {
         flexDirection: "row",

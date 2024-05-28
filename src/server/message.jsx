@@ -1,9 +1,20 @@
 import axios from "axios";
 import { apiBe } from ".";
 
-export const postMessage = async (userId, body) => {
+export const createMessage = async (postId, anonymousNumber) => {
     try {
-        const reponse = await apiBe.post(`/message/send/${userId}/`, body);
+        const response = await apiBe.get(`/message/checkroom/${postId}/${anonymousNumber}/`);
+        if (response) {
+            return { success: true, data: response.data };
+        }
+    } catch (error) {
+        return { success: false, data: error.response.data };
+    }
+};
+
+export const postMessage = async (roomId, body) => {
+    try {
+        const response = await apiBe.post(`/message/send/${roomId}/`, body);
         return { success: true };
     } catch (error) {
         return { success: false, data: error.response.data };
@@ -25,6 +36,18 @@ export const getMessageList = async () => {
 export const getMessageDetail = async (MessageId) => {
     try {
         const { data } = await apiBe.get(`/message/detail/${MessageId}/`);
+        if (data) {
+            return { success: true, data: data };
+        }
+        return { success: false, data: "정보를 가져오는 중에 오류가 발생했습니다" };
+    } catch (error) {
+        return { success: false, data: error.response.data };
+    }
+};
+
+export const getMessageInfo = async (MessageId) => {
+    try {
+        const { data } = await apiBe.get(`/message/info/${MessageId}/`);
         if (data) {
             return { success: true, data: data };
         }
