@@ -22,7 +22,6 @@ const PopupMenu = ({ navigation }) => {
   const route = useRoute();
   const { postId, memberId } = route.params;
   const [options, setOptions] = useState([]);
-
   const handleDeleteButton = async (postId) => {
     try {
       const { success } = await deletePost(postId);

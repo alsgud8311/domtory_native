@@ -1,6 +1,6 @@
 import React from "react";
-import MyPostBoard from "../../../components/mypage/mypageandcommentboard";
+import Board from "../../../components/board/board";
 
 export default function MyComment({ navigation }) {
-  return <MyPostBoard post={"post"} navigation={navigation} />;
+  return <Board boardId={8} navigation={navigation} />;
 }
