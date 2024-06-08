@@ -65,7 +65,6 @@ const PopupMenu = ({ navigation }) => {
 
   const handleCreateMessage = async (postId) => {
     try {
-      console.log("Creating message with postId:", postId);
       const response = await createMessage(postId, 0);
       if (response.success) {
         console.log("쪽지방 생성 성공", response.data);

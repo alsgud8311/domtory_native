@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-    View, TextInput, Button, TouchableWithoutFeedback,
+    View, TextInput, TouchableWithoutFeedback,
     Keyboard, StyleSheet, TouchableOpacity, Text, ScrollView,
     Alert
 } from 'react-native';
@@ -10,6 +10,8 @@ import { postMessage } from '../../server/message';
 const SendMessage = ({ onClose, roomId }) => {
     const [content, setContent] = useState("");
     const [isContentFocused, setIsContentFocused] = useState(false);
+
+    console.log("쪽지 보내는 방 넘겨받은 룸아이디:", roomId);
 
     const onChangeContent = (inputContent) => {
         setContent(inputContent);
@@ -39,7 +41,7 @@ const SendMessage = ({ onClose, roomId }) => {
 
     const handleSendMessage = async () => {
         try {
-            const response = await postMessage(9, { body: content });
+            const response = await postMessage(roomId, content);
             if (response.success) {
                 console.log("메시지 전송 성공");
                 onClose();

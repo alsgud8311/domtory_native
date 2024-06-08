@@ -17,7 +17,7 @@ export const postMessage = async (roomId, body) => {
         const response = await apiBe.post(`/message/send/${roomId}/`, body);
         return { success: true };
     } catch (error) {
-        return { success: false, data: error.response.data };
+        return { success: false, data: error.response ? error.response.data : error.message };
     }
 };
 
