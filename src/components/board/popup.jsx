@@ -10,9 +10,11 @@ import {
   Easing,
   TouchableWithoutFeedback,
   Alert,
+  Dimensions
 } from "react-native";
 import { Entypo } from "@expo/vector-icons";
-import { block, deletePost, getPostDetail, report } from "../../server/board";
+import { block, deletePost, report } from "../../server/board";
+import { createMessage } from "../../server/message";
 import { useAuth } from "../../store/AuthContext";
 
 const PopupMenu = ({ navigation }) => {
@@ -20,7 +22,6 @@ const PopupMenu = ({ navigation }) => {
   const route = useRoute();
   const { postId, memberId } = route.params;
   const [options, setOptions] = useState([]);
-  // console.log("뭐가문젠겨", postId, memberId);
   const handleDeleteButton = async (postId) => {
     try {
       const { success } = await deletePost(postId);
@@ -61,6 +62,20 @@ const PopupMenu = ({ navigation }) => {
     }
   };
 
+  const handleCreateMessage = async (postId) => {
+    try {
+      const response = await createMessage(postId, 0);
+      if (response.success) {
+        console.log("쪽지방 생성 성공", response.data);
+        navigation.navigate('쪽지방', { messageId: response.data.message_room_id });
+      } else {
+        console.error("쪽지방 생성 실패:", response.data);
+      }
+    } catch (error) {
+      console.error("쪽지방 생성 오류:", error);
+    }
+  };
+
   const [visible, setVisible] = useState(false);
   const scale = useRef(new Animated.Value(0)).current;
 
@@ -84,7 +99,7 @@ const PopupMenu = ({ navigation }) => {
                     navigation.navigate("게시글 수정", { postId: postId }),
                 },
               ],
-              { cancelable: false } // Android에서 백 버튼을 눌렀을 때 대화 상자가 닫히지 않도록 설정
+              { cancelable: false }
             ),
         },
         {
@@ -169,6 +184,25 @@ const PopupMenu = ({ navigation }) => {
               { cancelable: false }
             ),
         },
+        {
+          title: "쪽지 보내기",
+          action: () =>
+            Alert.alert(
+              "쪽지 보내기",
+              "해당 게시물을 작성한 상대방에게 쪽지를 보내시겠습니까?",
+              [
+                {
+                  text: "취소",
+                  style: "cancel",
+                },
+                {
+                  text: "예",
+                  onPress: () => handleCreateMessage(postId),
+                },
+              ],
+              { cancelable: false }
+            )
+        },
       ]);
     }
   }, [authState.id]);
@@ -182,6 +216,7 @@ const PopupMenu = ({ navigation }) => {
       easing: Easing.linear,
     }).start(() => to === 0 && setVisible(false));
   }
+
   return (
     <>
       <TouchableOpacity onPress={() => resizeBox(1)}>
@@ -218,6 +253,8 @@ const PopupMenu = ({ navigation }) => {
   );
 };
 
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 const styles = StyleSheet.create({
   popup: {
     borderRadius: 5,
@@ -226,8 +263,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     paddingHorizontal: 5,
     position: "absolute",
-    top: 45,
-    right: 20,
+    top: windowHeight * 0.055,
+    right: windowWidth * 0.03,
     // iOS용 그림자 스타일
     shadowColor: "#000",
     shadowOffset: {

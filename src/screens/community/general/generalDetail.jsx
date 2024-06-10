@@ -26,5 +26,5 @@ export default function GeneralDetail({ navigation }) {
     }, [postId])
   );
 
-  return <PostDetail data={data} reloadData={reloadData} postId={postId} />;
+  return <PostDetail data={data} reloadData={reloadData} postId={postId} navigation={navigation}/>;
 }
