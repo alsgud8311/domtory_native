@@ -95,6 +95,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               pushToken: token,
             };
             await apiBe.post("/push/token/", data);
+            setAuthState((prev) => ({ ...prev, pushTokenActive: "YES" }));
             await SecureStore.setItemAsync("PUSHTOKEN_ACTIVE", "YES");
           } catch (error) {
             console.log("Sending Push Token error", error);
@@ -126,11 +127,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           ...prev,
           staff: "YES",
         }));
+        await SecureStore.setItemAsync("STAFF", "YES");
       } else {
         setAuthState((prev) => ({
           ...prev,
           staff: "NO",
         }));
+        await SecureStore.setItemAsync("STAFF", "NO");
       }
 
       await SecureStore.setItemAsync("ACCESS_TOKEN", data.accessToken);
@@ -138,11 +141,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       await SecureStore.setItemAsync("USERNAME", data.member.username);
       await SecureStore.setItemAsync("NAME", data.member.name);
       await SecureStore.setItemAsync("ID", data.member.id.toString());
-      if (data.member.isStaff) {
-        await SecureStore.setItemAsync("STAFF", "YES");
-      } else {
-        await SecureStore.setItemAsync("STAFF", "NO");
-      }
       return { success: true, data: data };
     } catch (error) {
       console.log(error);

@@ -121,14 +121,10 @@ export default function Board({ boardId, navigation }) {
       />
       {boardId <= 5 && (
         <>
-          <TouchableOpacity
-            onPress={handleOpenNewPost}
-            style={styles.writeButton}
-          >
+          <TouchableOpacity onPress={handleOpenNewPost} style={styles.writeButton}>
             <AntDesign name="form" size={24} color={"#fff"} />
           </TouchableOpacity>
-          <NewPost
-            isVisible={isModalVisible}
+          <NewPost isVisible={isModalVisible}
             onClose={handleCloseNewPost}
             boardId={boardId}
             onPostSubmit={handleNewPostSubmit}

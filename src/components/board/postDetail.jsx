@@ -43,7 +43,7 @@ export const handleReport = async (type, id) => {
   }
 };
 
-export default function PostDetail({ data, reloadData, postId }) {
+export default function PostDetail({ data, reloadData, postId, navigation }) {
   const { authState } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
 
@@ -441,6 +441,7 @@ export default function PostDetail({ data, reloadData, postId }) {
           data={data}
           setCurrentReplyingTo={setCurrentReplyingTo}
           reloadData={reloadData}
+          navigation={navigation}
         />
       </ScrollView>
       {/* 댓글 작성 */}

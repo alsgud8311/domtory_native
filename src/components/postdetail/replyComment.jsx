@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import { Octicons, FontAwesome5 } from "@expo/vector-icons";
+import { Octicons, FontAwesome5, Feather } from "@expo/vector-icons";
 import domtory from "../../assets/icon.png";
 import like from "../../assets/like_icon.png";
 import unlike from "../../assets/unlike_icon.png";
@@ -18,13 +18,10 @@ import Hyperlink from "react-native-hyperlink";
 
 export default function ReplyCommentBox({
   comment,
-  reloadData,
-  commentBlock,
   handleBlock,
-  handleReport,
-  handleReplyDelete,
   confirmAndReport,
   confirmReplyDelete,
+  promptForCreateMessage,
 }) {
   console.log(comment)
   const { authState } = useAuth();
@@ -96,29 +93,29 @@ export default function ReplyCommentBox({
             </View>
             {/* 대댓글의 옵션 버튼 (삭제, 신고 등) */}
             <View style={styles.commentOption}>
+            <Feather name="send" style={styles.messageIcon} onPress={() => promptForCreateMessage(reply.anonymous_number)} />
+              <TouchableOpacity onPress={handlePostLike(reply)} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                <Image source={unlike} style={styles.likeIcon} />
+              </TouchableOpacity>
               {parseInt(authState.id) === reply.member ? (
                 <Octicons
                   name="trash"
                   style={styles.commnetDelete}
                   onPress={() => confirmReplyDelete(reply.id)}
                 />
+              ) : authState.staff === "YES" ? (
+                <FontAwesome5
+                  name="ban"
+                  style={styles.commnetReport}
+                  onPress={() => handleBlock(comment.id)}
+                />
               ) : (
-                <>
-                  <Octicons
-                    name="stop"
-                    style={styles.commnetReport}
-                    onPress={() => confirmAndReport("comment", reply.id)}
-                  />
-                  <FontAwesome5
-                    name="ban"
-                    style={styles.commnetReport}
-                    onPress={() => handleBlock(reply.id)}
-                  />
-                </>
+                <Octicons
+                  name="stop"
+                  style={styles.commnetReport}
+                  onPress={() => confirmAndReport("comment", comment.id)}
+                />
               )}
-              <TouchableOpacity onPress={handlePostLike(reply)} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                <Image source={unlike} style={{ width: 15, height: 15, marginHorizontal: 8, opacity: 0.45}} />
-              </TouchableOpacity>
             </View>
           </View>
           {reply.is_deleted || reply.is_blocked ? (
@@ -206,7 +203,22 @@ const styles = StyleSheet.create({
   commnetReply: {
     fontSize: 14,
     color: "#66666675",
-    paddingHorizontal: 13,
+    paddingHorizontal: 10,
+  },
+  // 쪽지 보내기 아이콘
+  messageIcon: {
+    fontSize: 15,
+    color: "#66666675",
+    marginTop: 0.5,
+    paddingHorizontal: 10,
+  },
+  // 좋아요 아이콘
+  likeIcon: {
+    width: 15.5,
+    height: 15,
+    opacity: 0.33,
+    marginBottom: 2.5,
+    marginHorizontal: 8
   },
   // 댓글 삭제 아이콘
   commnetDelete: {
@@ -218,7 +230,8 @@ const styles = StyleSheet.create({
   commnetReport: {
     fontSize: 13,
     color: "#66666675",
-    paddingHorizontal: 15,
+    paddingTop: 1.3,
+    paddingHorizontal: 10,
   },
   // 삭제된 댓글
   commentDeleted: {
