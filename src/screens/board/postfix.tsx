@@ -1,15 +1,16 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import FixPost from "../../components/board/fixpost";
-import { useRoute } from "@react-navigation/native";
+import { RouteProp, useRoute } from "@react-navigation/native";
 import { getPostDetail } from "../../server/board";
 import { ActivityIndicator, View } from "react-native";
+import { ParamList } from "../../models/route";
 
 export default function PostFix({ navigation }) {
-  const [data, setData] = useState(null);
-  const route = useRoute();
+  const [data, setData] = useState<PostDetailType | null>(null);
+  const route = useRoute<RouteProp<ParamList, "sampleType">>();
   const { postId } = route.params;
 
-  const reloadData = async () => {
+  const reloadData = async (): Promise<void> => {
     try {
       const result = await getPostDetail(postId);
       console.log(result);

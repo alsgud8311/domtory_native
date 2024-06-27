@@ -51,9 +51,6 @@ const CommunityStack = ({ navigation }) => {
         component={CommunityShortCuts}
         options={{
           title: "게시판",
-          headerBackTitleStyle: {
-            color: "black",
-          },
         }}
       />
       <Stack.Screen name="내가 쓴 글" component={MyPosting} />

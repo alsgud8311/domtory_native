@@ -1,15 +1,13 @@
 import { Text, ScrollView, StyleSheet } from "react-native";
-import Datecard from '../../components/menu/datecard'
-import Dailymenu from '../../components/menu/dailymenu'
+import Datecard from "../../components/menu/datecard";
 
 export default function Menu() {
   return (
     <ScrollView style={styles.container}>
-      <Datecard/>
+      <Datecard />
       {/* <Dailymenu /> */}
     </ScrollView>
-
-  )
+  );
 }
 
 const styles = StyleSheet.create({

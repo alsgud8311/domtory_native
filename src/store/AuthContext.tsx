@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { apiBe } from "../server";
 import * as SecureStore from "expo-secure-store";
 import {
@@ -7,15 +7,13 @@ import {
 } from "../utils/firebase/firebaseSetting";
 import messaging from "@react-native-firebase/messaging";
 import { Alert } from "react-native";
+import { CustomError, ProviderType, UserInfo } from "./authmodel";
 
 //AuthContext + SecureStore을 이용한 로그인
-const AuthContext = createContext();
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
+const AuthContext = createContext<ProviderType | undefined>(undefined);
 
-export const AuthProvider = ({ children }) => {
-  const [authState, setAuthState] = useState({
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [authState, setAuthState] = useState<UserInfo>({
     accessToken: null,
     refreshToken: null,
     pushToken: null,
@@ -24,6 +22,7 @@ export const AuthProvider = ({ children }) => {
     username: null,
     name: null,
     id: null,
+    pushTokenActive: null,
   });
 
   useEffect(() => {
@@ -59,22 +58,23 @@ export const AuthProvider = ({ children }) => {
     loadToken();
   }, []);
 
-  const signUp = async (formdata) => {
-    try {
-      const response = await apiBe.post("/member/signup/", formdata, {
-        headers: { "content-type": "multipart/form-data" },
-      });
-      return { success: true };
-    } catch (error) {
-      if (error.response && error.response.data) {
-        return { success: false, data: error.response.data };
-      } else {
-        console.error(error);
-      }
-    }
-  };
+  // interface SignUp {
+  //   success: Boolean;
+  //   data?: Object;
+  // }
+  // const signUp = async (formdata: FormData): Promise<SignUp> => {
+  //   try {
+  //     const response = await apiBe.post("/member/signup/", formdata, {
+  //       headers: { "content-type": "multipart/form-data" },
+  //     });
+  //     return { success: true };
+  //   } catch (error) {
+  //     const customErr = error as CustomError;
+  //     return { success: false, data: customErr.response?.data };
+  //   }
+  // };
 
-  const signin = async (username, password) => {
+  const signin = async (username: string, password: string) => {
     const signinData = { username: username, password: password };
 
     try {
@@ -87,15 +87,15 @@ export const AuthProvider = ({ children }) => {
       const { AuthorizationSuccess } = await requestUserPermission();
       if (AuthorizationSuccess) {
         const token = await messaging().getToken();
-        setAuthState({ pushToken: token });
-        await SecureStore.setItemAsync("PUSH_TOKEN", token);
         if (token) {
-          console.log("Push Token: ", token);
+          setAuthState((prev) => ({ ...prev, pushToken: token }));
+          await SecureStore.setItemAsync("PUSH_TOKEN", token);
           try {
             const data = {
               pushToken: token,
             };
             await apiBe.post("/push/token/", data);
+            setAuthState((prev) => ({ ...prev, pushTokenActive: "YES" }));
             await SecureStore.setItemAsync("PUSHTOKEN_ACTIVE", "YES");
           } catch (error) {
             console.log("Sending Push Token error", error);
@@ -104,7 +104,11 @@ export const AuthProvider = ({ children }) => {
           console.log("getToken Failed");
         }
       } else {
-        setAuthState({ pushToken: null, pushTokenActive: "NO" });
+        setAuthState((prev) => ({
+          ...prev,
+          pushToken: null,
+          pushTokenActive: "NO",
+        }));
         await SecureStore.setItemAsync("PUSHTOKEN_ACTIVE", "NO");
       }
 
@@ -123,11 +127,13 @@ export const AuthProvider = ({ children }) => {
           ...prev,
           staff: "YES",
         }));
+        await SecureStore.setItemAsync("STAFF", "YES");
       } else {
         setAuthState((prev) => ({
           ...prev,
           staff: "NO",
         }));
+        await SecureStore.setItemAsync("STAFF", "NO");
       }
 
       await SecureStore.setItemAsync("ACCESS_TOKEN", data.accessToken);
@@ -135,14 +141,10 @@ export const AuthProvider = ({ children }) => {
       await SecureStore.setItemAsync("USERNAME", data.member.username);
       await SecureStore.setItemAsync("NAME", data.member.name);
       await SecureStore.setItemAsync("ID", data.member.id.toString());
-      if (data.member.isStaff) {
-        await SecureStore.setItemAsync("STAFF", "YES");
-      } else {
-        await SecureStore.setItemAsync("STAFF", "NO");
-      }
       return { success: true, data: data };
     } catch (error) {
-      return { success: false, data: error.response.data };
+      console.log(error);
+      return { success: false, data: error };
     }
   };
 
@@ -168,6 +170,7 @@ export const AuthProvider = ({ children }) => {
         pushToken: null,
         authenticated: false,
         username: null,
+        name: null,
         id: null,
         staff: null,
         pushTokenActive: null,
@@ -191,6 +194,7 @@ export const AuthProvider = ({ children }) => {
         pushToken: null,
         authenticated: false,
         username: null,
+        name: null,
         id: null,
         staff: null,
         pushTokenActive: null,
@@ -200,14 +204,14 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const changePassword = async (oldPassword, newPassword) => {
+  const changePassword = async (oldPassword: string, newPassword: string) => {
     const data = { oldPassword: oldPassword, newPassword: newPassword };
     try {
       const response = await apiBe.post("/member/password/change/", data);
       return { success: true, data: response.data };
     } catch (error) {
-      console.log(error.response.data);
-      return { success: false, data: error.response.data };
+      const customErr = error as CustomError;
+      return { success: false, data: customErr.response?.data };
     }
   };
 
@@ -216,19 +220,42 @@ export const AuthProvider = ({ children }) => {
       const response = await apiBe.post("/member/withdrawal/");
       return { success: true, data: response.data };
     } catch (error) {
-      return { success: false, data: error.response.data };
+      const customErr = error as CustomError;
+      return { success: false, data: customErr.response?.data };
     }
   };
 
-  const value = {
-    onRegister: signUp,
+  const value: ProviderType = {
     onLogin: signin,
     onLogout: signout,
     onPasswordChange: changePassword,
     onWithdrawal: withdrawal,
-    authState: authState,
     setAuthState: setAuthState,
+    authState: authState,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
+
+const defaultAuthState = {
+  authState: {
+    accessToken: null,
+    refreshToken: null,
+    pushToken: null,
+    authenticated: false,
+    staff: null,
+    username: null,
+    name: null,
+    id: null,
+    pushTokenActive: null,
+  },
+  setAuthState: () => {}, // 기본값 또는 함수 구현
+};
+
+export function useAuth<T>(): T {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context as T;
+}

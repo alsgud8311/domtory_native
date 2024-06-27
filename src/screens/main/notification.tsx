@@ -1,17 +1,5 @@
-import {
-  useFocusEffect,
-  useNavigation,
-  useRoute,
-} from "@react-navigation/native";
-import {
-  Alert,
-  FlatList,
-  SafeAreaView,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { Alert, SafeAreaView, TouchableOpacity, View } from "react-native";
 import { pushRenderItems } from "../../components/common/pushlistrender";
 import { useCallback, useState } from "react";
 import { getNotificationList, pushDelete } from "../../server/notifications";

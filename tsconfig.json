@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "es2015",
+    "module": "esnext",
+    "allowJs": true,
+    "jsx": "react-native",
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "strictNullChecks": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "preserveSymlinks": true,
+    "experimentalDecorators": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true
+  },
+  "include": ["./src/**/*"],
+  "exclude": ["App.js", "node_modules"],
+  "extends": "expo/tsconfig.base"
+}

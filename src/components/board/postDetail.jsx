@@ -26,7 +26,7 @@ import {
   report,
   block,
   postLike,
-  postBookmark
+  postBookmark,
 } from "../../server/board";
 import { useAuth } from "../../store/AuthContext";
 import ImageModal from "react-native-image-modal";
@@ -67,6 +67,7 @@ export default function PostDetail({ data, reloadData, postId, navigation }) {
   const screenWidth = Dimensions.get("window").width - 40;
   useEffect(() => {
     console.log(authState);
+    console.log("??????", data);
     if (data && data.post_image) {
       const heights = data.post_image.map(() => 0);
       data.post_image.forEach((img, index) => {
@@ -423,9 +424,17 @@ export default function PostDetail({ data, reloadData, postId, navigation }) {
               alignItems: "center",
             }}
           >
-            <FontAwesome5 name="bookmark" size={16} color={isBookmarked ? "blue" : "gray"}
-              style={{ marginRight: 4, paddingTop: 2 }}/>
-            <Text style={{ fontSize: 15, color: isBookmarked ? "blue" : "gray" }}>{bookmarkCount}</Text>
+            <FontAwesome5
+              name="bookmark"
+              size={16}
+              color={isBookmarked ? "blue" : "gray"}
+              style={{ marginRight: 4, paddingTop: 2 }}
+            />
+            <Text
+              style={{ fontSize: 15, color: isBookmarked ? "blue" : "gray" }}
+            >
+              {bookmarkCount}
+            </Text>
           </TouchableOpacity>
         </View>
         <CommentBox

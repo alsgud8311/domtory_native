@@ -50,6 +50,7 @@ export default function LoginForm({ navigation }) {
     if (success) {
       console.log("login success");
     } else {
+      console.log("로그인 에라땄음", data);
       setLoginError(data);
       if (loginError.detail) {
         Alert.alert(loginError.detail);
@@ -84,7 +85,7 @@ export default function LoginForm({ navigation }) {
               value={username}
               autoCapitalize="none"
             />
-            {loginError.username ? (
+            {loginError?.username ? (
               <Text style={{ color: "red" }}>{loginError.username}</Text>
             ) : null}
             <View
@@ -149,15 +150,6 @@ export default function LoginForm({ navigation }) {
               </Text>
             </TouchableOpacity>
           )}
-          {/* <TouchableOpacity
-            style={styles.signupButton}
-            onPress={() => onSignupPress()}
-            disabled={isLoading}
-          >
-            <Text style={{ fontSize: 20, color: "orange", fontWeight: 700 }}>
-              회원가입
-            </Text>
-          </TouchableOpacity> */}
         </View>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
