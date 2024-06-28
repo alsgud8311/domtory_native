@@ -3,11 +3,12 @@ import {
   createBottomTabNavigator,
 } from "@react-navigation/bottom-tabs";
 import HomeStack from "./main/homestack";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, Entypo } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Text, View } from "react-native";
 import CommunityStack from "./community/communitystack";
 import SettingStack from "./setting/settingstack";
+import MessageStack from "./message/messageStack";
 
 const MainTab = () => {
   const Tab = createBottomTabNavigator();
@@ -66,6 +67,29 @@ const MainTab = () => {
                 color={focused ? "orange" : "gray"}
               />
               <Text style={{ marginTop: 5, color: "gray" }}>게시판</Text>
+            </View>
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Message"
+        component={MessageStack}
+        options={{
+          title: "Message",
+          tabBarIcon: ({ focused }) => (
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: 10,
+              }}
+            >
+              <Entypo
+                name="chat"
+                size={23}
+                color={focused ? "orange" : "gray"}
+              />
+              <Text style={{ marginTop: 5, color: "gray" }}>쪽지</Text>
             </View>
           ),
         }}

@@ -1,5 +1,4 @@
-import { StatusBar } from "expo-status-bar";
-import { ScrollView, StyleSheet, View, Alert } from "react-native";
+import { ScrollView, StyleSheet, View, Alert, Appearance } from "react-native";
 import DailyMenuCard from "../../components/main/menucard";
 import Shortcuts from "../../components/main/shortcuts";
 import CommunityCard from "../../components/main/communitycard";
@@ -17,8 +16,7 @@ import * as SecureStore from "expo-secure-store";
 import { pushCheckUpdate } from "../../server/notifications";
 import PopularPostCard from "../../components/main/popularpostcard";
 import { ProviderType } from "../../store/authmodel";
-
-// import * as SplashScreen from "expo-splash-screen";
+import { useColorStore } from "../../store/colorstore";
 
 Notification.setNotificationHandler({
   handleNotification: async () => ({
@@ -37,10 +35,12 @@ const board = {
 };
 
 export default function Home({ navigation }) {
+  const colorScheme = useColorStore((state) => state.darkmode);
   const { authState, setAuthState } = useAuth<ProviderType>();
 
   //개별 알림이 사용가능한지 확인
   useEffect(() => {
+    console.log("darkmode: ", colorScheme);
     const notificationCheck = async () => {
       const { AuthorizationSuccess } = await requestUserPermission();
       if (AuthorizationSuccess && authState.pushTokenActive === "NO") {
