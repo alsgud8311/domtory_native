@@ -14,9 +14,12 @@ import tools from "../../assets/tools.png";
 import dorm from "../../assets/dorm.png";
 import night from "../../assets/night.png";
 import books from "../../assets/books.png";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { useColorStore } from "../../store/colorstore";
 
 export default function Shortcuts({ navigation }) {
+  const darkmode = useColorStore((state) => state.darkmode);
+  const styles = useMemo(() => createStyles(darkmode), [darkmode]);
   return (
     <>
       <View style={styles.container}>
@@ -27,7 +30,7 @@ export default function Shortcuts({ navigation }) {
           onPress={() => openBrowserAsync("http://www.cbhs2.kr/main")}
         >
           <Image style={styles.buttons} source={dorm} />
-          <Text>충북학사</Text>
+          <Text style={styles.generalText}>충북학사</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.buttonWrapper}
@@ -38,7 +41,7 @@ export default function Shortcuts({ navigation }) {
           }
         >
           <Image style={styles.buttons} source={night} />
-          <Text>외박신청</Text>
+          <Text style={styles.generalText}>외박신청</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.buttonWrapper}
@@ -46,7 +49,7 @@ export default function Shortcuts({ navigation }) {
           onPress={() => navigation.navigate("공지사항", { div: "cbhs" })}
         >
           <Image style={styles.buttons} source={announcement} />
-          <Text>공지사항</Text>
+          <Text style={styles.generalText}>공지사항</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.buttonWrapper}
@@ -57,36 +60,41 @@ export default function Shortcuts({ navigation }) {
           }
         >
           <Image style={styles.buttons} source={tools} />
-          <Text>보수요청</Text>
+          <Text style={styles.generalText}>보수요청</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.buttonWrapper}
           onPress={() => openBrowserAsync("http://www.cbhs2.kr/0000038")}
         >
           <Image style={styles.buttons} source={books} />
-          <Text>도서관</Text>
+          <Text style={styles.generalText}>도서관</Text>
         </TouchableOpacity>
       </View>
     </>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  buttonWrapper: {
-    justifyContent: "center",
-    alignItems: "center",
-    textAlign: "center",
-    width: "20%",
-    height: 100,
-  },
-  buttons: {
-    width: 60,
-    height: 60,
-  },
-});
+const createStyles = (darkmode) => {
+  return StyleSheet.create({
+    container: {
+      width: "100%",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    buttonWrapper: {
+      justifyContent: "center",
+      alignItems: "center",
+      textAlign: "center",
+      width: "20%",
+      height: 100,
+    },
+    buttons: {
+      width: 60,
+      height: 60,
+    },
+    generalText: {
+      color: darkmode ? "white" : "black",
+    },
+  });
+};
