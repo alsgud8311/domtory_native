@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -11,9 +11,12 @@ import { AntDesign } from "@expo/vector-icons";
 import { getNoticePageData } from "../../server/cbhsnotice";
 import { useFocusEffect } from "@react-navigation/native";
 import { openBrowserAsync } from "expo-web-browser";
+import { useColorStore } from "../../store/colorstore";
 
 export default function NoticeCard({ navigation }) {
   const [noticeData, setNoticeData] = useState(null);
+  const darkmode = useColorStore((state) => state.darkmode);
+  const styles = useMemo(() => createStyles(darkmode), [darkmode]);
 
   useFocusEffect(
     useCallback(() => {
@@ -76,58 +79,62 @@ export default function NoticeCard({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    backgroundColor: "#fff",
-    marginBottom: 10,
-    marginTop: 10,
-  },
-  description: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: "100%",
-    paddingTop: 15,
-    paddingBottom: 5,
-    paddingLeft: 10,
-    paddingRight: 10,
-  },
-  descriptionText: {
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  moreButton: {
-    flexDirection: "row",
-  },
-  card: {
-    backgroundColor: "#ffffff",
-    borderRadius: 10,
-    borderColor: "orange",
-    borderStyle: "solid",
-    borderWidth: 1,
-    paddingHorizontal: 15,
-    paddingTop: 15,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    gap: 10,
-  },
+const createStyles = (darkmode) => {
+  return StyleSheet.create({
+    container: {
+      width: "100%",
+      backgroundColor: darkmode ? "black" : "#fff",
+      marginBottom: 10,
+      marginTop: 10,
+    },
+    description: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      width: "100%",
+      paddingTop: 15,
+      paddingBottom: 5,
+      paddingLeft: 10,
+      paddingRight: 10,
+    },
+    descriptionText: {
+      fontSize: 18,
+      fontWeight: "600",
+      color: darkmode ? "white" : "black",
+    },
+    moreButton: {
+      flexDirection: "row",
+    },
+    card: {
+      backgroundColor: darkmode ? "black" : "#fff",
+      borderRadius: 10,
+      borderColor: darkmode ? "gray" : "orange",
+      borderStyle: "solid",
+      borderWidth: 1,
+      paddingHorizontal: 15,
+      paddingTop: 15,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+      elevation: 5,
+      gap: 10,
+    },
 
-  postItem: {
-    borderBottomWidth: 0.5,
-    borderColor: "orange",
-  },
-  postText: {
-    width: "100%",
-    fontSize: 16,
-    paddingTop: 5,
-    paddingBottom: 15,
-  },
-  postDate: {
-    color: "gray",
-    fontSize: 13,
-  },
-});
+    postItem: {
+      borderBottomWidth: 0.5,
+      borderColor: darkmode ? "gray" : "orange",
+    },
+    postText: {
+      width: "100%",
+      fontSize: 16,
+      paddingTop: 5,
+      paddingBottom: 15,
+      color: darkmode ? "white" : "black",
+    },
+    postDate: {
+      color: "gray",
+      fontSize: 13,
+    },
+  });
+};
