@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -9,9 +9,12 @@ import {
 import { AntDesign } from "@expo/vector-icons";
 import { getCouncilNoticeList, getPostList } from "../../server/board";
 import { useFocusEffect } from "@react-navigation/native";
+import { useColorStore } from "../../store/colorstore";
 
 export default function CouncilNoticeCard({ navigation }) {
   const [noticeData, setNoticeData] = useState(null);
+  const darkmode = useColorStore((state) => state.darkmode);
+  const styles = useMemo(() => createStyles(darkmode), [darkmode]);
 
   useFocusEffect(
     useCallback(() => {
@@ -62,7 +65,7 @@ export default function CouncilNoticeCard({ navigation }) {
                 {notice.title}
               </Text>
               <Text
-                style={{ fontSize: 14, marginBottom: 10, color: "dimgray" }}
+                style={styles.postBody}
                 ellipsizeMode="tail"
                 numberOfLines={2}
               >
@@ -86,53 +89,61 @@ export default function CouncilNoticeCard({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#fff",
-    marginBottom: 60,
-  },
-  description: {
-    alignItems: "center",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-    paddingTop: 15,
-    paddingBottom: 5,
-    paddingLeft: 10,
-    paddingRight: 10,
-  },
-  descriptionText: {
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  moreButton: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  scrollContainer: {
-    paddingLeft: 10,
-  },
-  card: {
-    width: 250,
-    height: 110,
-    marginRight: 20,
-
-    justifyContent: "center",
-    backgroundColor: "oldlace",
-    borderRadius: 10,
-    borderColor: "orange",
-    borderStyle: "solid",
-    borderWidth: 1,
-    padding: 15,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  postText: {
-    fontSize: 16,
-    fontWeight: "600",
-    paddingVertical: 2,
-  },
-});
+const createStyles = (darkmode) => {
+  return StyleSheet.create({
+    container: {
+      backgroundColor: darkmode ? "black" : "#fff",
+      marginBottom: 60,
+    },
+    description: {
+      alignItems: "center",
+      flexDirection: "row",
+      justifyContent: "space-between",
+      width: "100%",
+      paddingTop: 15,
+      paddingBottom: 5,
+      paddingLeft: 10,
+      paddingRight: 10,
+    },
+    descriptionText: {
+      fontSize: 18,
+      fontWeight: "600",
+      color: darkmode ? "#fff" : "black",
+    },
+    moreButton: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    scrollContainer: {
+      paddingLeft: 10,
+    },
+    card: {
+      width: 250,
+      height: 110,
+      marginRight: 20,
+      justifyContent: "center",
+      backgroundColor: darkmode ? "black" : "oldlace",
+      borderRadius: 10,
+      borderColor: darkmode ? "gray" : "orange",
+      borderStyle: "solid",
+      borderWidth: 1,
+      padding: 15,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+      elevation: 5,
+    },
+    postText: {
+      fontSize: 16,
+      fontWeight: "600",
+      paddingVertical: 2,
+      color: darkmode ? "#fff" : "black",
+    },
+    postBody: {
+      fontSize: 14,
+      marginBottom: 10,
+      color: darkmode ? "white" : "dimgray",
+    },
+  });
+};
