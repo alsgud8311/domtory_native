@@ -27,14 +27,6 @@ import PostFix from "../board/postfix";
 import NotificationList from "./notification";
 import Popular from "../community/popular/popular";
 
-// function Logo() {
-//   return (
-//     <View style={{ flex: 1, justifyContent: "center" }}>
-//       <Image source={logo} style={{ width: 50, height: 50 }} />
-//     </View>
-//   );
-// }
-
 const HomeStack = ({ navigation }) => {
   const Stack = createNativeStackNavigator();
 
