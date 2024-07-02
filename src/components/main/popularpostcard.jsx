@@ -1,12 +1,15 @@
 import { useFocusEffect } from "@react-navigation/native";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { getPopularpost, popularpost } from "../../server/board";
 import acorn from "../../assets/like_icon.png";
 import { AntDesign, Octicons } from "@expo/vector-icons";
+import { useColorStore } from "../../store/colorstore";
 
 export default function PopularPostCard({ navigation }) {
   const [data, setData] = useState(null);
+  const darkmode = useColorStore((state) => state.darkmode);
+  const styles = useMemo(() => createStyles(darkmode), [darkmode]);
 
   const getData = async () => {
     const { success, data } = await getPopularpost();
@@ -67,7 +70,9 @@ export default function PopularPostCard({ navigation }) {
                     source={acorn}
                     style={{ width: 15, height: 15 }}
                   ></Image>
-                  <Text>{post.likes_cnt}</Text>
+                  <Text style={{ color: darkmode ? "#fff" : "black" }}>
+                    {post.likes_cnt}
+                  </Text>
                 </View>
                 <View
                   style={{
@@ -90,50 +95,54 @@ export default function PopularPostCard({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 20,
-    borderWidth: 1,
-    borderColor: "orange",
-    borderRadius: 10,
-    backgroundColor: "bisque",
-  },
-  description: {
-    alignItems: "center",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-    paddingTop: 15,
-    paddingBottom: 5,
-    paddingRight: 10,
-  },
-  descriptionText: {
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  moreButton: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  title: {
-    fontSize: 17,
-    fontWeight: "600",
-    paddingLeft: 10,
-  },
-  post: {
-    paddingVertical: 15,
-    borderBottomColor: "orange",
-    borderBottomWidth: 0.5,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  postTitle: {
-    fontSize: 15,
-  },
-  likedCnt: {
-    flexDirection: "row",
-    gap: 5,
-    alignItems: "center",
-  },
-});
+const createStyles = (darkmode) => {
+  return StyleSheet.create({
+    container: {
+      paddingHorizontal: 20,
+      borderWidth: 1,
+      borderColor: darkmode ? "gray" : "orange",
+      borderRadius: 10,
+      backgroundColor: darkmode ? "black" : "bisque",
+    },
+    description: {
+      alignItems: "center",
+      flexDirection: "row",
+      justifyContent: "space-between",
+      width: "100%",
+      paddingTop: 15,
+      paddingBottom: 5,
+      paddingRight: 10,
+    },
+    descriptionText: {
+      fontSize: 18,
+      fontWeight: "600",
+    },
+    moreButton: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    title: {
+      fontSize: 17,
+      fontWeight: "600",
+      paddingLeft: 10,
+      color: darkmode ? "#fff" : "black",
+    },
+    post: {
+      paddingVertical: 15,
+      borderBottomColor: darkmode ? "gray" : "orange",
+      borderBottomWidth: 0.5,
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    postTitle: {
+      fontSize: 15,
+      color: darkmode ? "#fff" : "black",
+    },
+    likedCnt: {
+      flexDirection: "row",
+      gap: 5,
+      alignItems: "center",
+    },
+  });
+};
