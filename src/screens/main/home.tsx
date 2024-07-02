@@ -5,7 +5,7 @@ import CommunityCard from "../../components/main/communitycard";
 import NoticeCard from "../../components/main/noticecard";
 import RecentPostCard from "../../components/main/recentcard";
 import CouncilNoticeCard from "../../components/main/councilnoticecard";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import messaging from "@react-native-firebase/messaging";
 import React from "react";
 import { apiBe } from "../../server";
@@ -37,10 +37,10 @@ const board = {
 export default function Home({ navigation }) {
   const colorScheme = useColorStore((state) => state.darkmode);
   const { authState, setAuthState } = useAuth<ProviderType>();
+  const styles = useMemo(() => createStyles(colorScheme), [colorScheme]);
 
   //개별 알림이 사용가능한지 확인
   useEffect(() => {
-    console.log("darkmode: ", colorScheme);
     const notificationCheck = async () => {
       const { AuthorizationSuccess } = await requestUserPermission();
       if (AuthorizationSuccess && authState.pushTokenActive === "NO") {
@@ -174,11 +174,13 @@ export default function Home({ navigation }) {
     </View>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    backgroundColor: "#fff",
-    padding: 20,
-    marginBottom: 70,
-  },
-});
+const createStyles = (darkmode) => {
+  return StyleSheet.create({
+    container: {
+      width: "100%",
+      backgroundColor: darkmode ? "black" : "#fff",
+      padding: 20,
+      marginBottom: 70,
+    },
+  });
+};
