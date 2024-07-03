@@ -1,12 +1,11 @@
-import { StatusBar } from "expo-status-bar";
-import { ScrollView, StyleSheet, View, Alert } from "react-native";
+import { ScrollView, StyleSheet, View, Alert, Appearance } from "react-native";
 import DailyMenuCard from "../../components/main/menucard";
 import Shortcuts from "../../components/main/shortcuts";
 import CommunityCard from "../../components/main/communitycard";
 import NoticeCard from "../../components/main/noticecard";
 import RecentPostCard from "../../components/main/recentcard";
 import CouncilNoticeCard from "../../components/main/councilnoticecard";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import messaging from "@react-native-firebase/messaging";
 import React from "react";
 import { apiBe } from "../../server";
@@ -16,8 +15,8 @@ import { requestUserPermission } from "../../utils/firebase/firebaseSetting";
 import * as SecureStore from "expo-secure-store";
 import { pushCheckUpdate } from "../../server/notifications";
 import PopularPostCard from "../../components/main/popularpostcard";
-
-// import * as SplashScreen from "expo-splash-screen";
+import { ProviderType } from "../../store/authmodel";
+import { useColorStore } from "../../store/colorstore";
 
 Notification.setNotificationHandler({
   handleNotification: async () => ({
@@ -36,11 +35,12 @@ const board = {
 };
 
 export default function Home({ navigation }) {
-  const { authState, setAuthState } = useAuth();
-  let isMessageHandlerRegistered = false;
+  const colorScheme = useColorStore((state) => state.darkmode);
+  const { authState, setAuthState } = useAuth<ProviderType>();
 
   //개별 알림이 사용가능한지 확인
   useEffect(() => {
+    console.log("darkmode: ", colorScheme);
     const notificationCheck = async () => {
       const { AuthorizationSuccess } = await requestUserPermission();
       if (AuthorizationSuccess && authState.pushTokenActive === "NO") {
@@ -77,9 +77,9 @@ export default function Home({ navigation }) {
             if (postId && boardId && pushedAt) {
               const { success } = await pushCheckUpdate(authState.id, pushedAt);
               if (success) {
-                navigation.navigate(board[boardId], { postId: postId });
+                navigation.navigate(board[`${boardId}`], { postId: postId });
               } else {
-                navigation.navigate(board[boardId], { postId: postId });
+                navigation.navigate(board[`${boardId}`], { postId: postId });
               }
             } else {
               console.log("푸시 알림 데이터가 부족합니다.");
@@ -95,9 +95,9 @@ export default function Home({ navigation }) {
           if (postId && boardId && pushedAt) {
             const { success } = await pushCheckUpdate(authState.id, pushedAt);
             if (success) {
-              navigation.navigate(board[boardId], { postId: postId });
+              navigation.navigate(board[`${boardId}`], { postId: postId });
             } else {
-              navigation.navigate(board[boardId], { postId: postId });
+              navigation.navigate(board[`${boardId}`], { postId: postId });
             }
           } else {
             console.log("푸시 알림 데이터가 부족합니다.");
@@ -119,8 +119,8 @@ export default function Home({ navigation }) {
         const { postId, boardId, pushedAt } = remoteMessage.data;
         if (postId && boardId && pushedAt) {
           Alert.alert(
-            remoteMessage.notification.title,
-            remoteMessage.notification.body,
+            remoteMessage.notification?.title ?? "알림",
+            remoteMessage.notification?.body ?? "새로운 알림이 도착했습니다",
             [
               { text: "취소", style: "cancel" },
               {
@@ -131,9 +131,13 @@ export default function Home({ navigation }) {
                     pushedAt
                   );
                   if (success) {
-                    navigation.navigate(board[boardId], { postId: postId });
+                    navigation.navigate(board[`${boardId}`], {
+                      postId: postId,
+                    });
                   } else {
-                    navigation.navigate(board[boardId], { postId: postId });
+                    navigation.navigate(board[`${boardId}`], {
+                      postId: postId,
+                    });
                   }
                 },
               },
@@ -141,14 +145,14 @@ export default function Home({ navigation }) {
           );
         } else {
           Alert.alert(
-            remoteMessage.notification.title,
-            remoteMessage.notification.body
+            remoteMessage.notification?.title ?? "알림",
+            remoteMessage.notification?.body ?? "새로운 알림이 도착했습니다"
           );
         }
       } else {
         Alert.alert(
-          remoteMessage.notification.title,
-          remoteMessage.notification.body
+          remoteMessage.notification?.title ?? "알림",
+          remoteMessage.notification?.body ?? "새로운 알림이 도착했습니다"
         );
       }
     });

@@ -1,21 +1,23 @@
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import {
+  BottomTabNavigationOptions,
+  createBottomTabNavigator,
+} from "@react-navigation/bottom-tabs";
 import HomeStack from "./main/homestack";
-import { AntDesign, MaterialCommunityIcons, Entypo } from "@expo/vector-icons";
+import { AntDesign, Entypo } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Text, View } from "react-native";
 import CommunityStack from "./community/communitystack";
 import SettingStack from "./setting/settingstack";
 import MessageStack from "./message/messageStack";
-import { useEffect } from "react";
 
 const MainTab = () => {
   const Tab = createBottomTabNavigator();
-  const screenOptions = {
+  const screenOptions: BottomTabNavigationOptions = {
     tabBarShowLabel: false,
     headerShown: false,
     tabBarStyle: {
       position: "absolute",
       height: 70,
-      background: "#fff",
     },
   };
 

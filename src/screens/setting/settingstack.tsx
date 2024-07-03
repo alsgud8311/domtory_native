@@ -1,19 +1,15 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Text } from "react-native";
-import {
-  stackScreenOptionsWithTitle,
-  stackscreenOptions,
-} from "../../constants/screenoptions";
+import { stackScreenOptionsWithTitle } from "../../constants/screenoptions";
 import PasswordChange from "./passwordchange";
 import Mypage from "./mypage";
-import Header from "../../components/common/header";
 import { useAuth } from "../../store/AuthContext";
 import { useEffect } from "react";
 import NotificationSetting from "./notification";
+import { ProviderType } from "../../store/authmodel";
 
 export default function SettingStack() {
   const Stack = createNativeStackNavigator();
-  const { authState } = useAuth();
+  const { authState } = useAuth<ProviderType>();
 
   useEffect(() => {
     console.log(authState);
@@ -28,9 +24,6 @@ export default function SettingStack() {
         name="내 정보"
         component={Mypage}
         options={{
-          headerBackTitleStyle: {
-            color: "black",
-          },
           title: "내 정보",
         }}
       />

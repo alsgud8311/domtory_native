@@ -18,13 +18,15 @@ export const writePost = async (boardId, formData) => {
 };
 
 //게시글 상세 정보 가져오기
-export const getPostDetail = async (postId) => {
+export const getPostDetail = async (
+  postId: number
+): Promise<{ success: boolean; data?: PostDetailType }> => {
   try {
     const { data } = await apiBe.get(`/board/post/detail/${postId}/`);
     if (data) {
       return { success: true, data: data };
     }
-    return { success: false, data: "정보를 가져오는 중에 오류가 발생했습니다" };
+    return { success: false };
   } catch (error) {
     return { success: false, data: error.response.data };
   }

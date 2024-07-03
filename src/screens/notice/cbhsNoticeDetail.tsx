@@ -1,18 +1,13 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Image,
-} from "react-native";
+import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
 import { getNoticeIdData } from "../../server/cbhsnotice";
 
 const CbhsNoticeDetail = ({ route }) => {
   const { postId } = route.params;
 
-  const [noticeData, setNoticeData] = useState(null);
+  const [noticeData, setNoticeData] = useState<NotificationListType | null>(
+    null
+  );
 
   useEffect(() => {
     (async () => {
@@ -63,7 +58,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     borderBottomColor: "orange",
-    borderBottomStyle: "solid",
     borderBottomWidth: 1,
     paddingVertical: 20,
     paddingHorizontal: 5,

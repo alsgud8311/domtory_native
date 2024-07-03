@@ -20,7 +20,6 @@ import CouncilNoticeDetail from "../notice/CouncilNoticeDetail";
 import Header from "../../components/common/header";
 import { stackscreenOptions } from "../../constants/screenoptions";
 import { Image } from "react-native";
-import domtoryText from "../../assets/domtory_text.png";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import PostDetail from "../../components/board/postDetail";
 import PopupMenu from "../../components/board/popup";
@@ -28,13 +27,13 @@ import PostFix from "../board/postfix";
 import NotificationList from "./notification";
 import Popular from "../community/popular/popular";
 
-function Logo() {
-  return (
-    <View style={{ flex: 1, justifyContent: "center" }}>
-      <Image source={logo} style={{ width: 50, height: 50 }} />
-    </View>
-  );
-}
+// function Logo() {
+//   return (
+//     <View style={{ flex: 1, justifyContent: "center" }}>
+//       <Image source={logo} style={{ width: 50, height: 50 }} />
+//     </View>
+//   );
+// }
 
 const HomeStack = ({ navigation }) => {
   const Stack = createNativeStackNavigator();
@@ -48,9 +47,6 @@ const HomeStack = ({ navigation }) => {
           title: "",
           header: () => {
             return <Header navigation={navigation} />;
-          },
-          headerBackTitleStyle: {
-            color: "black",
           },
         }}
       />
