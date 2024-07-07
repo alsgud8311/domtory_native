@@ -1,8 +1,12 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { useColorStore } from "../../../store/colorstore";
+import { useMemo } from "react";
 
 export default function MyPostCard({ navigation }) {
+  const darkmode = useColorStore((state) => state.darkmode);
+  const styles = useMemo(() => createStyles(darkmode));
   return (
     <View style={styles.container}>
       <View style={{ marginBottom: 5 }}>
@@ -15,7 +19,11 @@ export default function MyPostCard({ navigation }) {
         style={styles.shortcutButton}
         onPress={() => navigation.navigate("내가 스크랩한 글")}
       >
-        <FontAwesome5 name="bookmark" size={24} color="black" />
+        <FontAwesome5
+          name="bookmark"
+          size={24}
+          color={darkmode ? "white" : "black"}
+        />
         <Text style={styles.sortcutText}>내가 스크랩한 글</Text>
       </TouchableOpacity>
       <TouchableOpacity
@@ -25,7 +33,7 @@ export default function MyPostCard({ navigation }) {
         <MaterialCommunityIcons
           name="comment-account-outline"
           size={24}
-          color="black"
+          color={darkmode ? "white" : "black"}
         />
         <Text style={styles.sortcutText}>내가 쓴 글</Text>
       </TouchableOpacity>
@@ -33,34 +41,41 @@ export default function MyPostCard({ navigation }) {
         style={styles.shortcutButton}
         onPress={() => navigation.navigate("내가 쓴 댓글")}
       >
-        <FontAwesome5 name="comment-dots" size={24} color="black" />
+        <FontAwesome5
+          name="comment-dots"
+          size={24}
+          color={darkmode ? "white" : "black"}
+        />
         <Text style={styles.sortcutText}>내가 쓴 댓글</Text>
       </TouchableOpacity>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    padding: 20,
-  },
-  shortcutButton: {
-    flexDirection: "row",
-    paddingVertical: 15,
-    gap: 20,
-  },
-  sortcutText: {
-    fontSize: 17,
-  },
-  boardTitle: {
-    fontSize: 16,
-    marginBottom: 5,
-    color: "orange",
-    fontWeight: "700",
-  },
-  boardsubTitle: {
-    fontSize: 14,
-    color: "orange",
-  },
-});
+const createStyles = (darkmode) => {
+  return StyleSheet.create({
+    container: {
+      width: "100%",
+      padding: 20,
+    },
+    shortcutButton: {
+      flexDirection: "row",
+      paddingVertical: 15,
+      gap: 20,
+    },
+    sortcutText: {
+      fontSize: 17,
+      color: darkmode ? "white" : "black",
+    },
+    boardTitle: {
+      fontSize: 16,
+      marginBottom: 5,
+      color: "orange",
+      fontWeight: "700",
+    },
+    boardsubTitle: {
+      fontSize: 14,
+      color: "orange",
+    },
+  });
+};
