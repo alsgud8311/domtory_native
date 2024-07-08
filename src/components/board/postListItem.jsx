@@ -96,6 +96,8 @@ const createStyles = (darkmode) => {
       shadowOpacity: 0.13,
       shadowRadius: 8,
       elevation: 2,
+      borderTopWidth: 1,
+      borderColor: darkmode ? "gray" : "white",
       flexDirection: "row",
       justifyContent: "space-between",
     },

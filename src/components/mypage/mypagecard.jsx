@@ -71,10 +71,17 @@ export default function MypageCard({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.wrapper}>
-        <View style={styles.card}>
-          <Fontisto name="night-clear" style={styles.icons} />
-          <Text style={styles.cardText}>다크모드 설정</Text>
-          <Switch onValueChange={setDarkmode} value={darkmode} />
+        <View style={{ ...styles.card, justifyContent: "space-between" }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
+            <Fontisto name="night-clear" style={styles.icons} />
+            <Text style={styles.cardText}>다크모드 설정</Text>
+          </View>
+          <Switch
+            trackColor={{ true: "orange" }}
+            thumbColor={darkmode ? "#f5dd4b" : "#f4f3f4"}
+            onValueChange={setDarkmode}
+            value={darkmode}
+          />
         </View>
         <TouchableOpacity
           style={styles.card}

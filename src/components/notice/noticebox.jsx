@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   SafeAreaView,
   View,
@@ -16,11 +16,14 @@ import NewPost from "../board/newPost";
 import { getCouncilNotice } from "../../server/notice";
 import { openBrowserAsync } from "expo-web-browser";
 import { useAuth } from "../../store/AuthContext";
+import { useColorStore } from "../../store/colorstore";
 
 export default function Noticebox({ div, navigation }) {
   const { authState } = useAuth();
   const [data, setData] = useState("");
   const [category, setCategory] = useState("cbhs");
+  const darkmode = useColorStore((state) => state.darkmode);
+  const styles = useMemo(() => createStyles(darkmode));
 
   // 카테고리 변경
   const onCategoryChange = (newCategory) => {
@@ -94,16 +97,16 @@ export default function Noticebox({ div, navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={select.select}>
+      <View style={styles.select}>
         <View style={{ flexDirection: "row" }}>
           <TouchableOpacity onPress={() => onCategoryChange("cbhs")}>
-            <Text style={category === "cbhs" ? select.active : select.inactive}>
+            <Text style={category === "cbhs" ? styles.active : styles.inactive}>
               학사
             </Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => onCategoryChange("council")}>
             <Text
-              style={category === "council" ? select.active : select.inactive}
+              style={category === "council" ? styles.active : styles.inactive}
             >
               자율회
             </Text>
@@ -111,7 +114,7 @@ export default function Noticebox({ div, navigation }) {
         </View>
         {category === "council" && authState.staff === "YES" && (
           <TouchableOpacity onPress={handleOpenNewPost}>
-            <AntDesign name="form" style={select.writeText} />
+            <AntDesign name="form" style={styles.writeText} />
           </TouchableOpacity>
         )}
       </View>
@@ -136,13 +139,18 @@ export default function Noticebox({ div, navigation }) {
               }
             }}
           >
-            <ListItem bottomDivider>
-              <ListItem.Content style={list.content}>
-                <ListItem.Subtitle style={list.number}>
+            <ListItem
+              bottomDivider
+              containerStyle={{ backgroundColor: darkmode ? "black" : "white" }}
+            >
+              <ListItem.Content style={styles.content}>
+                <ListItem.Subtitle style={styles.number}>
                   {item.id}
                 </ListItem.Subtitle>
-                <ListItem.Title style={list.title}>{item.title}</ListItem.Title>
-                <ListItem.Subtitle style={list.date}>
+                <ListItem.Title style={styles.title}>
+                  {item.title}
+                </ListItem.Title>
+                <ListItem.Subtitle style={styles.date}>
                   {item.date}
                 </ListItem.Subtitle>
               </ListItem.Content>
@@ -162,70 +170,71 @@ export default function Noticebox({ div, navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    backgroundColor: "#fff",
-    flex: 1,
-    marginBottom: 60,
-  },
-  listHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 10,
-    //backgroundColor: '#ffa451',
-  },
-});
-
-const list = StyleSheet.create({
-  content: {
-    flexDirection: "row",
-    alignItems: "center",
-    minHeight: 30,
-  },
-  number: {
-    flex: 0.5,
-    fontSize: 13,
-  },
-  title: {
-    flex: 3.5,
-    fontSize: 13,
-    marginRight: 15,
-  },
-  date: {
-    flex: 1,
-    fontSize: 11,
-  },
-});
-
-const select = StyleSheet.create({
-  select: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 10,
-    paddingBottom: 0,
-    borderBottomWidth: 1.5,
-    borderBottomColor: "rgba(211, 211, 211, 0.7)",
-  },
-  active: {
-    padding: 10,
-    paddingHorizontal: 30,
-    fontSize: 15,
-    fontWeight: "600",
-    borderBottomWidth: 2,
-    borderBottomColor: "#ffa451",
-    color: "#ffa451",
-  },
-  inactive: {
-    padding: 10,
-    paddingHorizontal: 30,
-    fontSize: 15,
-    fontWeight: "400",
-  },
-  writeText: {
-    padding: 10,
-    paddingHorizontal: 20,
-    fontSize: 20,
-  },
-});
+const createStyles = (darkmode) => {
+  return StyleSheet.create({
+    container: {
+      width: "100%",
+      backgroundColor: darkmode ? "black" : "white",
+      flex: 1,
+      marginBottom: 60,
+    },
+    listHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: 10,
+    },
+    content: {
+      flexDirection: "row",
+      alignItems: "center",
+      minHeight: 30,
+      backgroundColor: darkmode ? "black" : "white",
+    },
+    number: {
+      flex: 0.5,
+      fontSize: 13,
+      color: darkmode ? "white" : "black",
+    },
+    title: {
+      flex: 3.5,
+      fontSize: 13,
+      marginRight: 15,
+      color: darkmode ? "white" : "black",
+    },
+    date: {
+      flex: 1,
+      fontSize: 11,
+      color: darkmode ? "white" : "black",
+    },
+    select: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      padding: 10,
+      paddingBottom: 0,
+      borderBottomWidth: 1.5,
+      borderBottomColor: "rgba(211, 211, 211, 0.7)",
+      backgroundColor: darkmode ? "black" : "white",
+    },
+    active: {
+      padding: 10,
+      paddingHorizontal: 30,
+      fontSize: 15,
+      fontWeight: "600",
+      borderBottomWidth: 2,
+      borderBottomColor: "#ffa451",
+      color: "#ffa451",
+    },
+    inactive: {
+      padding: 10,
+      paddingHorizontal: 30,
+      fontSize: 15,
+      fontWeight: "400",
+      color: darkmode ? "gray" : "black",
+    },
+    writeText: {
+      padding: 10,
+      paddingHorizontal: 20,
+      fontSize: 20,
+    },
+  });
+};
