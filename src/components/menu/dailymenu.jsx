@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import {
   getLunchMenuData,
   getDinnerMenuData,
   getBreakMenuData,
 } from "../../server/menu";
+import { useColorStore } from "../../store/colorstore";
 
 export default function Menucard({ selectedDate }) {
   const options = { month: "2-digit", day: "2-digit", weekday: "short" };
+  const darkmode = useColorStore((state) => state.darkmode);
+  const styles = useMemo(() => createStyles(darkmode), [darkmode]);
 
   // 렌더링 할 포멧 02. 12. (월)
   const [formattedDate, setFormattedDate] = useState(
@@ -124,55 +127,60 @@ export default function Menucard({ selectedDate }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    backgroundColor: "#fff",
-    marginBottom: 10,
-    paddingBottom: 50,
-  },
-  day: {
-    width: "100%",
-    paddingTop: 15,
-    paddingBottom: 20,
-    paddingLeft: 10,
-    paddingRight: 10,
-  },
-  dayText: {
-    fontSize: 18,
-  },
-  meal: {
-    paddingLeft: 10,
-    paddingRight: 10,
-    paddingBottom: 20,
-  },
-  timeText: {
-    fontSize: 15,
-    borderBottomColor: "orange",
-    borderBottomWidth: 1,
-    paddingBottom: 10,
-  },
-  card: {
-    backgroundColor: "#ffffff",
-    borderRadius: 10,
-    borderColor: "orange",
-    borderStyle: "solid",
-    borderWidth: 1,
-    padding: 15,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    marginBottom: 15,
-    marginTop: 5,
-  },
-  mealText: {
-    fontSize: 15,
-    paddingTop: 7,
-  },
-  mealWrapper: {
-    flexDirection: "colomn",
-    justifyContent: "space-between",
-  },
-});
+const createStyles = (darkmode) => {
+  return StyleSheet.create({
+    container: {
+      width: "100%",
+      backgroundColor: darkmode ? "black" : "white",
+      marginBottom: 10,
+      paddingBottom: 50,
+    },
+    day: {
+      width: "100%",
+      paddingTop: 15,
+      paddingBottom: 20,
+      paddingLeft: 10,
+      paddingRight: 10,
+    },
+    dayText: {
+      fontSize: 18,
+      color: darkmode ? "white" : "black",
+    },
+    meal: {
+      paddingLeft: 10,
+      paddingRight: 10,
+      paddingBottom: 20,
+    },
+    timeText: {
+      fontSize: 15,
+      borderBottomColor: "orange",
+      borderBottomWidth: 1,
+      paddingBottom: 10,
+      color: darkmode ? "white" : "black",
+    },
+    card: {
+      backgroundColor: darkmode ? "black" : "white",
+      borderRadius: 10,
+      borderColor: "orange",
+      borderStyle: "solid",
+      borderWidth: 1,
+      padding: 15,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+      elevation: 5,
+      marginBottom: 15,
+      marginTop: 5,
+    },
+    mealText: {
+      fontSize: 15,
+      paddingTop: 7,
+      color: darkmode ? "white" : "black",
+    },
+    mealWrapper: {
+      flexDirection: "colomn",
+      justifyContent: "space-between",
+    },
+  });
+};

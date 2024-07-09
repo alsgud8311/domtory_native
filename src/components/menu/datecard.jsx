@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -8,10 +8,13 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import RecentPostCard from "./dailymenu";
+import { useColorStore } from "../../store/colorstore";
 
 export default function Menu() {
   const currentDate = new Date();
   const options = { month: "2-digit", day: "2-digit", weekday: "short" };
+  const darkmode = useColorStore((state) => state.darkmode);
+  const styles = useMemo(() => createStyles(darkmode), [darkmode]);
 
   // 오늘 날짜로 초기화
   const [selectedDate, setSelectedDate] = useState(
@@ -83,39 +86,42 @@ export default function Menu() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#fff",
-    marginBottom: 10,
-    flexDirection: "colomn",
-  },
-  scrollContainer: {
-    paddingLeft: 10,
-  },
-  card: {
-    width: 80,
-    height: 30,
-    marginRight: 15,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#ffcc99",
-    borderRadius: 10,
-    padding: 0,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  dateText: {
-    fontSize: 14,
-    paddingVertical: 5,
-  },
-  mealInf: {
-    paddingHorizontal: 15,
-    paddingTop: 20,
-  },
-  timeInf: {
-    color: "gray",
-  },
-});
+const createStyles = (darkmode) => {
+  return StyleSheet.create({
+    container: {
+      backgroundColor: darkmode ? "black" : "white",
+      marginBottom: 10,
+      flexDirection: "colomn",
+    },
+    scrollContainer: {
+      paddingLeft: 10,
+    },
+    card: {
+      width: 80,
+      height: 30,
+      marginRight: 15,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: darkmode ? "orange" : "#ffcc99",
+      borderRadius: 10,
+      padding: 0,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+      elevation: 5,
+    },
+    dateText: {
+      fontSize: 14,
+      paddingVertical: 5,
+      color: darkmode ? "white" : "black",
+    },
+    mealInf: {
+      paddingHorizontal: 15,
+      paddingTop: 20,
+    },
+    timeInf: {
+      color: "gray",
+    },
+  });
+};

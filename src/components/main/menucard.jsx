@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -10,8 +10,11 @@ import getMenuData from "../../utils/getDate";
 import { getDateMenuData } from "../../server/menu";
 import { ActivityIndicator } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
+import { useColorStore } from "../../store/colorstore";
 
 export default function DailyMenuCard({ navigation }) {
+  const darkmode = useColorStore((state) => state.darkmode);
+  const styles = useMemo(() => createStyles(darkmode), [darkmode]);
   const [menuData, setMenuData] = useState(null);
   useFocusEffect(
     useCallback(() => {
@@ -50,7 +53,12 @@ export default function DailyMenuCard({ navigation }) {
               }}
             >
               <Text style={styles.mealTypeText}>{menuData.dayDiv}</Text>
-              <Text style={{ color: "gray", textAlign: "right" }}>
+              <Text
+                style={{
+                  color: darkmode ? "lightgray" : "gray",
+                  textAlign: "right",
+                }}
+              >
                 {mealTime[menuData.dayDiv]}
               </Text>
             </View>
@@ -72,38 +80,45 @@ export default function DailyMenuCard({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    backgroundColor: "#fff",
-  },
-  card: {
-    backgroundColor: "#ffcc99",
-    borderRadius: 10,
-    padding: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  dateText: {
-    fontSize: 24,
-    marginBottom: 5,
-    fontWeight: "600",
-  },
-  mealTypeText: {
-    fontSize: 24,
-    borderBottomWidth: 2,
-    borderColor: "#ff9933",
-    paddingBottom: 5,
-    fontWeight: "600",
-  },
-  menuList: {
-    paddingTop: 10,
-  },
-  menuItem: {
-    fontSize: 15,
-    paddingVertical: 2,
-  },
-});
+const createStyles = (darkmode) => {
+  return StyleSheet.create({
+    container: {
+      width: "100%",
+      backgroundColor: darkmode ? "black" : "#fff",
+    },
+    card: {
+      backgroundColor: darkmode ? "black" : "#ffcc99",
+      borderWidth: darkmode ? 1 : 0,
+      borderColor: darkmode ? "gray" : "",
+      borderRadius: 10,
+      padding: 20,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+      elevation: 5,
+    },
+    dateText: {
+      fontSize: 24,
+      marginBottom: 5,
+      fontWeight: "600",
+      color: darkmode ? "#fff" : "black",
+    },
+    mealTypeText: {
+      fontSize: 24,
+      borderBottomWidth: 2,
+      borderColor: "#ff9933",
+      paddingBottom: 5,
+      fontWeight: "600",
+      color: darkmode ? "#fff" : "black",
+    },
+    menuList: {
+      paddingTop: 10,
+    },
+    menuItem: {
+      fontSize: 15,
+      paddingVertical: 2,
+      color: darkmode ? "#fff" : "black",
+    },
+  });
+};

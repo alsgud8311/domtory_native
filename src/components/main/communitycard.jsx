@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -10,9 +10,12 @@ import {
 import { AntDesign } from "@expo/vector-icons";
 import { getLatestPosts } from "../../server/board";
 import { useFocusEffect } from "@react-navigation/native";
+import { useColorStore } from "../../store/colorstore";
 
 export default function CommunityCard({ navigation }) {
   const [communityData, setCommunityData] = useState(null);
+  const darkmode = useColorStore((state) => state.darkmode);
+  const styles = useMemo(() => createStyles(darkmode), [darkmode]);
 
   useFocusEffect(
     useCallback(() => {
@@ -90,64 +93,68 @@ export default function CommunityCard({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    backgroundColor: "#fff",
-  },
-  description: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-    paddingTop: 15,
-    paddingBottom: 5,
-    paddingLeft: 10,
-    paddingRight: 10,
-  },
-  descriptionText: {
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  moreButton: {
-    flexDirection: "row",
-  },
-  card: {
-    backgroundColor: "#ffffff",
-    borderRadius: 10,
-    borderColor: "orange",
-    borderStyle: "solid",
-    borderWidth: 1,
-    paddingHorizontal: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    paddingVertical: 5,
-  },
-  postItem: {
-    borderBottomWidth: 0.5,
-    borderColor: "orange",
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 10,
-    gap: 10,
-    justifyContent: "space-between",
-  },
-  postLastItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 10,
-    gap: 10,
-    justifyContent: "space-between",
-  },
-  postText: {
-    width: "80%",
-    fontSize: 16,
-    paddingTop: 5,
-  },
-  postDate: {
-    fontSize: 12,
-    color: "gray",
-  },
-});
+const createStyles = (darkmode) => {
+  return StyleSheet.create({
+    container: {
+      width: "100%",
+      backgroundColor: darkmode ? "black" : "#fff",
+    },
+    description: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      width: "100%",
+      paddingTop: 15,
+      paddingBottom: 5,
+      paddingLeft: 10,
+      paddingRight: 10,
+    },
+    descriptionText: {
+      fontSize: 18,
+      fontWeight: "600",
+      color: darkmode ? "#fff" : "black",
+    },
+    moreButton: {
+      flexDirection: "row",
+    },
+    card: {
+      backgroundColor: darkmode ? "black" : "#fff",
+      borderRadius: 10,
+      borderColor: darkmode ? "gray" : "orange",
+      borderStyle: "solid",
+      borderWidth: 1,
+      paddingHorizontal: 20,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+      elevation: 5,
+      paddingVertical: 5,
+    },
+    postItem: {
+      borderBottomWidth: 0.5,
+      borderColor: darkmode ? "gray" : "orange",
+      flexDirection: "row",
+      alignItems: "center",
+      paddingVertical: 10,
+      gap: 10,
+      justifyContent: "space-between",
+    },
+    postLastItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingVertical: 10,
+      gap: 10,
+      justifyContent: "space-between",
+    },
+    postText: {
+      width: "80%",
+      fontSize: 16,
+      paddingTop: 5,
+      color: darkmode ? "#fff" : "black",
+    },
+    postDate: {
+      fontSize: 12,
+      color: "gray",
+    },
+  });
+};

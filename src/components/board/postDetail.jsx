@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
   SafeAreaView,
   View,
@@ -32,6 +32,7 @@ import { useAuth } from "../../store/AuthContext";
 import ImageModal from "react-native-image-modal";
 import Hyperlink from "react-native-hyperlink";
 import CommentBox from "../postdetail/comment";
+import { useColorStore } from "../../store/colorstore";
 
 export const handleReport = async (type, id) => {
   const result = await report(type, id);
@@ -46,6 +47,8 @@ export const handleReport = async (type, id) => {
 export default function PostDetail({ data, reloadData, postId, navigation }) {
   const { authState } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
+  const darkmode = useColorStore((state) => state.darkmode);
+  const styles = useMemo(() => createStyles(darkmode));
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -478,189 +481,196 @@ export default function PostDetail({ data, reloadData, postId, navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  scrollView: {
-    marginHorizontal: 20,
-    marginTop: 25,
-    marginBottom: 5,
-    flex: 1,
-  },
-  // 내용
-  header: {
-    flexDirection: "row",
-    marginBottom: 15,
-    alignItems: "center",
-  },
-  user: {
-    fontSize: 16,
-    fontWeight: "700",
-    marginBottom: 2,
-  },
-  date: {
-    fontSize: 12,
-    color: "grey",
-  },
-  image: {
-    borderRadius: 3,
-    marginBottom: 10,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "700",
-    marginBottom: 5,
-  },
-  content: {
-    fontSize: 15,
-    marginBottom: 13,
-  },
+const createStyles = (darkmode) => {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: darkmode ? "black" : "white",
+    },
+    scrollView: {
+      marginHorizontal: 20,
+      marginTop: 25,
+      marginBottom: 5,
+      flex: 1,
+    },
+    // 내용
+    header: {
+      flexDirection: "row",
+      marginBottom: 15,
+      alignItems: "center",
+    },
+    user: {
+      fontSize: 16,
+      fontWeight: "700",
+      marginBottom: 2,
+      color: darkmode ? "white" : "black",
+    },
+    date: {
+      fontSize: 12,
+      color: "grey",
+    },
+    image: {
+      borderRadius: 3,
+      marginBottom: 10,
+    },
+    title: {
+      fontSize: 18,
+      fontWeight: "700",
+      marginBottom: 5,
+      color: darkmode ? "white" : "black",
+    },
+    content: {
+      fontSize: 15,
+      marginBottom: 13,
+      color: darkmode ? "white" : "black",
+    },
 
-  // 댓글/좋아요 아이콘, 댓글수/좋아요수
-  comment: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginLeft: 3,
-    paddingBottom: 5,
-    borderBottomWidth: 1,
-    borderBottomColor: "#e1e1e1",
-    marginBottom: 13,
-    marginTop: 15,
-  },
-  commentIcon: {
-    fontSize: 17,
-    marginRight: 5,
-    color: "crimson",
-    marginTop: 2,
-  },
-  likeIcon: {
-    width: 20,
-    height: 20,
-    marginRight: 3,
-    marginBottom: 2,
-  },
-  likeNum: {
-    fontSize: 15,
-    marginRight: 15,
-  },
-  commentNum: {
-    fontSize: 15,
-    color: "crimson",
-    marginRight: 15,
-  },
-  // 댓글 컨테이너
-  commentContainer: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#e1e1e1",
-    paddingBottom: 8,
-    marginBottom: 8,
-  },
-  // 댓글 작성자
-  commentMember: {
-    fontSize: 16,
-    fontWeight: "700",
-    marginLeft: 5,
-  },
-  // 댓글 내용
-  commentContent: {
-    fontSize: 15,
-    color: "#333",
-    marginTop: 3,
-    marginBottom: 4,
-  },
-  // 댓글 작성일
-  commentDate: {
-    fontSize: 13,
-    color: "#666666",
-  },
-  // 댓글 옵션
-  commentOption: {
-    flexDirection: "row",
-    padding: 4,
-    borderRadius: 10,
-    backgroundColor: "#e1e1e170",
-  },
-  // 대댓글 아이콘
-  commnetReply: {
-    fontSize: 14,
-    color: "#66666675",
-    paddingHorizontal: 13,
-    borderRightWidth: 1,
-    borderRightColor: "#6666665e",
-  },
-  // 댓글 삭제 아이콘
-  commnetDelete: {
-    fontSize: 14,
-    color: "#66666675",
-    paddingHorizontal: 13,
-    borderRightWidth: 1,
-    borderRightColor: "#6666665e",
-  },
-  // 댓글 신고 아이콘
-  commnetReport: {
-    fontSize: 13,
-    color: "#66666675",
-    paddingHorizontal: 15,
-  },
-  // 삭제된 댓글
-  commentDeleted: {
-    paddingVertical: 13,
-    color: "#666666",
-  },
-  // 대댓글 컨테이너
-  replyContainer: {
-    marginTop: 8,
-    paddingHorizontal: 2,
-  },
-  // 대댓글 1개 컨테이너
-  reply: {
-    backgroundColor: "#e1e1e170",
-    marginBottom: 10,
-    borderRadius: 10,
-    padding: 6,
-  },
+    // 댓글/좋아요 아이콘, 댓글수/좋아요수
+    comment: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginLeft: 3,
+      paddingBottom: 5,
+      borderBottomWidth: 1,
+      borderBottomColor: "gray",
+      marginBottom: 13,
+      marginTop: 15,
+    },
+    commentIcon: {
+      fontSize: 17,
+      marginRight: 5,
+      color: "crimson",
+      marginTop: 2,
+    },
+    likeIcon: {
+      width: 20,
+      height: 20,
+      marginRight: 3,
+      marginBottom: 2,
+      tintColor: darkmode ? "gray" : "black",
+    },
+    likeNum: {
+      fontSize: 15,
+      marginRight: 15,
+      color: darkmode ? "gray" : "black",
+    },
+    commentNum: {
+      fontSize: 15,
+      color: "crimson",
+      marginRight: 15,
+    },
+    // 댓글 컨테이너
+    commentContainer: {
+      borderBottomWidth: 1,
+      borderBottomColor: "#e1e1e1",
+      paddingBottom: 8,
+      marginBottom: 8,
+    },
+    // 댓글 작성자
+    commentMember: {
+      fontSize: 16,
+      fontWeight: "700",
+      marginLeft: 5,
+    },
+    // 댓글 내용
+    commentContent: {
+      fontSize: 15,
+      color: "#333",
+      marginTop: 3,
+      marginBottom: 4,
+    },
+    // 댓글 작성일
+    commentDate: {
+      fontSize: 13,
+      color: "#666666",
+    },
+    // 댓글 옵션
+    commentOption: {
+      flexDirection: "row",
+      padding: 4,
+      borderRadius: 10,
+      backgroundColor: "#e1e1e170",
+    },
+    // 대댓글 아이콘
+    commnetReply: {
+      fontSize: 14,
+      color: "#66666675",
+      paddingHorizontal: 13,
+      borderRightWidth: 1,
+      borderRightColor: "#6666665e",
+    },
+    // 댓글 삭제 아이콘
+    commnetDelete: {
+      fontSize: 14,
+      color: "#66666675",
+      paddingHorizontal: 13,
+      borderRightWidth: 1,
+      borderRightColor: "#6666665e",
+    },
+    // 댓글 신고 아이콘
+    commnetReport: {
+      fontSize: 13,
+      color: "#66666675",
+      paddingHorizontal: 15,
+    },
+    // 삭제된 댓글
+    commentDeleted: {
+      paddingVertical: 13,
+      color: "#666666",
+    },
+    // 대댓글 컨테이너
+    replyContainer: {
+      marginTop: 8,
+      paddingHorizontal: 2,
+    },
+    // 대댓글 1개 컨테이너
+    reply: {
+      backgroundColor: "#e1e1e170",
+      marginBottom: 10,
+      borderRadius: 10,
+      padding: 6,
+    },
 
-  // 댓글 작성
-  writeComment: {
-    flexDirection: "row",
-    backgroundColor: "white",
-    width: "100%",
-    marginBottom: 70,
-  },
-  inputBox: {
-    flexDirection: "row",
-    borderWidth: 1,
-    borderColor: "#fff",
-    borderRadius: 15,
-    backgroundColor: "#d8d8d853",
-    marginTop: 3,
-    marginBottom: 5,
-    marginHorizontal: 10,
-    paddingHorizontal: 10,
-    alignItems: "center",
-    gap: 10,
-    flex: 1,
-  },
-  commentInput: {
-    flex: 1,
-    paddingTop: Platform.OS === "ios" ? 15 : 0,
-    paddingHorizontal: 10,
-    paddingBottom: 1.5,
-    minHeight: 45,
-    fontSize: 14,
-  },
-  anonymousCheck: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  checkboxLabel: {
-    color: "#848484",
-    marginBottom: 3,
-    marginLeft: 4,
-  },
-  submitButton: {
-    marginRight: 3,
-  },
-});
+    // 댓글 작성
+    writeComment: {
+      flexDirection: "row",
+      backgroundColor: darkmode ? "black" : "white",
+      width: "100%",
+      marginBottom: 70,
+    },
+    inputBox: {
+      flexDirection: "row",
+      borderWidth: 1,
+      borderColor: darkmode ? "gray" : "#fff",
+      borderRadius: 15,
+      backgroundColor: darkmode ? "black" : "#d8d8d853",
+      marginTop: 3,
+      marginBottom: 5,
+      marginHorizontal: 10,
+      paddingHorizontal: 10,
+      alignItems: "center",
+      gap: 10,
+      flex: 1,
+    },
+    commentInput: {
+      flex: 1,
+      paddingTop: Platform.OS === "ios" ? 15 : 0,
+      paddingHorizontal: 10,
+      paddingBottom: 1.5,
+      minHeight: 45,
+      fontSize: 14,
+    },
+    anonymousCheck: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    checkboxLabel: {
+      color: "#848484",
+      marginBottom: 3,
+      marginLeft: 4,
+    },
+    submitButton: {
+      marginRight: 3,
+    },
+  });
+};

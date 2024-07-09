@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Modal } from "react-native";
 import CommunityShortCuts from "./shortcuts/communityShortcuts";
 //게시판
@@ -21,7 +21,7 @@ import CbhsNoticeDetail from "../notice/cbhsNoticeDetail";
 import MyPosting from "./mypost/mypost";
 import Mycomment from "./mypost/mycomment";
 // 쪽지방
-import MessageDetail from '../message/messageDetail';
+import MessageDetail from "../message/messageDetail";
 import Search from "../search/search";
 
 import Header from "../../components/common/header";
@@ -37,14 +37,15 @@ import MyComment from "./mypost/mycomment";
 import PostFix from "../board/postfix";
 import Bookmark from "./bookmark/bookmark";
 import BookmarkDetail from "./bookmark/bookmarkDetail";
+import { useColorStore } from "../../store/colorstore";
 
 const CommunityStack = ({ navigation }) => {
   const Stack = createNativeStackNavigator();
-
+  const darkmode = useColorStore((state) => state.darkmode);
   return (
     <Stack.Navigator
       initialRouteName="커뮤니티 바로가기 탭"
-      screenOptions={stackScreenOptionsWithTitle}
+      screenOptions={stackScreenOptionsWithTitle(darkmode)}
     >
       <Stack.Screen
         name="커뮤니티 바로가기"
@@ -80,7 +81,7 @@ const CommunityStack = ({ navigation }) => {
               <AntDesign
                 name="search1"
                 size={30}
-                color="black"
+                color={darkmode ? "white" : "black"}
                 onPress={() =>
                   navigation.navigate("검색", { board: "자유게시판" })
                 }
@@ -219,69 +220,3 @@ const CommunityStack = ({ navigation }) => {
 };
 
 export default CommunityStack;
-
-// // 모달 상태 관리
-// const [modalVisible, setModalVisible] = useState(false);
-
-// // 모달 띄우는 함수
-// const openModal = () => {
-//   setModalVisible(true);
-// };
-
-// // 모달 닫는 함수
-// const closeModal = () => {
-//   setModalVisible(false);
-// };
-
-// {/* 모달 컴포넌트 추가 */}
-// <Modal
-// animationType="slide"
-// transparent={true}
-// visible={modalVisible}
-// onRequestClose={closeModal}
-// >
-// <View style={styles.modalView}>
-//   <TouchableOpacity
-//     style={styles.modalOption}
-//     onPress={() => {
-//       // 수정 로직
-//       closeModal();
-//     }}
-//   >
-//     <Text>게시글 수정</Text>
-//   </TouchableOpacity>
-//   <TouchableOpacity
-//     style={styles.modalOption}
-//     onPress={() => {
-//       // 신고 로직
-//       closeModal();
-//     }}
-//   >
-//     <Text>게시글 신고</Text>
-//   </TouchableOpacity>
-// </View>
-// </Modal>
-
-// const styles = StyleSheet.create({
-//   // 모달 스타일
-//   modalView: {
-//     margin: 20,
-//     backgroundColor: "white",
-//     borderRadius: 20,
-//     padding: 35,
-//     alignItems: "center",
-//     shadowColor: "#000",
-//     shadowOffset: {
-//       width: 0,
-//       height: 2
-//     },
-//     shadowOpacity: 0.25,
-//     shadowRadius: 4,
-//     elevation: 5
-//   },
-//   // 모달 옵션 스타일
-//   modalOption: {
-//     padding: 10,
-//     borderBottomWidth: 1,
-//   }
-// })

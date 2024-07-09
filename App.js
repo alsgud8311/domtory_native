@@ -48,19 +48,7 @@ export const Layout = () => {
         {authState.authenticated ? (
           <Stack.Screen name="홈 탭" component={MainTab} />
         ) : (
-          <>
-            <Stack.Screen name="로그인" component={Login} />
-            {/* <Stack.Screen
-              name="회원가입"
-              component={Signup}
-              options={{
-                headerShown: true,
-                headerBackTitleVisible: false,
-                headerTintColor: "orange",
-                title: "",
-              }}
-            /> */}
-          </>
+          <Stack.Screen name="로그인" component={Login} />
         )}
       </Stack.Navigator>
     </NavigationContainer>

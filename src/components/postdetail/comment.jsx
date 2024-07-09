@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { useNavigation } from "@react-navigation/native";
 import {
   View,
   Text,
@@ -13,11 +13,18 @@ import { Octicons, FontAwesome5, Feather } from "@expo/vector-icons";
 import domtory from "../../assets/icon.png";
 import like from "../../assets/like_icon.png";
 import unlike from "../../assets/unlike_icon.png";
-import { deleteComment, deleteReply, report, block, postCommentLike } from "../../server/board";
+import {
+  deleteComment,
+  deleteReply,
+  report,
+  block,
+  postCommentLike,
+} from "../../server/board";
 import { createMessage } from "../../server/message";
 import { useAuth } from "../../store/AuthContext";
 import Hyperlink from "react-native-hyperlink";
 import ReplyCommentBox from "./replyComment";
+import { useColorStore } from "../../store/colorstore";
 
 export const handleReport = async (type, id) => {
   const result = await report(type, id);
@@ -29,8 +36,15 @@ export const handleReport = async (type, id) => {
   }
 };
 
-export default function CommentBox({ data, setCurrentReplyingTo, reloadData, navigation }) {
+export default function CommentBox({
+  data,
+  setCurrentReplyingTo,
+  reloadData,
+  navigation,
+}) {
   const { authState } = useAuth();
+  const darkmode = useColorStore((state) => state.darkmode);
+  const styles = useMemo(() => createStyles(darkmode));
 
   // 대댓글 작성 확인창
   const promptForReply = (commentId) => {
@@ -182,39 +196,35 @@ export default function CommentBox({ data, setCurrentReplyingTo, reloadData, nav
 
   const handlePostLike = (comment) => async () => {
     if (comment.is_liked || isLiked[comment.id]) {
-      Alert.alert('이미 좋아요 한 댓글입니다.');
+      Alert.alert("이미 좋아요 한 댓글입니다.");
     } else {
-      Alert.alert(
-        '좋아요',
-        '이 댓글에 좋아요를 누르시겠습니까?',
-        [
-          {
-            text: '아니요',
-            onPress: () => console.log('좋아요 취소'),
-            style: 'cancel',
-          },
-          {
-            text: '네',
-            onPress: async () => {
-              try {
-                const { success, data } = await postCommentLike(comment.id);
-                if (success) {
-                  setLikesCounts(prevCounts => ({
-                    ...prevCounts,
-                    [comment.id]: data.likes_cnt
-                  }));
-                  setIsLiked((prevIsLiked) => ({
-                    ...prevIsLiked,
-                    [comment.id]: true,
-                  }));
-                }
-              } catch (error) {
-                console.error("좋아요를 처리하는 중 에러 발생:", error);
+      Alert.alert("좋아요", "이 댓글에 좋아요를 누르시겠습니까?", [
+        {
+          text: "아니요",
+          onPress: () => console.log("좋아요 취소"),
+          style: "cancel",
+        },
+        {
+          text: "네",
+          onPress: async () => {
+            try {
+              const { success, data } = await postCommentLike(comment.id);
+              if (success) {
+                setLikesCounts((prevCounts) => ({
+                  ...prevCounts,
+                  [comment.id]: data.likes_cnt,
+                }));
+                setIsLiked((prevIsLiked) => ({
+                  ...prevIsLiked,
+                  [comment.id]: true,
+                }));
               }
-            },
+            } catch (error) {
+              console.error("좋아요를 처리하는 중 에러 발생:", error);
+            }
           },
-        ],
-      );
+        },
+      ]);
     }
   };
 
@@ -245,7 +255,9 @@ export default function CommentBox({ data, setCurrentReplyingTo, reloadData, nav
       const response = await createMessage(data.id, userId);
       if (response.success) {
         console.log("쪽지방 생성 성공", response.data);
-        navigation.navigate('쪽지방', { messageId: response.data.message_room_id });
+        navigation.navigate("쪽지방", {
+          messageId: response.data.message_room_id,
+        });
       } else {
         console.error("쪽지방 생성 실패:", response.data);
       }
@@ -265,9 +277,10 @@ export default function CommentBox({ data, setCurrentReplyingTo, reloadData, nav
                 style={{
                   flexDirection: "row",
                   justifyContent: "space-between",
+                  marginBottom: 5,
                 }}
               >
-                <View style={{ flexDirection: "row" }}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Image
                     source={domtory}
                     style={{
@@ -297,8 +310,21 @@ export default function CommentBox({ data, setCurrentReplyingTo, reloadData, nav
                     style={styles.commnetReply}
                     onPress={() => promptForReply(comment.id)}
                   />
-                  <Feather name="send" style={styles.messageIcon} onPress={() => promptForCreateMessage(comment.anonymous_number)} />
-                  <TouchableOpacity onPress={handlePostLike(comment)} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                  <Feather
+                    name="send"
+                    style={styles.messageIcon}
+                    onPress={() =>
+                      promptForCreateMessage(comment.anonymous_number)
+                    }
+                  />
+                  <TouchableOpacity
+                    onPress={handlePostLike(comment)}
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
+                  >
                     <Image source={unlike} style={styles.likeIcon} />
                   </TouchableOpacity>
 
@@ -330,14 +356,19 @@ export default function CommentBox({ data, setCurrentReplyingTo, reloadData, nav
               ) : (
                 <>
                   {/* 내용, 날짜 등을 표시하는 부분 */}
-                  <Hyperlink linkDefault={true} linkStyle={{ color: "mediumblue" }}>
+                  <Hyperlink
+                    linkDefault={true}
+                    linkStyle={{ color: "mediumblue" }}
+                  >
                     <Text style={styles.commentContent}>{comment.body}</Text>
                   </Hyperlink>
-                  <View style={{ display: 'flex', flexDirection: 'row' }}>
+                  <View style={{ display: "flex", flexDirection: "row" }}>
                     <Text style={styles.commentDate}>{comment.created_at}</Text>
                     <Image source={like} style={{ width: 15, height: 15 }} />
                     <Text style={styles.commentDate}>
-                      {likesCounts[comment.id] !== undefined ? likesCounts[comment.id] : comment.likes_cnt}
+                      {likesCounts[comment.id] !== undefined
+                        ? likesCounts[comment.id]
+                        : comment.likes_cnt}
                     </Text>
                   </View>
                 </>
@@ -362,151 +393,158 @@ export default function CommentBox({ data, setCurrentReplyingTo, reloadData, nav
   );
 }
 
-const styles = StyleSheet.create({
-  // 댓글 아이콘, 댓글수
-  comment: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginLeft: 3,
-    paddingBottom: 5,
-    borderBottomWidth: 1,
-    borderBottomColor: "#e1e1e1",
-    marginBottom: 13,
-    marginTop: 15,
-  },
-  commentIcon: {
-    fontSize: 17,
-    marginRight: 5,
-    color: "#666666",
-  },
-  commentNum: {
-    fontSize: 15,
-    color: "#666666",
-  },
-  // 댓글 컨테이너
-  commentContainer: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#e1e1e1",
-    paddingBottom: 8,
-    marginBottom: 8,
-  },
-  // 댓글 작성자
-  commentMember: {
-    fontSize: 16,
-    fontWeight: "700",
-    marginLeft: 5,
-  },
-  // 댓글 내용
-  commentContent: {
-    fontSize: 15,
-    color: "#333",
-    marginTop: 3,
-    marginBottom: 4,
-  },
-  // 댓글 작성일
-  commentDate: {
-    fontSize: 13,
-    color: "#666666",
-    marginRight: 7
-  },
-  // 댓글 옵션
-  commentOption: {
-    flexDirection: "row",
-    padding: 4,
-    borderRadius: 10,
-    backgroundColor: "#e1e1e170",
-  },
-  // 대댓글 아이콘
-  commnetReply: {
-    fontSize: 14,
-    color: "#66666675",
-    paddingHorizontal: 10,
-  },
-  // 쪽지 보내기 아이콘
-  messageIcon: {
-    fontSize: 15,
-    color: "#66666675",
-    marginTop: 0.5,
-    paddingHorizontal: 10,
-  },
-  // 좋아요 아이콘
-  likeIcon: {
-    width: 15.5,
-    height: 15,
-    opacity: 0.33,
-    marginBottom: 2.5,
-    marginHorizontal: 8
-  },
-  // 댓글 삭제 아이콘
-  commnetDelete: {
-    fontSize: 14,
-    color: "#66666675",
-    paddingHorizontal: 13,
-  },
-  // 댓글 신고 아이콘
-  commnetReport: {
-    fontSize: 13,
-    color: "#66666675",
-    paddingTop: 1.3,
-    paddingHorizontal: 10,
-  },
-  // 삭제된 댓글
-  commentDeleted: {
-    paddingVertical: 13,
-    color: "#666666",
-  },
-  // 대댓글 컨테이너
-  replyContainer: {
-    marginTop: 8,
-    paddingHorizontal: 2,
-  },
-  // 대댓글 1개 컨테이너
-  reply: {
-    backgroundColor: "#e1e1e170",
-    marginBottom: 10,
-    borderRadius: 10,
-    padding: 6,
-  },
+const createStyles = (darkmode) => {
+  return StyleSheet.create({
+    // 댓글 아이콘, 댓글수
+    comment: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginLeft: 3,
+      paddingBottom: 5,
+      borderBottomWidth: 1,
+      borderBottomColor: darkmode ? "gray" : "#e1e1e1",
+      marginBottom: 13,
+      marginTop: 15,
+    },
+    commentIcon: {
+      fontSize: 17,
+      marginRight: 5,
+      color: darkmode ? "white" : "#666666",
+    },
+    commentNum: {
+      fontSize: 15,
+      color: darkmode ? "white" : "black",
+    },
+    // 댓글 컨테이너
+    commentContainer: {
+      borderBottomWidth: 1,
+      borderBottomColor: darkmode ? "gray" : "#e1e1e1",
+      paddingBottom: 8,
+      marginBottom: 8,
+    },
+    // 댓글 작성자
+    commentMember: {
+      fontSize: 16,
+      fontWeight: "700",
+      marginLeft: 5,
+      color: darkmode ? "white" : "black",
+    },
+    // 댓글 내용
+    commentContent: {
+      fontSize: 15,
 
-  // 댓글 작성
-  writeComment: {
-    flexDirection: "row",
-    backgroundColor: "white",
-    width: "100%",
-    marginBottom: 70,
-  },
-  inputBox: {
-    flexDirection: "row",
-    borderWidth: 1,
-    borderColor: "#fff",
-    borderRadius: 15,
-    backgroundColor: "#d8d8d853",
-    marginTop: 3,
-    marginBottom: 5,
-    marginHorizontal: 10,
-    paddingHorizontal: 10,
-    alignItems: "center",
-    gap: 10,
-    flex: 1,
-  },
-  commentInput: {
-    flex: 1,
-    paddingTop: Platform.OS === "ios" ? 15 : 0,
-    paddingHorizontal: 10,
-    paddingBottom: 1.5,
-    minHeight: 45,
-    fontSize: 14,
-  },
-  anonymousCheck: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  checkboxLabel: {
-    color: "#848484",
-    marginBottom: 3,
-    marginLeft: 4,
-  },
-  submitButton: {
-    marginRight: 3,
-  },
-});
+      marginTop: 3,
+      marginBottom: 4,
+      color: darkmode ? "white" : "black",
+    },
+    // 댓글 작성일
+    commentDate: {
+      fontSize: 13,
+      color: darkmode ? "darkgray" : "#666666",
+      marginRight: 7,
+    },
+    // 댓글 옵션
+    commentOption: {
+      flexDirection: "row",
+      padding: 4,
+      borderRadius: 10,
+      backgroundColor: darkmode ? "black" : "#e1e1e170",
+      borderWidth: darkmode ? 1 : 0,
+      borderColor: darkmode ? "gray" : "",
+    },
+    // 대댓글 아이콘
+    commnetReply: {
+      fontSize: 14,
+      color: darkmode ? "white" : "#66666675",
+      paddingHorizontal: 10,
+    },
+    // 쪽지 보내기 아이콘
+    messageIcon: {
+      fontSize: 15,
+      color: darkmode ? "white" : "#66666675",
+      marginTop: 0.5,
+      paddingHorizontal: 10,
+    },
+    // 좋아요 아이콘
+    likeIcon: {
+      width: 15.5,
+      height: 15,
+      opacity: 1,
+      marginBottom: 2.5,
+      marginHorizontal: 8,
+      tintColor: darkmode ? "white" : "#66666675",
+    },
+    // 댓글 삭제 아이콘
+    commnetDelete: {
+      fontSize: 14,
+      paddingHorizontal: 13,
+      color: darkmode ? "white" : "#66666675",
+    },
+    // 댓글 신고 아이콘
+    commnetReport: {
+      fontSize: 13,
+      color: darkmode ? "white" : "#66666675",
+      paddingTop: 1.3,
+      paddingHorizontal: 10,
+    },
+    // 삭제된 댓글
+    commentDeleted: {
+      paddingVertical: 13,
+      color: "#666666",
+    },
+    // 대댓글 컨테이너
+    replyContainer: {
+      marginTop: 8,
+      paddingHorizontal: 2,
+    },
+    // 대댓글 1개 컨테이너
+    reply: {
+      backgroundColor: "#e1e1e170",
+      marginBottom: 10,
+      borderRadius: 10,
+      padding: 6,
+    },
+
+    // 댓글 작성
+    writeComment: {
+      flexDirection: "row",
+      backgroundColor: "white",
+      width: "100%",
+      marginBottom: 70,
+    },
+    inputBox: {
+      flexDirection: "row",
+      borderWidth: 1,
+      borderColor: "#fff",
+      borderRadius: 15,
+      backgroundColor: "#d8d8d853",
+      marginTop: 3,
+      marginBottom: 5,
+      marginHorizontal: 10,
+      paddingHorizontal: 10,
+      alignItems: "center",
+      gap: 10,
+      flex: 1,
+    },
+    commentInput: {
+      flex: 1,
+      paddingTop: Platform.OS === "ios" ? 15 : 0,
+      paddingHorizontal: 10,
+      paddingBottom: 1.5,
+      minHeight: 45,
+      fontSize: 14,
+    },
+    anonymousCheck: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    checkboxLabel: {
+      color: "#848484",
+      marginBottom: 3,
+      marginLeft: 4,
+    },
+    submitButton: {
+      marginRight: 3,
+    },
+  });
+};

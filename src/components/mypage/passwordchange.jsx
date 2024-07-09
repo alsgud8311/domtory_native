@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Alert,
   KeyboardAvoidingView,
@@ -9,6 +9,7 @@ import {
   View,
 } from "react-native";
 import { useAuth } from "../../store/AuthContext";
+import { useColorStore } from "../../store/colorstore";
 
 const PasswordChangeView = () => {
   const [oldPassword, setoldPassword] = useState("");
@@ -16,6 +17,8 @@ const PasswordChangeView = () => {
   const [newPasswordCheck, setoldPasswordCheck] = useState("");
   const [passwordvalid, setPasswordvalid] = useState(true);
   const { onLogout, onPasswordChange } = useAuth();
+  const darkmode = useColorStore((state) => state.darkmode);
+  const styles = useMemo(() => createStyles(darkmode), [darkmode]);
 
   const passwordchange = async () => {
     const { success, data } = await onPasswordChange(oldPassword, newPassword);
@@ -42,7 +45,7 @@ const PasswordChangeView = () => {
             autoCorrect={false}
             secureTextEntry={true}
             placeholder="기존 비밀번호"
-            placeholderColor="#c4c3cb"
+            placeholderTextColor={darkmode ? "gray" : "#c4c3cb"}
             style={styles.textInput}
             onChangeText={(text) => setoldPassword(text)}
             value={oldPassword}
@@ -53,12 +56,12 @@ const PasswordChangeView = () => {
               spellCheck={false}
               autoCorrect={false}
               placeholder="새 비밀번호"
-              placeholderColor="#c4c3cb"
+              placeholderTextColor={darkmode ? "gray" : "#c4c3cb"}
               style={styles.textInput}
               onChangeText={(text) => setNewPassword(text)}
               value={newPassword}
             />
-            <Text style={{ paddingLeft: 10 }}>
+            <Text style={styles.passwordInform}>
               비밀번호는 6자리 이상이며, 특수기호가 포함되어야 합니다
             </Text>
           </View>
@@ -68,7 +71,7 @@ const PasswordChangeView = () => {
               spellCheck={false}
               autoCorrect={false}
               placeholder="새 비밀번호 확인"
-              placeholderColor="#c4c3cb"
+              placeholderTextColor={darkmode ? "gray" : "#c4c3cb"}
               style={styles.textInput}
               onChangeText={(text) => setoldPasswordCheck(text)}
               value={newPasswordCheck}
@@ -96,56 +99,63 @@ const PasswordChangeView = () => {
     </KeyboardAvoidingView>
   );
 };
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    height: "100%",
-    alignItems: "center",
-    padding: 20,
-    marginBottom: 50,
-    backgroundColor: "white",
-  },
-  wrapper: {
-    width: "100%",
-    gap: 20,
-  },
-  textInput: {
-    width: 350,
-    height: 60,
-    fontSize: 20,
-    borderRadius: 15,
-    borderWidth: 1,
-    borderColor: "orange",
-    backgroundColor: "#fff",
-    paddingLeft: 10,
-    marginTop: 10,
-    marginBottom: 10,
-  },
-  inputWrapper: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  disabledButton: {
-    color: "white",
-    backgroundColor: "#eaeaea",
-    borderRadius: 15,
-    width: 350,
-    height: 60,
-    marginTop: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 10,
-  },
-  button: {
-    color: "white",
-    backgroundColor: "orange",
-    borderRadius: 15,
-    width: 350,
-    height: 60,
-    marginTop: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 10,
-  },
-});
+const createStyles = (darkmode) => {
+  return StyleSheet.create({
+    container: {
+      width: "100%",
+      height: "100%",
+      alignItems: "center",
+      padding: 20,
+      marginBottom: 50,
+      backgroundColor: darkmode ? "black" : "white",
+    },
+    wrapper: {
+      width: "100%",
+      gap: 20,
+    },
+    textInput: {
+      width: 350,
+      height: 60,
+      fontSize: 20,
+      borderRadius: 15,
+      borderWidth: 1,
+      borderColor: "orange",
+      backgroundColor: darkmode ? "black" : "white",
+      color: darkmode ? "white" : "black",
+      paddingLeft: 10,
+      marginTop: 10,
+      marginBottom: 10,
+    },
+    inputWrapper: {
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    passwordInform: {
+      color: darkmode ? "gray" : "black",
+      paddingLeft: 10,
+    },
+    disabledButton: {
+      color: "white",
+      backgroundColor: darkmode ? "gray" : "#eaeaea",
+      borderRadius: 15,
+      width: 350,
+      height: 60,
+      marginTop: 10,
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: 10,
+    },
+    button: {
+      color: "white",
+      backgroundColor: "orange",
+      borderRadius: 15,
+      width: 350,
+      height: 60,
+      marginTop: 10,
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: 10,
+    },
+  });
+};
 export default PasswordChangeView;

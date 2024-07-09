@@ -1,15 +1,28 @@
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  StyleSheet,
+  Switch,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import {
   AntDesign,
   MaterialIcons,
   FontAwesome5,
   FontAwesome,
+  Fontisto,
 } from "@expo/vector-icons";
 import { useAuth } from "../../store/AuthContext";
 import { openBrowserAsync } from "expo-web-browser";
+import { useColorStore } from "../../store/colorstore";
+import { useMemo } from "react";
 
 export default function MypageCard({ navigation }) {
   const { onLogout, onWithdrawal, authState } = useAuth();
+  const darkmode = useColorStore((state) => state.darkmode);
+  const setDarkmode = useColorStore((state) => state.changeColorTheme);
+  const styles = useMemo(() => createStyles(darkmode), [darkmode]);
   const logout = async () => {
     const { success } = await onLogout();
     if (success) {
@@ -58,18 +71,30 @@ export default function MypageCard({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.wrapper}>
+        <View style={{ ...styles.card, justifyContent: "space-between" }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
+            <Fontisto name="night-clear" style={styles.icons} />
+            <Text style={styles.cardText}>다크모드 설정</Text>
+          </View>
+          <Switch
+            trackColor={{ true: "orange" }}
+            thumbColor={darkmode ? "#f5dd4b" : "#f4f3f4"}
+            onValueChange={setDarkmode}
+            value={darkmode}
+          />
+        </View>
         <TouchableOpacity
           style={styles.card}
           onPress={() => navigation.navigate("비밀번호 변경")}
         >
-          <AntDesign name="lock" size={24} color="black" />
+          <AntDesign name="lock" style={styles.icons} />
           <Text style={styles.cardText}>비밀번호 변경</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.card}
           onPress={() => navigation.navigate("알림 설정")}
         >
-          <MaterialIcons name="notifications-on" size={24} color="black" />
+          <MaterialIcons name="notifications-on" style={styles.icons} />
           <Text style={styles.cardText}>알림 설정</Text>
         </TouchableOpacity>
       </View>
@@ -82,7 +107,7 @@ export default function MypageCard({ navigation }) {
             )
           }
         >
-          <FontAwesome name="book" size={24} color="black" />
+          <FontAwesome name="book" style={styles.icons} />
           <Text style={styles.cardText}>이용 약관</Text>
         </TouchableOpacity>
       </View>
@@ -95,17 +120,17 @@ export default function MypageCard({ navigation }) {
             )
           }
         >
-          <FontAwesome name="address-book" size={24} color="black" />
+          <FontAwesome name="address-book" style={styles.icons} />
           <Text style={styles.cardText}>개인정보 처리방침</Text>
         </TouchableOpacity>
       </View>
       <View style={{ borderBottomWidth: 1, borderColor: "gray" }}>
         <TouchableOpacity style={styles.card} onPress={onPressLogout}>
-          <AntDesign name="unlock" size={24} color="black" />
+          <AntDesign name="unlock" style={styles.icons} />
           <Text style={styles.cardText}>로그아웃</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.card} onPress={onPressWithdraw}>
-          <FontAwesome5 name="sad-tear" size={24} color="black" />
+          <FontAwesome5 name="sad-tear" style={styles.icons} />
           <Text style={styles.cardText}>회원탈퇴</Text>
         </TouchableOpacity>
       </View>
@@ -113,25 +138,33 @@ export default function MypageCard({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    paddingHorizontal: 20,
-    paddingTop: 20,
-  },
-  wrapper: {
-    borderBottomWidth: 1,
-    borderTopWidth: 1,
-    borderBottomColor: "gray",
-    borderTopColor: "gray",
-  },
-  card: {
-    padding: 20,
-    flexDirection: "row",
-    gap: 20,
-    alignItems: "center",
-  },
-  cardText: {
-    fontSize: 17,
-  },
-});
+const createStyles = (darkmode) => {
+  return StyleSheet.create({
+    container: {
+      width: "100%",
+      paddingHorizontal: 20,
+      paddingTop: 20,
+      backgroundColor: darkmode ? "black" : "white",
+    },
+    wrapper: {
+      borderBottomWidth: 1,
+      borderTopWidth: 1,
+      borderBottomColor: "gray",
+      borderTopColor: "gray",
+    },
+    card: {
+      padding: 20,
+      flexDirection: "row",
+      gap: 20,
+      alignItems: "center",
+    },
+    icons: {
+      fontSize: 24,
+      color: darkmode ? "white" : "black",
+    },
+    cardText: {
+      fontSize: 17,
+      color: darkmode ? "white" : "black",
+    },
+  });
+};

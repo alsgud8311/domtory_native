@@ -8,7 +8,7 @@ type Action = {
 };
 
 export const useColorStore = create<State & Action>((set) => ({
-  darkmode: false,
+  darkmode: true,
   changeColorTheme: () =>
     set((state) => ({
       darkmode: !state.darkmode,

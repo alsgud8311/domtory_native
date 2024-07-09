@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
   StyleSheet,
   FlatList,
@@ -14,6 +14,7 @@ import { AntDesign } from "@expo/vector-icons";
 import { getPostList } from "../../server/board";
 import PostListItems from "./postListItem";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
+import { useColorStore } from "../../store/colorstore";
 
 export default function Board({ boardId, navigation }) {
   const [data, setData] = useState([]);
@@ -24,7 +25,8 @@ export default function Board({ boardId, navigation }) {
   const [goBackRefresh, setGoBackRefresh] = useState(false);
   const [lastCall, setLastCall] = useState(null);
   const [newRefresh, setNewRefresh] = useState(true);
-
+  const darkmode = useColorStore((state) => state.darkmode);
+  const styles = useMemo(() => createStyles(darkmode), [darkmode]);
   const fetchData = async () => {
     try {
       console.log("몇페이지", currPage);
@@ -139,89 +141,91 @@ export default function Board({ boardId, navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    backgroundColor: "white",
-    flex: 1,
-    marginBottom: 65,
-  },
-  // 글 박스
-  item: {
-    width: "100%",
-    backgroundColor: "#ffffff",
-    borderRadius: 5,
-    padding: 15,
-    paddingBottom: 10,
-    marginVertical: 6,
-    marginHorizontal: 10,
-    shadowColor: "#5a5a5a",
-    shadowOffset: { width: 1, height: 1 },
-    shadowOpacity: 0.13,
-    shadowRadius: 8,
-    elevation: 2,
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  date: {
-    fontSize: 11,
-    color: "#5a5a5a",
-    marginRight: 6,
-    paddingRight: 5,
-    borderRightWidth: 1,
-    borderRightColor: "#5a5a5abf",
-  },
-  commentIcon: {
-    fontSize: 15,
-    marginRight: 5,
-    color: "crimson",
-  },
-  comment_cnt: {
-    fontSize: 12,
-    color: "crimson",
-  },
-  title: {
-    fontSize: 14,
-    paddingRight: 10,
-    fontWeight: "700",
-    marginBottom: 2.5,
-  },
-  content: {
-    paddingRight: 10,
-    fontSize: 13,
-    marginBottom: 2,
-  },
-  image: {
-    width: 60,
-    height: 60,
-    borderRadius: 5,
-  },
-  // 글쓰기 버튼
-  writeButton: {
-    position: "absolute",
-    right: 20,
-    bottom: 40,
-    width: 50,
-    height: 50,
-    borderRadius: 28,
-    backgroundColor: "#ffa451",
-    justifyContent: "center",
-    alignItems: "center",
-    elevation: 5,
-    shadowColor: "#5a5a5a",
-    shadowOffset: { width: 1, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-  },
-  nodata: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: "white",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  nodataText: {
-    fontSize: 20,
-    color: "gray",
-  },
-});
+const createStyles = (darkmode) => {
+  return StyleSheet.create({
+    container: {
+      width: "100%",
+      backgroundColor: darkmode ? "black" : "white",
+      flex: 1,
+      marginBottom: 65,
+    },
+    // 글 박스
+    item: {
+      width: "100%",
+      backgroundColor: darkmode ? "white" : "black",
+      borderRadius: 5,
+      padding: 15,
+      paddingBottom: 10,
+      marginVertical: 6,
+      marginHorizontal: 10,
+      shadowColor: "#5a5a5a",
+      shadowOffset: { width: 1, height: 1 },
+      shadowOpacity: 0.13,
+      shadowRadius: 8,
+      elevation: 2,
+      flexDirection: "row",
+      justifyContent: "space-between",
+    },
+    date: {
+      fontSize: 11,
+      color: "#5a5a5a",
+      marginRight: 6,
+      paddingRight: 5,
+      borderRightWidth: 1,
+      borderRightColor: "#5a5a5abf",
+    },
+    commentIcon: {
+      fontSize: 15,
+      marginRight: 5,
+      color: "crimson",
+    },
+    comment_cnt: {
+      fontSize: 12,
+      color: "crimson",
+    },
+    title: {
+      fontSize: 14,
+      paddingRight: 10,
+      fontWeight: "700",
+      marginBottom: 2.5,
+    },
+    content: {
+      paddingRight: 10,
+      fontSize: 13,
+      marginBottom: 2,
+    },
+    image: {
+      width: 60,
+      height: 60,
+      borderRadius: 5,
+    },
+    // 글쓰기 버튼
+    writeButton: {
+      position: "absolute",
+      right: 20,
+      bottom: 40,
+      width: 50,
+      height: 50,
+      borderRadius: 28,
+      backgroundColor: "#ffa451",
+      justifyContent: "center",
+      alignItems: "center",
+      elevation: 5,
+      shadowColor: "#5a5a5a",
+      shadowOffset: { width: 1, height: 1 },
+      shadowOpacity: 0.2,
+      shadowRadius: 6,
+    },
+    nodata: {
+      width: "100%",
+      height: "100%",
+      backgroundColor: darkmode ? "black" : "white",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    nodataText: {
+      fontSize: 20,
+      color: "gray",
+    },
+  });
+};
