@@ -469,7 +469,7 @@ const createStyles = (darkmode) => {
     likeIcon: {
       width: 15.5,
       height: 15,
-      opacity: darkmode ? 1 : 0.33,
+      opacity: 1,
       marginBottom: 2.5,
       marginHorizontal: 8,
       tintColor: darkmode ? "white" : "#66666675",

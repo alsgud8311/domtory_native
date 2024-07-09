@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Button,
   ScrollView,
@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
 import { getPushDetail, putPushDetail } from "../../server/notifications";
+import { useColorStore } from "../../store/colorstore";
 
 const SettingView = ({ navigation }) => {
   const [setting, setSetting] = useState({
@@ -19,6 +20,12 @@ const SettingView = ({ navigation }) => {
     comment: false,
     reply: false,
   });
+  const darkmode = useColorStore((state) => state.darkmode);
+  const styles = useMemo(() => createStyles(darkmode), [darkmode]);
+  const pickerSelectStyles = useMemo(
+    () => createPickerSelectStyles(darkmode),
+    [darkmode]
+  );
 
   const getData = async () => {
     const { success, data } = await getPushDetail();
@@ -182,83 +189,106 @@ const SettingView = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: "white",
-    padding: 20,
-    gap: 30,
-  },
-  card: {
-    width: "100%",
-    borderColor: "lightgray",
-    borderWidth: 1,
-    padding: 20,
-    borderRadius: 10,
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 17,
-    fontWeight: "700",
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: "gray",
-    marginBottom: 15,
-  },
-  selectCard: {
-    fontSize: 20,
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingVertical: 5,
-  },
-  selectWrapper: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "flex-end",
-  },
-  sectiontitle: {
-    fontSize: 16,
-    paddingVertical: 10,
-    paddingLeft: 10,
-  },
-  savebutton: {
-    padding: 15,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "orange",
-    marginBottom: 150,
-    borderRadius: 10,
-  },
-  buttonText: {
-    fontSize: 15,
-    color: "white",
-    fontWeight: "700",
-  },
-});
-
-const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    fontSize: 16,
-    paddingVertical: 10,
-    paddingHorizontal: 5,
-    borderRadius: 4,
-    color: "black",
-    paddingLeft: 100,
-  },
-  inputAndroid: {
-    fontSize: 16,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderWidth: 0.5,
-    borderColor: "purple",
-    borderRadius: 8,
-    color: "black",
-    paddingRight: 30, // to ensure the text is never behind the icon
-  },
-});
+const createStyles = (darkmode) => {
+  return StyleSheet.create({
+    container: {
+      width: "100%",
+      height: "100%",
+      backgroundColor: darkmode ? "black" : "white",
+      padding: 20,
+      gap: 30,
+    },
+    card: {
+      width: "100%",
+      borderColor: "lightgray",
+      borderWidth: 1,
+      padding: 20,
+      borderRadius: 10,
+      marginBottom: 20,
+    },
+    title: {
+      fontSize: 17,
+      fontWeight: "700",
+      marginBottom: 10,
+      color: darkmode ? "white" : "black",
+    },
+    subtitle: {
+      fontSize: 14,
+      color: "gray",
+      marginBottom: 15,
+    },
+    selectCard: {
+      fontSize: 20,
+      width: "100%",
+      flexDirection: "row",
+      justifyContent: "space-between",
+      paddingVertical: 5,
+    },
+    selectWrapper: {
+      flex: 1,
+      flexDirection: "row",
+      justifyContent: "flex-end",
+    },
+    sectiontitle: {
+      fontSize: 16,
+      paddingVertical: 10,
+      paddingLeft: 10,
+      color: darkmode ? "white" : "black",
+    },
+    savebutton: {
+      padding: 15,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "orange",
+      marginBottom: 150,
+      borderRadius: 10,
+    },
+    buttonText: {
+      fontSize: 15,
+      color: "white",
+      fontWeight: "700",
+    },
+    pickerSelectStyles_IOS: {
+      fontSize: 16,
+      paddingVertical: 10,
+      paddingHorizontal: 5,
+      borderRadius: 4,
+      color: "black",
+      paddingLeft: 100,
+    },
+    pickerSelectStyles_Android: {
+      fontSize: 16,
+      paddingHorizontal: 10,
+      paddingVertical: 8,
+      borderWidth: 0.5,
+      borderColor: "purple",
+      borderRadius: 8,
+      color: "black",
+      paddingRight: 30, // to ensure the text is never behind the icon
+    },
+  });
+};
+const createPickerSelectStyles = (darkmode) => {
+  return StyleSheet.create({
+    inputIOS: {
+      fontSize: 16,
+      paddingVertical: 10,
+      paddingHorizontal: 5,
+      borderRadius: 4,
+      color: darkmode ? "white" : "black",
+      paddingLeft: 100,
+    },
+    inputAndroid: {
+      fontSize: 16,
+      paddingHorizontal: 10,
+      paddingVertical: 8,
+      borderWidth: 0.5,
+      borderColor: "purple",
+      borderRadius: 8,
+      color: darkmode ? "white" : "black",
+      paddingRight: 30, // to ensure the text is never behind the icon
+    },
+  });
+};
 
 export default SettingView;
