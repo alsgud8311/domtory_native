@@ -9,6 +9,7 @@ import {
   Text,
   ScrollView,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { postMessage } from "../../server/message";
@@ -17,6 +18,7 @@ import { useColorStore } from "../../store/colorstore";
 const SendMessage = ({ onClose, roomId }) => {
   const [content, setContent] = useState("");
   const [isContentFocused, setIsContentFocused] = useState(false);
+  const [isSending, setIsSending] = useState(false);
   const darkmode = useColorStore((state) => state.darkmode);
   const styles = useMemo(() => createStyles(darkmode));
   console.log("쪽지 보내는 방 넘겨받은 룸아이디:", roomId);
@@ -48,8 +50,26 @@ const SendMessage = ({ onClose, roomId }) => {
     );
   };
 
+  const handleSending = () => {
+    Alert.alert(
+      "쪽지 보내기",
+      "쪽지를 보내시겠습니까?",
+      [
+        {
+          text: "취소",
+          style: "cancel",
+        },
+        {
+          text: "확인",
+          onPress: handleSendMessage,
+        },
+      ],
+      { cancelable: false }
+    );
+  };
   const handleSendMessage = async () => {
     try {
+      setIsSending(true);
       const response = await postMessage(roomId, content);
       if (response.success) {
         console.log("메시지 전송 성공");
@@ -75,9 +95,10 @@ const SendMessage = ({ onClose, roomId }) => {
           </TouchableOpacity>
           <Text style={styles.headerText}>쪽지 보내기</Text>
           <Feather
-            onPress={handleSendMessage}
+            onPress={handleSending}
             name="send"
             style={styles.sendIcon}
+            disabled={isSending}
           />
         </View>
         <TouchableWithoutFeedback
@@ -98,6 +119,7 @@ const SendMessage = ({ onClose, roomId }) => {
             multiline={true}
           />
         </TouchableWithoutFeedback>
+        {isSending && <ActivityIndicator color={"orange"} size={"large"} />}
       </ScrollView>
     </View>
   );

@@ -40,8 +40,8 @@ export default function PopularPostCard({ navigation }) {
           style={styles.moreButton}
           onPress={() => navigation.navigate("핫도토리 게시판")}
         >
-          <Text>더 보기</Text>
-          <AntDesign name="right" size={15} />
+          <Text style={styles.text}>더 보기</Text>
+          <AntDesign name="right" size={15} style={styles.text} />
         </TouchableOpacity>
       </View>
       <View style={styles.container}>
@@ -148,6 +148,9 @@ const createStyles = (darkmode) => {
       flexDirection: "row",
       gap: 5,
       alignItems: "center",
+    },
+    text: {
+      color: darkmode ? "white" : "black",
     },
   });
 };

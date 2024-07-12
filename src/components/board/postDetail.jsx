@@ -659,6 +659,7 @@ const createStyles = (darkmode) => {
       paddingBottom: 1.5,
       minHeight: 45,
       fontSize: 14,
+      color: darkmode ? "white" : "black",
     },
     anonymousCheck: {
       flexDirection: "row",

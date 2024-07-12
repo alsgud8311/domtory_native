@@ -5,6 +5,7 @@ import { useCallback, useState } from "react";
 import { getNotificationList, pushDelete } from "../../server/notifications";
 import { SwipeListView } from "react-native-swipe-list-view";
 import { EvilIcons } from "@expo/vector-icons";
+import { useColorStore } from "../../store/colorstore";
 
 export default function NotificationList() {
   const hiddenPushListRender = ({ item }) => {
@@ -46,6 +47,7 @@ export default function NotificationList() {
       </View>
     );
   };
+  const { darkmode } = useColorStore();
 
   const [data, setData] = useState(null);
   const navigation = useNavigation();
@@ -58,7 +60,7 @@ export default function NotificationList() {
   };
   const renderItem = ({ item }) => {
     // navigation을 renderItem 함수에 전달
-    return pushRenderItems({ item, navigation });
+    return pushRenderItems({ item, navigation, darkmode });
   };
 
   useFocusEffect(
@@ -69,7 +71,11 @@ export default function NotificationList() {
 
   return (
     <SafeAreaView
-      style={{ width: "100%", marginBottom: 80, backgroundColor: "white" }}
+      style={{
+        width: "100%",
+        marginBottom: 70,
+        backgroundColor: darkmode ? "black" : "white",
+      }}
     >
       <SwipeListView
         data={data}

@@ -44,8 +44,8 @@ export default function CommunityCard({ navigation }) {
           style={styles.moreButton}
           onPress={() => navigation.navigate("자유게시판")}
         >
-          <Text>더 보기</Text>
-          <AntDesign name="right" size={15} />
+          <Text style={styles.text}>더 보기</Text>
+          <AntDesign name="right" size={15} style={styles.text} />
         </TouchableOpacity>
       </View>
       <View style={styles.card}>
@@ -155,6 +155,9 @@ const createStyles = (darkmode) => {
     postDate: {
       fontSize: 12,
       color: "gray",
+    },
+    text: {
+      color: darkmode ? "white" : "black",
     },
   });
 };
