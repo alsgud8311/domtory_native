@@ -39,8 +39,8 @@ export default function CouncilNoticeCard({ navigation }) {
           style={styles.moreButton}
           onPress={() => navigation.navigate("공지사항", { div: "council" })}
         >
-          <Text>더 보기</Text>
-          <AntDesign name="right" size={15} />
+          <Text style={styles.text}>더 보기</Text>
+          <AntDesign name="right" size={15} style={styles.text} />
         </TouchableOpacity>
       </View>
       <ScrollView
@@ -144,6 +144,9 @@ const createStyles = (darkmode) => {
       fontSize: 14,
       marginBottom: 10,
       color: darkmode ? "white" : "dimgray",
+    },
+    text: {
+      color: darkmode ? "white" : "black",
     },
   });
 };

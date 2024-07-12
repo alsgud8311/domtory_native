@@ -19,12 +19,14 @@ import CbhsNoticeDetail from "../notice/cbhsNoticeDetail";
 import CouncilNoticeDetail from "../notice/CouncilNoticeDetail";
 import Header from "../../components/common/header";
 import { stackscreenOptions } from "../../constants/screenoptions";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, Feather } from "@expo/vector-icons";
 import PopupMenu from "../../components/board/popup";
 import PostFix from "../board/postfix";
 import NotificationList from "./notification";
 import Popular from "../community/popular/popular";
 import { useColorStore } from "../../store/colorstore";
+import Message from "../message/message";
+import MessageDetail from "../message/messageDetail";
 
 const HomeStack = ({ navigation }) => {
   const Stack = createNativeStackNavigator();
@@ -128,6 +130,26 @@ const HomeStack = ({ navigation }) => {
         })}
       />
       <Stack.Screen name="알림" component={NotificationList} />
+      <Stack.Screen name="쪽지" component={Message} />
+      <Stack.Screen
+        name="쪽지방"
+        component={MessageDetail}
+        options={({ navigation }) => ({
+          headerBackVisible: true,
+          headerRight: () => (
+            <Feather
+              onPress={() => navigation.setParams({ showModal: true })}
+              name="send"
+              size={24}
+              color={darkmode ? "white" : "black"}
+              style={{
+                paddingTop: 8,
+                paddingRight: 5,
+              }}
+            />
+          ),
+        })}
+      />
     </Stack.Navigator>
   );
 };

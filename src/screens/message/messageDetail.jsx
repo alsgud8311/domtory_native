@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   ImageBackground,
   View,
@@ -27,6 +27,7 @@ export default function MessageDetail({ route, navigation }) {
   const [refreshing, setRefreshing] = useState(false);
   const darkmode = useColorStore((state) => state.darkmode);
   const styles = useMemo(() => createStyles(darkmode), [darkmode]);
+  const recentMessage = useRef(null);
 
   console.log(messageId);
 
@@ -133,17 +134,19 @@ export default function MessageDetail({ route, navigation }) {
       <ImageBackground source={img} resizeMode="cover" style={styles.image}>
         <View style={styles.info}>
           <Text style={styles.infoText}>
-            해당 쪽지는 {messageInfo.board}의 "{messageInfo.post_title}" 이라는
-            글에서 시작된 쪽지입니다.
+            해당 쪽지는 {messageInfo.board}의 "{messageInfo.post_title}" 글에서
+            시작된 쪽지입니다.
           </Text>
         </View>
         <FlatList
+          ref={recentMessage}
           data={messageDetail}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
           }
+          onContentSizeChange={() => recentMessage.current.scrollToEnd()}
         />
       </ImageBackground>
       <Modal
