@@ -362,7 +362,9 @@ export default function CommentBox({
                   >
                     <Text style={styles.commentContent}>{comment.body}</Text>
                   </Hyperlink>
-                  <View style={{ display: "flex", flexDirection: "row" }}>
+                  <View
+                    style={{ display: "flex", flexDirection: "row", gap: 3 }}
+                  >
                     <Text style={styles.commentDate}>{comment.created_at}</Text>
                     <Image source={like} style={{ width: 15, height: 15 }} />
                     <Text style={styles.commentDate}>

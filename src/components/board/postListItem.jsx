@@ -103,7 +103,7 @@ const createStyles = (darkmode) => {
     },
     date: {
       fontSize: 11,
-      color: "#5a5a5a",
+      color: "lightgray",
     },
     commentWrapper: {
       flexDirection: "row",
