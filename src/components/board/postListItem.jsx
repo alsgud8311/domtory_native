@@ -103,7 +103,7 @@ const createStyles = (darkmode) => {
     },
     date: {
       fontSize: 11,
-      color: "lightgray",
+      color: darkmode ? "lightgray" : "gray",
     },
     commentWrapper: {
       flexDirection: "row",
@@ -114,11 +114,11 @@ const createStyles = (darkmode) => {
     commentIcon: {
       fontSize: 13,
       marginRight: 5,
-      color: "crimson",
+      color: darkmode ? "#ff4d6d" : "crimson",
     },
     comment_cnt: {
       fontSize: 12,
-      color: "crimson",
+      color: darkmode ? "#ff4d6d" : "crimson",
     },
     title: {
       color: darkmode ? "white" : "black",

@@ -81,8 +81,13 @@ export default function PopularPostCard({ navigation }) {
                     gap: 5,
                   }}
                 >
-                  <Octicons name="comment" style={{ color: "crimson" }} />
-                  <Text style={{ color: "crimson" }}>{post.comment_cnt}</Text>
+                  <Octicons
+                    name="comment"
+                    style={{ color: darkmode ? "#ff4d6d" : "crimson" }}
+                  />
+                  <Text style={{ color: darkmode ? "#ff4d6d" : "crimson" }}>
+                    {post.comment_cnt}
+                  </Text>
                 </View>
               </View>
             </TouchableOpacity>

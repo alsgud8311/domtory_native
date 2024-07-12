@@ -59,7 +59,7 @@ const HomeStack = ({ navigation }) => {
               <AntDesign
                 name="search1"
                 size={30}
-                color="black"
+                color={darkmode ? "white" : "black"}
                 onPress={() =>
                   navigation.navigate("검색", { board: "자유게시판" })
                 }
@@ -83,7 +83,7 @@ const HomeStack = ({ navigation }) => {
               <AntDesign
                 name="search1"
                 size={30}
-                color="black"
+                color={darkmode ? "white" : "black"}
                 onPress={() =>
                   navigation.navigate("검색", { board: "핫도토리게시판" })
                 }
