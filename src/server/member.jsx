@@ -60,7 +60,7 @@ export const getUserInfo = async () => {
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.log(error);
-      throw new Error("오류가 발생했습니다. 다시 시도해 주시겠어요?");
+      return new Error("오류가 발생했습니다. 다시 시도해 주시겠어요?");
     }
   }
 };

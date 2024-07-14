@@ -64,18 +64,18 @@ export default function Board({ boardId, navigation }) {
   );
 
   const handleOpenNewPost = async () => {
-    try {
-      const { status } = await getUserInfo();
-      if (status === "ACTIVE") setModalVisible(true);
-      else if (status === "WITHDRAWAL") {
-        alert("탈퇴한 계정으로 글을 작성할 수 없습니다.");
-      } else if (status === "BANNED") {
-        alert(
+    const result = await getUserInfo();
+    if (result instanceof Error) {
+      Alert.alert(result.message);
+    } else {
+      if (result.status === "ACTIVE") setModalVisible(true);
+      else if (result.status === "WITHDRAWAL") {
+        Alert.alert("탈퇴한 계정으로 글을 작성할 수 없습니다.");
+      } else if (result.status === "BANNED") {
+        Alert.alert(
           "커뮤니티 규칙을 위반하여 일시정지된 계정입니다.\n 문의는 kiiub8311@gmail.com으로 부탁드립니다."
         );
       }
-    } catch (error) {
-      console.log(error);
     }
   };
 
