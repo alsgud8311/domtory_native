@@ -53,4 +53,14 @@ export const signin = async (email, password) => {
   }
 };
 
-export const signout = async () => {};
+export const getUserInfo = async () => {
+  try {
+    const userInfo = await apiBe.get(`/member/info/`);
+    return userInfo.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.log(error);
+      throw new Error("오류가 발생했습니다. 다시 시도해 주시겠어요?");
+    }
+  }
+};

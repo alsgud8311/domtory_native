@@ -15,6 +15,7 @@ import { getPostList } from "../../server/board";
 import PostListItems from "./postListItem";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import { useColorStore } from "../../store/colorstore";
+import { getUserInfo } from "../../server/member";
 
 export default function Board({ boardId, navigation }) {
   const [data, setData] = useState([]);
@@ -62,8 +63,20 @@ export default function Board({ boardId, navigation }) {
     }, [boardId, currPage, navigation])
   );
 
-  const handleOpenNewPost = () => {
-    setModalVisible(true);
+  const handleOpenNewPost = async () => {
+    try {
+      const { status } = await getUserInfo();
+      if (status === "ACTIVE") setModalVisible(true);
+      else if (status === "WITHDRAWAL") {
+        alert("탈퇴한 계정으로 글을 작성할 수 없습니다.");
+      } else if (status === "BANNED") {
+        alert(
+          "커뮤니티 규칙을 위반하여 일시정지된 계정입니다.\n 문의는 kiiub8311@gmail.com으로 부탁드립니다."
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleCloseNewPost = () => {
