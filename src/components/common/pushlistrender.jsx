@@ -13,12 +13,16 @@ export const pushRenderItems = ({ item, navigation, darkmode }) => {
   };
   const styles = createStyles(darkmode);
   const navigateToDetailScreen = async () => {
-    if (item.boardId && item.postId) {
+    if ((item.boardId && item.postId) || item.message_room_id) {
       const { success } = await pushCheckUpdate(item.memberId, item.pushedAt);
-      if (success) {
+      if (success && postId) {
         navigation.navigate(board[item.boardId], {
           postId: item.postId,
           memberId: item.member,
+        });
+      } else if (success && message_room_id) {
+        navigation.navigate(board[`쪽지방`], {
+          messageId: message_room_id,
         });
       }
     } else {
