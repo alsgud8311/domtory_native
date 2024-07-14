@@ -73,13 +73,14 @@ export default function Home({ navigation }) {
         .getInitialNotification()
         .then(async (remoteMessage) => {
           if (remoteMessage && remoteMessage.data) {
-            const { postId, boardId, pushedAt } = remoteMessage.data;
-            if (postId && boardId && pushedAt) {
-              const { success } = await pushCheckUpdate(authState.id, pushedAt);
-              if (success) {
+            const { postId, boardId, pushedAt, message_room_id } =
+              remoteMessage.data;
+            if (((postId && boardId) || message_room_id) && pushedAt) {
+              await pushCheckUpdate(authState.id, pushedAt);
+              if (boardId && postId) {
                 navigation.navigate(board[`${boardId}`], { postId: postId });
-              } else {
-                navigation.navigate(board[`${boardId}`], { postId: postId });
+              } else if (message_room_id) {
+                navigation.navigate("쪽지방", { messageId: message_room_id });
               }
             } else {
               console.log("푸시 알림 데이터가 부족합니다.");
@@ -91,13 +92,14 @@ export default function Home({ navigation }) {
 
       messaging().onNotificationOpenedApp(async (remoteMessage) => {
         if (remoteMessage && remoteMessage.data) {
-          const { postId, boardId, pushedAt } = remoteMessage.data;
-          if (postId && boardId && pushedAt) {
-            const { success } = await pushCheckUpdate(authState.id, pushedAt);
-            if (success) {
+          const { postId, boardId, pushedAt, message_room_id } =
+            remoteMessage.data;
+          if (((postId && boardId) || message_room_id) && pushedAt) {
+            await pushCheckUpdate(authState.id, pushedAt);
+            if (boardId && postId) {
               navigation.navigate(board[`${boardId}`], { postId: postId });
-            } else {
-              navigation.navigate(board[`${boardId}`], { postId: postId });
+            } else if (message_room_id) {
+              navigation.navigate("쪽지방", { messageId: message_room_id });
             }
           } else {
             console.log("푸시 알림 데이터가 부족합니다.");
@@ -116,8 +118,9 @@ export default function Home({ navigation }) {
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
       console.log("포어그라운드", remoteMessage);
       if (remoteMessage && remoteMessage.data) {
-        const { postId, boardId, pushedAt } = remoteMessage.data;
-        if (postId && boardId && pushedAt) {
+        const { postId, boardId, pushedAt, message_room_id } =
+          remoteMessage.data;
+        if (((postId && boardId) || message_room_id) && pushedAt) {
           Alert.alert(
             remoteMessage.notification?.title ?? "알림",
             remoteMessage.notification?.body ?? "새로운 알림이 도착했습니다",
@@ -126,17 +129,14 @@ export default function Home({ navigation }) {
               {
                 text: "보러가기",
                 onPress: async () => {
-                  const { success } = await pushCheckUpdate(
-                    authState.id,
-                    pushedAt
-                  );
-                  if (success) {
+                  await pushCheckUpdate(authState.id, pushedAt);
+                  if (boardId && postId) {
                     navigation.navigate(board[`${boardId}`], {
                       postId: postId,
                     });
-                  } else {
-                    navigation.navigate(board[`${boardId}`], {
-                      postId: postId,
+                  } else if (message_room_id) {
+                    navigation.navigate("쪽지방", {
+                      messageId: message_room_id,
                     });
                   }
                 },

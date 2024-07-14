@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useRoute } from "@react-navigation/native";
 import {
   TouchableOpacity,
@@ -10,18 +10,21 @@ import {
   Easing,
   TouchableWithoutFeedback,
   Alert,
-  Dimensions
+  Dimensions,
 } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 import { block, deletePost, report } from "../../server/board";
 import { createMessage } from "../../server/message";
 import { useAuth } from "../../store/AuthContext";
+import { useColorStore } from "../../store/colorstore";
 
 const PopupMenu = ({ navigation }) => {
   const { authState } = useAuth();
   const route = useRoute();
   const { postId, memberId } = route.params;
   const [options, setOptions] = useState([]);
+  const darkmode = useColorStore((state) => state.darkmode);
+  const styles = useMemo(() => createStyles(darkmode), [darkmode]);
   const handleDeleteButton = async (postId) => {
     try {
       const { success } = await deletePost(postId);
@@ -67,7 +70,9 @@ const PopupMenu = ({ navigation }) => {
       const response = await createMessage(postId, 0);
       if (response.success) {
         console.log("쪽지방 생성 성공", response.data);
-        navigation.navigate('쪽지방', { messageId: response.data.message_room_id });
+        navigation.navigate("쪽지방", {
+          messageId: response.data.message_room_id,
+        });
       } else {
         console.error("쪽지방 생성 실패:", response.data);
       }
@@ -201,7 +206,7 @@ const PopupMenu = ({ navigation }) => {
                 },
               ],
               { cancelable: false }
-            )
+            ),
         },
       ]);
     }
@@ -220,7 +225,11 @@ const PopupMenu = ({ navigation }) => {
   return (
     <>
       <TouchableOpacity onPress={() => resizeBox(1)}>
-        <Entypo name="dots-three-vertical" size={20} color="black" />
+        <Entypo
+          name="dots-three-vertical"
+          size={20}
+          color={darkmode ? "white" : "black"}
+        />
       </TouchableOpacity>
       <Modal transparent visible={visible}>
         <TouchableWithoutFeedback onPress={() => setVisible(false)}>
@@ -253,32 +262,35 @@ const PopupMenu = ({ navigation }) => {
   );
 };
 
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
-const styles = StyleSheet.create({
-  popup: {
-    borderRadius: 5,
-    borderColor: "#fff",
-    borderWidth: 1,
-    backgroundColor: "#fff",
-    paddingHorizontal: 5,
-    position: "absolute",
-    top: windowHeight * 0.055,
-    right: windowWidth * 0.03,
-    // iOS용 그림자 스타일
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
+const createStyles = (darkmode) => {
+  return StyleSheet.create({
+    popup: {
+      borderRadius: 5,
+      borderColor: "#fff",
+      borderWidth: 1,
+      backgroundColor: darkmode ? "black" : "#fff",
+      paddingHorizontal: 5,
+      position: "absolute",
+      top: windowHeight * 0.055,
+      right: windowWidth * 0.03,
+      // iOS용 그림자 스타일
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+      // Android용 그림자 스타일
+      elevation: 5,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    // Android용 그림자 스타일
-    elevation: 5,
-  },
-  title: {
-    fontSize: 17,
-  },
-});
+    title: {
+      fontSize: 17,
+      color: darkmode ? "white" : "black",
+    },
+  });
+};
 
 export default PopupMenu;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -16,11 +16,21 @@ import {
   blockMessage,
 } from "../../server/message";
 import Swipeable from "react-native-swipeable-row";
+import { useColorStore } from "../../store/colorstore";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function MessageList({ navigation }) {
   console.log("쪽지 목록");
   const [messageList, setMessageList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const darkmode = useColorStore((state) => state.darkmode);
+  const styles = useMemo(() => createStyles(darkmode), [darkmode]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchMessageList();
+    }, [])
+  );
 
   const fetchMessageList = async () => {
     try {
@@ -38,10 +48,6 @@ export default function MessageList({ navigation }) {
       setRefreshing(false);
     }
   };
-
-  useEffect(() => {
-    fetchMessageList();
-  }, []);
 
   const handleRefresh = () => {
     setRefreshing(true);
@@ -62,13 +68,15 @@ export default function MessageList({ navigation }) {
         rightButtons={[
           <TouchableOpacity
             style={styles.deleteButton}
-            onPress={() => confirmDelete(item.id)}
+            onPress={() => confirmDelete(item.message_room_id)}
           >
             <Text style={styles.buttonText}>삭제</Text>
           </TouchableOpacity>,
           <TouchableOpacity
             style={styles.blockButton}
-            onPress={() => confirmBlock(item.id, item.send_id, item.recv_id)}
+            onPress={() =>
+              confirmBlock(item.message_room_id, item.send_id, item.recv_id)
+            }
           >
             <Text style={styles.buttonText}>차단</Text>
           </TouchableOpacity>,
@@ -77,7 +85,7 @@ export default function MessageList({ navigation }) {
         <TouchableOpacity
           style={styles.listItem}
           onPress={() => {
-            navigation.navigate("쪽지방", { messageId: item.id });
+            navigation.navigate("쪽지방", { messageId: item.message_room_id });
           }}
         >
           <View>
@@ -89,7 +97,9 @@ export default function MessageList({ navigation }) {
           <View style={{ alignItems: "flex-end" }}>
             <Text style={styles.timestamp}>{item.created_at}</Text>
             {item.is_received && !item.is_read && (
-              <Text style={styles.unreadMessageCnt}>+ {item.message_cnt}</Text>
+              <Text style={styles.unreadMessageCnt}>
+                + {item.new_messages_cnt}
+              </Text>
             )}
           </View>
         </TouchableOpacity>
@@ -169,70 +179,75 @@ export default function MessageList({ navigation }) {
 }
 
 const windowWidth = Dimensions.get("window").width;
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    backgroundColor: "white",
-    flex: 1,
-    marginBottom: 65,
-  },
-  listItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#cccccc8b",
-  },
-  name: {
-    fontSize: 14,
-    fontWeight: "bold",
-  },
-  content: {
-    fontSize: 13,
-    marginTop: 5,
-    width: windowWidth * 0.63,
-  },
-  timestamp: {
-    fontSize: 11,
-    color: "#999999",
-    marginTop: 5,
-  },
-  unreadMessageCnt: {
-    backgroundColor: "#ffb46e",
-    color: "#fff",
-    borderWidth: 1,
-    borderRadius: 4,
-    borderColor: "#fff",
-    marginTop: 4,
-    paddingHorizontal: 8,
-  },
-  deleteButton: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#ff5f5f",
-    width: windowWidth * 0.2,
-  },
-  blockButton: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#cacaca",
-    width: windowWidth * 0.2,
-  },
-  buttonText: {
-    color: "white",
-    fontSize: 15,
-  },
-  errorContainer: {
-    width: "100%",
-    flex: 1,
-    backgroundColor: "white",
-    justifyContent: "center",
-  },
-  noMessageErrorText: {
-    fontSize: 17,
-    textAlign: "center",
-  },
-});
+const createStyles = (darkmode) => {
+  return StyleSheet.create({
+    container: {
+      width: "100%",
+      backgroundColor: darkmode ? "black" : "white",
+      flex: 1,
+      marginBottom: 65,
+    },
+    listItem: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      paddingHorizontal: 15,
+      paddingVertical: 10,
+      borderBottomWidth: 1,
+      borderBottomColor: "#cccccc8b",
+    },
+    name: {
+      fontSize: 14,
+      fontWeight: "bold",
+      color: darkmode ? "white" : "black",
+    },
+    content: {
+      fontSize: 13,
+      marginTop: 5,
+      width: windowWidth * 0.63,
+      color: darkmode ? "white" : "black",
+    },
+    timestamp: {
+      fontSize: 11,
+      color: "#999999",
+      marginTop: 5,
+    },
+    unreadMessageCnt: {
+      backgroundColor: "#ffb46e",
+      color: "#fff",
+      borderWidth: 1,
+      borderRadius: 4,
+      borderColor: "#fff",
+      marginTop: 4,
+      paddingHorizontal: 8,
+    },
+    deleteButton: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "#ff5f5f",
+      width: windowWidth * 0.2,
+    },
+    blockButton: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "#cacaca",
+      width: windowWidth * 0.2,
+    },
+    buttonText: {
+      color: "white",
+      fontSize: 15,
+    },
+    errorContainer: {
+      width: "100%",
+      flex: 1,
+      backgroundColor: darkmode ? "black" : "white",
+      justifyContent: "center",
+    },
+    noMessageErrorText: {
+      fontSize: 17,
+      textAlign: "center",
+      color: darkmode ? "gray" : "black",
+    },
+  });
+};

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import {
   View,
   Text,
@@ -12,10 +12,12 @@ import {
 } from "react-native";
 import { AntDesign, Octicons, MaterialIcons } from "@expo/vector-icons";
 import { getSearhedData } from "../../server/search";
+import { useColorStore } from "../../store/colorstore";
 
 export default function Searchbox({ route, navigation }) {
   const textInputRef = useRef(null);
-
+  const darkmode = useColorStore((state) => state.darkmode);
+  const styles = useMemo(() => createStyles(darkmode), [darkmode]);
   const renderItem = ({ item, board }) => {
     const Boardname = {
       1: "자유 게시판",
@@ -64,7 +66,13 @@ export default function Searchbox({ route, navigation }) {
                 <Text style={styles.board}>{Boardname[item.board]}</Text>
               )}
               <Text style={styles.title}>{item.title}</Text>
-              <Text style={styles.content}>{item.content}</Text>
+              <Text
+                style={styles.content}
+                ellipsizeMode="tail"
+                numberOfLines={2}
+              >
+                {item.body}
+              </Text>
             </View>
             <View style={{ flexDirection: "row", marginTop: 7, height: 15 }}>
               <Text style={styles.date}>{item.created_at}</Text>
@@ -138,6 +146,7 @@ export default function Searchbox({ route, navigation }) {
             ref={textInputRef}
             style={styles.searchbox}
             placeholder="검색어를 입력하세요."
+            placeholderTextColor={darkmode ? "white" : "black"}
             onChangeText={handleInputChange}
             value={inputText}
             onSubmitEditing={() => handleSearch()}
@@ -180,118 +189,128 @@ export default function Searchbox({ route, navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: "#fff",
-    marginBottom: 10,
-    paddingBottom: 150,
-  },
-  searchcontainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    borderBottomColor: "#f0f0f0",
-    borderStyle: "solid",
-    borderBottomWidth: 1,
-    paddingHorizontal: 10,
-    alignItems: "center",
-  },
-  inputContainer: {
-    width: "85%",
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 10,
-  },
-  searchbox: {
-    height: 40,
-    backgroundColor: "#f0f0f0",
-    borderBottomLeftRadius: 10,
-    borderTopLeftRadius: 10,
-    paddingLeft: 10,
-    width: "90%",
-  },
-  searchbtn: {
-    backgroundColor: "#f0f0f0",
-    height: 40,
-    paddingRight: 10,
-    paddingTop: 10,
-    paddingLeft: 10,
-    borderTopRightRadius: 10,
-    borderBottomRightRadius: 10,
-  },
-  canceltext: {
-    fontSize: 15,
-  },
-  item: {
-    backgroundColor: "#ffffff",
-    borderRadius: 5,
-    padding: 15,
-    paddingBottom: 10,
-    marginVertical: 6,
-    marginHorizontal: 10,
-    shadowColor: "#5a5a5a",
-    shadowOffset: { width: 1, height: 1 },
-    shadowOpacity: 0.13,
-    shadowRadius: 8,
-    elevation: 2,
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  board: {
-    fontSize: 13,
-    color: "orange",
-    paddingBottom: 5,
-  },
-  commenticon: {
-    fontSize: 11,
-    color: "#5a5a5a",
-    marginRight: 3,
-    paddingTop: 3,
-  },
-  comment: {
-    fontSize: 12,
-    color: "#5a5a5a",
-    marginRight: 5,
-  },
-  date: {
-    fontSize: 12,
-    color: "#5a5a5a",
-    marginRight: 6,
-    paddingRight: 5,
-    borderRightWidth: 1,
-    borderRightColor: "#5a5a5abf",
-  },
-  user: {
-    fontSize: 12,
-    marginRight: 5,
-    paddingRight: 5,
-    color: "#5a5a5a",
-  },
-  title: {
-    fontSize: 14,
-    fontWeight: "700",
-    marginBottom: 2.5,
-  },
-  content: {
-    fontSize: 14,
-  },
-  image: {
-    width: 60,
-    height: 60,
-    borderRadius: 5,
-  },
-  empty: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: "#f0f0f0",
-    alignItems: "center",
-    paddingTop: 150,
-  },
-  emptyText: {
-    fontSize: 16,
-    textAlign: "center",
-    color: "gray",
-    paddingTop: 10,
-  },
-});
+const createStyles = (darkmode) => {
+  return StyleSheet.create({
+    container: {
+      width: "100%",
+      height: "100%",
+      backgroundColor: darkmode ? "black" : "#fff",
+      marginBottom: 10,
+      paddingBottom: 150,
+    },
+    searchcontainer: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      borderBottomColor: darkmode ? "gray" : "#f0f0f0",
+      borderStyle: "solid",
+      borderBottomWidth: 1,
+      paddingHorizontal: 10,
+      alignItems: "center",
+    },
+    inputContainer: {
+      width: "85%",
+      flexDirection: "row",
+      alignItems: "center",
+      padding: 10,
+    },
+    searchbox: {
+      height: 40,
+      backgroundColor: darkmode ? "black" : "#f0f0f0",
+      borderBottomLeftRadius: 10,
+      borderTopLeftRadius: 10,
+      borderColor: darkmode ? "gray" : "",
+      borderWidth: darkmode ? 1 : 0,
+      paddingLeft: 10,
+      width: "90%",
+      color: darkmode ? "white" : "black",
+    },
+    searchbtn: {
+      backgroundColor: darkmode ? "black" : "#f0f0f0",
+      height: 40,
+      paddingRight: 10,
+      paddingTop: 10,
+      paddingLeft: 10,
+      borderTopRightRadius: 10,
+      borderBottomRightRadius: 10,
+      borderColor: darkmode ? "gray" : "",
+      borderWidth: darkmode ? 1 : 0,
+    },
+    canceltext: {
+      fontSize: 15,
+      color: darkmode ? "white" : "black",
+    },
+    item: {
+      backgroundColor: darkmode ? "black" : "#ffffff",
+      borderRadius: 5,
+      padding: 15,
+      paddingBottom: 10,
+      marginVertical: 6,
+      marginHorizontal: 10,
+      shadowColor: "#5a5a5a",
+      shadowOffset: { width: 1, height: 1 },
+      shadowOpacity: 0.13,
+      shadowRadius: 8,
+      elevation: 2,
+      flexDirection: "row",
+      justifyContent: "space-between",
+    },
+    board: {
+      fontSize: 13,
+      color: "orange",
+      paddingBottom: 5,
+    },
+    commenticon: {
+      fontSize: 11,
+      color: darkmode ? "#ff4d6d" : "crimson",
+      marginRight: 3,
+      paddingTop: 3,
+    },
+    comment: {
+      fontSize: 12,
+      color: darkmode ? "#ff4d6d" : "crimson",
+      marginRight: 5,
+    },
+    date: {
+      fontSize: 12,
+      color: darkmode ? "lightgray" : "#5a5a5a",
+      marginRight: 6,
+      paddingRight: 5,
+      borderRightWidth: 1,
+      borderRightColor: "#5a5a5abf",
+    },
+    user: {
+      fontSize: 12,
+      marginRight: 5,
+      paddingRight: 5,
+      color: "#5a5a5a",
+    },
+    title: {
+      fontSize: 14,
+      fontWeight: "700",
+      marginBottom: 2.5,
+      color: darkmode ? "white" : "black",
+    },
+    content: {
+      fontSize: 14,
+      color: darkmode ? "white" : "black",
+    },
+    image: {
+      width: 60,
+      height: 60,
+      borderRadius: 5,
+    },
+    empty: {
+      width: "100%",
+      height: "100%",
+      backgroundColor: darkmode ? "black" : "#f0f0f0",
+      alignItems: "center",
+      paddingTop: 150,
+    },
+    emptyText: {
+      fontSize: 16,
+      textAlign: "center",
+      color: "gray",
+      paddingTop: 10,
+    },
+  });
+};

@@ -148,7 +148,7 @@ export default function ReplyCommentBox({
               <Hyperlink linkDefault={true} linkStyle={{ color: "mediumblue" }}>
                 <Text style={styles.commentContent}>{reply.body}</Text>
               </Hyperlink>
-              <View style={{ display: "flex", flexDirection: "row" }}>
+              <View style={{ display: "flex", flexDirection: "row", gap: 3 }}>
                 <Text style={styles.commentDate}>{reply.created_at}</Text>
                 <Image source={like} style={{ width: 15, height: 15 }} />
                 <Text style={styles.commentDate}>

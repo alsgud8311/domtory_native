@@ -41,8 +41,8 @@ export default function NoticeCard({ navigation }) {
           style={styles.moreButton}
           onPress={() => navigation.navigate("공지사항", { div: "cbhs" })}
         >
-          <Text>더 보기</Text>
-          <AntDesign name="right" size={15} />
+          <Text style={styles.text}>더 보기</Text>
+          <AntDesign name="right" size={15} style={styles.text} />
         </TouchableOpacity>
       </View>
       <View style={styles.card}>
@@ -135,6 +135,9 @@ const createStyles = (darkmode) => {
     postDate: {
       color: "gray",
       fontSize: 13,
+    },
+    text: {
+      color: darkmode ? "white" : "black",
     },
   });
 };

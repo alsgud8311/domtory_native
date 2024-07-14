@@ -100,8 +100,13 @@ export default function RecentPostCard({ navigation }) {
                       gap: 5,
                     }}
                   >
-                    <Octicons name="comment" style={{ color: "crimson" }} />
-                    <Text style={{ color: "crimson" }}>{data.comment_cnt}</Text>
+                    <Octicons
+                      name="comment"
+                      style={{ color: darkmode ? "#ff4d6d" : "crimson" }}
+                    />
+                    <Text style={{ color: darkmode ? "#ff4d6d" : "crimson" }}>
+                      {data.comment_cnt}
+                    </Text>
                   </View>
                 </View>
               </View>

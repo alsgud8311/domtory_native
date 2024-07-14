@@ -103,7 +103,7 @@ const MainTab = () => {
     </Tab.Navigator>
   );
 };
-const createStyles = (darkmode) => {
+const createStyles = (darkmode: boolean) => {
   return StyleSheet.create({
     iconContainer: {
       justifyContent: "center",
