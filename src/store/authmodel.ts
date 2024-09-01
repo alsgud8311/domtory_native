@@ -9,6 +9,7 @@ export type UserInfo = {
   username?: string | null;
   name?: string | null;
   id?: string | null;
+  dorm?: string | null;
   pushTokenActive?: string | null;
 };
 

@@ -156,7 +156,7 @@ export default function Home({ navigation }) {
         );
       }
     });
-
+    console.log("대박쓰", authState);
     return unsubscribe;
   }, []);
 

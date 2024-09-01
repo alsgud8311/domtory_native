@@ -7,10 +7,12 @@ import { AntDesign } from "@expo/vector-icons";
 import dotory from "../../../assets/unlike_icon.png";
 import { useColorStore } from "../../../store/colorstore";
 import { useMemo } from "react";
+import { useAuth } from "../../../store/AuthContext";
 
 export default function ShortcutCard({ navigation }) {
   const darkmode = useColorStore((state) => state.darkmode);
   const styles = useMemo(() => createStyles(darkmode));
+  const { authState } = useAuth();
   return (
     <>
       <View style={styles.noticeContainer}>
@@ -61,7 +63,9 @@ export default function ShortcutCard({ navigation }) {
           onPress={() => navigation.navigate("자유게시판")}
         >
           <Octicons name="comment-discussion" style={styles.icons} />
-          <Text style={styles.shortcutText}>자유게시판</Text>
+          <Text style={styles.shortcutText}>
+            {authState.dorm === "2" ? "동서울관" : "서서울관"} 자유게시판
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.shortcutButton}

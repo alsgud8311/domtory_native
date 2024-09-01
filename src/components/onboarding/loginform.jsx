@@ -50,10 +50,10 @@ export default function LoginForm({ navigation }) {
     if (success) {
       console.log("login success");
     } else {
-      console.log("로그인 에라땄음", data);
+      console.log("로그인 에라땄음");
       setLoginError(data);
-      if (loginError.detail) {
-        Alert.alert(loginError.detail);
+      if (data.detail) {
+        Alert.alert(data.detail);
         setIsLoading(false);
         return;
       }

@@ -288,15 +288,11 @@ export default function PostDetail({ data, reloadData, postId, navigation }) {
         {
           text: "네",
           onPress: async () => {
-            try {
-              const { success, data } = await postLike(postId);
-              if (success) {
-                console.log(data);
-                setLikesCount(data.likes_cnt);
-                setIsLiked(true);
-              }
-            } catch (error) {
-              console.error("좋아요를 처리하는 중 에러 발생:", error);
+            const { success, data } = await postLike(postId);
+            if (success) {
+              console.log(data);
+              setLikesCount(data.likes_cnt);
+              setIsLiked(true);
             }
           },
         },

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { apiBe } from ".";
+import { Alert } from "react-native";
 
 //게시글 작성
 export const writePost = async (boardId, formData) => {
@@ -41,7 +42,8 @@ export const postLike = async (postId) => {
     }
     return { success: false, data: "정보를 가져오는 중에 오류가 발생했습니다" };
   } catch (error) {
-    return { success: false, data: error.response.data };
+    Alert.alert(error.response.data.detail);
+    return;
   }
 };
 
@@ -138,7 +140,6 @@ export const getLatestPosts = async (boardId) => {
   try {
     const { data } = await apiBe.get(`/board/post/latest/${boardId}/`);
     if (data) {
-      console.log("성공", data);
       return { success: true, data: data };
     }
     return { success: false, data: "정보를 가져오는 중에 오류가 발생했습니다" };
