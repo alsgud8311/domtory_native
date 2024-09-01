@@ -64,7 +64,7 @@ export default function ShortcutCard({ navigation }) {
         >
           <Octicons name="comment-discussion" style={styles.icons} />
           <Text style={styles.shortcutText}>
-            {authState.dorm === "2" ? "동서울관" : "서서울관"} 자유게시판
+            {authState.dorm === "3" ? "서서울관" : "동서울관"} 자유게시판
           </Text>
         </TouchableOpacity>
         <TouchableOpacity

@@ -410,7 +410,14 @@ export default function PostDetail({ data, reloadData, postId, navigation }) {
               alignItems: "center",
             }}
           >
-            <Image source={isLiked ? like : unlike} style={styles.likeIcon} />
+            <Image
+              source={isLiked ? like : unlike}
+              style={
+                isLiked
+                  ? { ...styles.likeIcon, tintColor: undefined }
+                  : styles.likeIcon
+              }
+            />
             <Text style={styles.likeNum}>{likesCount}</Text>
           </TouchableOpacity>
           <Octicons name="comment" style={styles.commentIcon} />

@@ -26,18 +26,16 @@ export default function RecentPostCard({ navigation }) {
     3: "취준생게시판",
     4: "번개모임게시판",
     5: "분실물게시판",
+    6: "자율회 공지사항",
     7: "통합게시판",
   };
-
+  //취준생 게시판을 통해 같은 서서울관 사생들과 취준 스터디나 고민 공유 등의 이야기를 나누어보세요.
   useFocusEffect(
     useCallback(() => {
       const getData = async () => {
         const { success, data } = await getLatestPosts("0");
         if (success) {
           setRecentPostData(data);
-          console.log("???", data);
-        } else {
-          console.log("?????", data);
         }
       };
       getData();

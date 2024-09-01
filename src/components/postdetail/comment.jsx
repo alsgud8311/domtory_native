@@ -331,7 +331,14 @@ export default function CommentBox({
                       alignItems: "center",
                     }}
                   >
-                    <Image source={unlike} style={styles.likeIcon} />
+                    <Image
+                      source={comment.is_liked ? like : unlike}
+                      style={
+                        comment.is_liked
+                          ? { ...styles.likeIcon, tintColor: undefined }
+                          : styles.likeIcon
+                      }
+                    />
                   </TouchableOpacity>
 
                   {parseInt(authState.id) === comment.member ? (

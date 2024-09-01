@@ -90,7 +90,7 @@ export const deletePost = async (postId) => {
 export const getPostList = async (boardId, page) => {
   let boardUrl;
   switch (boardId) {
-    case 6:
+    case "bookmark":
       // 북마크
       boardUrl = `/board/post/bookmark/list/?page=${page}`;
       break;
@@ -107,7 +107,6 @@ export const getPostList = async (boardId, page) => {
       boardUrl = `/board/mypage/paged/comment/?page=${page}`;
       break;
     default:
-      console.log("너 머야", boardId);
       boardUrl = `/board/post/paged/list/${boardId}/?page=${page}`;
       break;
   }

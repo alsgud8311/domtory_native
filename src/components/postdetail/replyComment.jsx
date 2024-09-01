@@ -119,7 +119,14 @@ export default function ReplyCommentBox({
                   alignItems: "center",
                 }}
               >
-                <Image source={unlike} style={styles.likeIcon} />
+                <Image
+                  source={reply.is_liked ? like : unlike}
+                  style={
+                    reply.is_liked
+                      ? { ...styles.likeIcon, tintColor: undefined }
+                      : styles.likeIcon
+                  }
+                />
               </TouchableOpacity>
               {parseInt(authState.id) === reply.member ? (
                 <Octicons

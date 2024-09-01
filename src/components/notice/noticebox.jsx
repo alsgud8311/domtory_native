@@ -17,6 +17,7 @@ import { getCouncilNotice } from "../../server/notice";
 import { openBrowserAsync } from "expo-web-browser";
 import { useAuth } from "../../store/AuthContext";
 import { useColorStore } from "../../store/colorstore";
+import { apiBe } from "../../server";
 
 export default function Noticebox({ div, navigation }) {
   const { authState } = useAuth();
@@ -54,13 +55,13 @@ export default function Noticebox({ div, navigation }) {
         }
       } else {
         let apiUrl = `https://api.domtory.site/notice/?page=${page}`;
-        response = await axios.get(apiUrl);
+        response = await apiBe.get(apiUrl);
         setData(response.data.postList);
         setCbhsTotalPages(response.data.pageCnt);
         setCurrentPage(response.data.curPage);
       }
     } catch (error) {
-      console.error(error);
+      console.log(error);
     } finally {
       setLoading(false);
     }
