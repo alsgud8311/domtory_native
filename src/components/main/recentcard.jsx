@@ -26,6 +26,7 @@ export default function RecentPostCard({ navigation }) {
     3: "취준생게시판",
     4: "번개모임게시판",
     5: "분실물게시판",
+    7: "통합게시판",
   };
 
   useFocusEffect(

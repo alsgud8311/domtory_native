@@ -116,7 +116,6 @@ export default function Home({ navigation }) {
 
     fetchData();
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
-      console.log("포어그라운드", remoteMessage);
       if (remoteMessage && remoteMessage.data) {
         const { postId, boardId, pushedAt, message_room_id } =
           remoteMessage.data;
