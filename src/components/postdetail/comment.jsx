@@ -207,6 +207,10 @@ export default function CommentBox({
         {
           text: "네",
           onPress: async () => {
+            if (parseInt(authState.id) === comment.member) {
+              Alert.alert("자신의 글이나 댓글에는 좋아요를 남길 수 없습니다.");
+              return;
+            }
             try {
               const { success, data } = await postCommentLike(comment.id);
               if (success) {
@@ -310,13 +314,15 @@ export default function CommentBox({
                     style={styles.commnetReply}
                     onPress={() => promptForReply(comment.id)}
                   />
-                  <Feather
-                    name="send"
-                    style={styles.messageIcon}
-                    onPress={() =>
-                      promptForCreateMessage(comment.anonymous_number)
-                    }
-                  />
+                  {parseInt(authState.id) !== comment.member ? (
+                    <Feather
+                      name="send"
+                      style={styles.messageIcon}
+                      onPress={() =>
+                        promptForCreateMessage(comment.anonymous_number)
+                      }
+                    />
+                  ) : null}
                   <TouchableOpacity
                     onPress={handlePostLike(comment)}
                     style={{

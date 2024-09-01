@@ -54,6 +54,10 @@ export default function ReplyCommentBox({
         {
           text: "네",
           onPress: async () => {
+            if (parseInt(authState.id) === reply.member) {
+              Alert.alert("자기 자신의 답글에는 좋아요를 남길 수 없습니다");
+              return;
+            }
             try {
               const { success, data } = await postCommentLike(reply.id);
               if (success) {
@@ -100,11 +104,13 @@ export default function ReplyCommentBox({
             </View>
             {/* 대댓글의 옵션 버튼 (삭제, 신고 등) */}
             <View style={styles.commentOption}>
-              <Feather
-                name="send"
-                style={styles.messageIcon}
-                onPress={() => promptForCreateMessage(reply.anonymous_number)}
-              />
+              {parseInt(authState.id) !== reply.member ? (
+                <Feather
+                  name="send"
+                  style={styles.messageIcon}
+                  onPress={() => promptForCreateMessage(reply.anonymous_number)}
+                />
+              ) : null}
               <TouchableOpacity
                 onPress={handlePostLike(reply)}
                 style={{
