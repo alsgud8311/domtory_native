@@ -85,7 +85,10 @@ export default function MessageList({ navigation }) {
         <TouchableOpacity
           style={styles.listItem}
           onPress={() => {
-            navigation.navigate("쪽지방", { messageId: item.message_room_id });
+            navigation.navigate("쪽지방", {
+              messageId: item.message_room_id,
+              senderId: item.sender,
+            });
           }}
         >
           <View>
