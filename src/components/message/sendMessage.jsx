@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   View,
   TextInput,
@@ -9,17 +9,22 @@ import {
   Text,
   ScrollView,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { postMessage } from "../../server/message";
+import { useColorStore } from "../../store/colorstore";
 
 const SendMessage = ({ onClose, roomId }) => {
   const [content, setContent] = useState("");
   const [isContentFocused, setIsContentFocused] = useState(false);
-
+  const [isSending, setIsSending] = useState(false);
+  const darkmode = useColorStore((state) => state.darkmode);
+  const styles = useMemo(() => createStyles(darkmode));
   console.log("쪽지 보내는 방 넘겨받은 룸아이디:", roomId);
 
   const onChangeContent = (inputContent) => {
+    console.log(inputContent);
     setContent(inputContent);
   };
 
@@ -45,8 +50,26 @@ const SendMessage = ({ onClose, roomId }) => {
     );
   };
 
+  const handleSending = () => {
+    Alert.alert(
+      "쪽지 보내기",
+      "쪽지를 보내시겠습니까?",
+      [
+        {
+          text: "취소",
+          style: "cancel",
+        },
+        {
+          text: "확인",
+          onPress: handleSendMessage,
+        },
+      ],
+      { cancelable: false }
+    );
+  };
   const handleSendMessage = async () => {
     try {
+      setIsSending(true);
       const response = await postMessage(roomId, content);
       if (response.success) {
         console.log("메시지 전송 성공");
@@ -64,13 +87,18 @@ const SendMessage = ({ onClose, roomId }) => {
       <ScrollView style={styles.modal}>
         <View style={styles.header}>
           <TouchableOpacity onPress={handleCancel}>
-            <AntDesign name="close" size={22} />
+            <AntDesign
+              name="close"
+              size={22}
+              style={{ color: darkmode ? "white" : "black" }}
+            />
           </TouchableOpacity>
           <Text style={styles.headerText}>쪽지 보내기</Text>
           <Feather
-            onPress={handleSendMessage}
+            onPress={handleSending}
             name="send"
             style={styles.sendIcon}
+            disabled={isSending}
           />
         </View>
         <TouchableWithoutFeedback
@@ -91,6 +119,7 @@ const SendMessage = ({ onClose, roomId }) => {
             multiline={true}
           />
         </TouchableWithoutFeedback>
+        {isSending && <ActivityIndicator color={"orange"} size={"large"} />}
       </ScrollView>
     </View>
   );
@@ -109,48 +138,54 @@ const baseInputContent = {
   textAlignVertical: "top",
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: "100%",
-    marginTop: 50,
-  },
-  modal: {
-    backgroundColor: "#fff",
-    width: "100%",
-    height: "100%",
-    padding: 15,
-    borderRadius: 10,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 10,
-    marginBottom: 15,
-    marginHorizontal: 5,
-  },
-  headerText: {
-    textAlign: "center",
-    flex: 1,
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#333333",
-  },
-  sendIcon: {
-    fontSize: 24,
-    paddingTop: 10,
-  },
-  contentContainer: {
-    marginTop: 10,
-  },
-  focused: {
-    ...baseInputContent,
-    borderColor: "#ff910097",
-  },
-  inputContent: {
-    ...baseInputContent,
-  },
-});
+const createStyles = (darkmode) => {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      width: "100%",
+      paddingTop: 50,
+      backgroundColor: darkmode ? "black" : "white",
+    },
+    modal: {
+      backgroundColor: darkmode ? "black" : "#fff",
+      width: "100%",
+
+      padding: 15,
+      borderRadius: 10,
+    },
+    header: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingHorizontal: 10,
+      marginBottom: 15,
+      marginHorizontal: 5,
+    },
+    headerText: {
+      textAlign: "center",
+      flex: 1,
+      fontSize: 18,
+      fontWeight: "700",
+      color: darkmode ? "white" : "#333333",
+    },
+    sendIcon: {
+      fontSize: 24,
+      paddingTop: 10,
+      color: darkmode ? "white" : "black",
+    },
+    contentContainer: {
+      marginTop: 10,
+    },
+    focused: {
+      ...baseInputContent,
+      borderColor: "#ff910097",
+      color: darkmode ? "white" : "black",
+    },
+    inputContent: {
+      ...baseInputContent,
+      color: darkmode ? "white" : "black",
+    },
+  });
+};
 
 export default SendMessage;

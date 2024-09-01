@@ -539,7 +539,7 @@ const createStyles = (darkmode) => {
     commentIcon: {
       fontSize: 17,
       marginRight: 5,
-      color: "crimson",
+      color: darkmode ? "#ff4d6d" : "crimson",
       marginTop: 2,
     },
     likeIcon: {
@@ -556,7 +556,7 @@ const createStyles = (darkmode) => {
     },
     commentNum: {
       fontSize: 15,
-      color: "crimson",
+      color: darkmode ? "#ff4d6d" : "crimson",
       marginRight: 15,
     },
     // 댓글 컨테이너
@@ -659,6 +659,7 @@ const createStyles = (darkmode) => {
       paddingBottom: 1.5,
       minHeight: 45,
       fontSize: 14,
+      color: darkmode ? "white" : "black",
     },
     anonymousCheck: {
       flexDirection: "row",
