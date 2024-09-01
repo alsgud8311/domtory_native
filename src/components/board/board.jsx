@@ -134,7 +134,7 @@ export default function Board({ boardId, navigation }) {
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
       />
-      {boardId <= 5 && (
+      {boardId <= 7 && (
         <>
           <TouchableOpacity
             onPress={handleOpenNewPost}

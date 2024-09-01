@@ -26,6 +26,9 @@ export default function PostListItems({ item, navigation }) {
       case 5:
         screenName = "분실물게시판";
         break;
+      case 7:
+        screenName = "통합 게시판";
+        break;
       default:
         screenName = "일치하는 게시판 없음";
     }

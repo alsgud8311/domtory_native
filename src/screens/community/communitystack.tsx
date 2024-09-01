@@ -38,6 +38,8 @@ import PostFix from "../board/postfix";
 import Bookmark from "./bookmark/bookmark";
 import BookmarkDetail from "./bookmark/bookmarkDetail";
 import { useColorStore } from "../../store/colorstore";
+import CombinedGeneral from "./combinedGeneral/combinedGeneral";
+import CombinedGeneralDetail from "./combinedGeneral/combinedGeneralDetail";
 
 const CommunityStack = ({ navigation }) => {
   const Stack = createNativeStackNavigator();
@@ -61,6 +63,31 @@ const CommunityStack = ({ navigation }) => {
       <Stack.Screen
         name="스크랩한 글 보기"
         component={BookmarkDetail}
+        options={({ navigation }) => ({
+          headerRight: () => <Popup navigation={navigation} />,
+        })}
+      />
+      <Stack.Screen
+        name="통합게시판"
+        component={CombinedGeneral}
+        options={{
+          headerRight: () => {
+            return (
+              <AntDesign
+                name="search1"
+                size={30}
+                color={darkmode ? "white" : "black"}
+                onPress={() =>
+                  navigation.navigate("검색", { board: "통합 게시판" })
+                }
+              />
+            );
+          },
+        }}
+      />
+      <Stack.Screen
+        name="통합 게시판"
+        component={CombinedGeneralDetail}
         options={({ navigation }) => ({
           headerRight: () => <Popup navigation={navigation} />,
         })}

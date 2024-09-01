@@ -92,18 +92,20 @@ export const getPostList = async (boardId, page) => {
       // 북마크
       boardUrl = `/board/post/bookmark/list/?page=${page}`;
       break;
-    case 7:
+    case "hot":
       // 핫도토리 게시판
       boardUrl = `/board/post/paged/list/popular/?page=${page}`;
       break;
-    case 8:
+    case "mypost":
       // 내가 쓴 글 게시판
       boardUrl = `/board/mypage/paged/post/?page=${page}`;
       break;
-    case 9:
+    case "mycomment":
       // 내가 댓글 쓴 글 게시판
       boardUrl = `/board/mypage/paged/comment/?page=${page}`;
+      break;
     default:
+      console.log("너 머야", boardId);
       boardUrl = `/board/post/paged/list/${boardId}/?page=${page}`;
       break;
   }
@@ -136,6 +138,7 @@ export const getLatestPosts = async (boardId) => {
   try {
     const { data } = await apiBe.get(`/board/post/latest/${boardId}/`);
     if (data) {
+      console.log("성공", data);
       return { success: true, data: data };
     }
     return { success: false, data: "정보를 가져오는 중에 오류가 발생했습니다" };

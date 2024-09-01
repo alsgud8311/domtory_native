@@ -1,5 +1,5 @@
 import { TouchableOpacity, Text, View, StyleSheet, Image } from "react-native";
-import { Entypo } from "@expo/vector-icons";
+import { Entypo, FontAwesome6 } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Octicons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -48,6 +48,13 @@ export default function ShortcutCard({ navigation }) {
             }}
           />
           <Text style={styles.shortcutText}>핫도토리 게시판</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.shortcutButton}
+          onPress={() => navigation.navigate("통합게시판")}
+        >
+          <FontAwesome6 name="people-roof" style={styles.icons} />
+          <Text style={styles.shortcutText}>통합게시판</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.shortcutButton}

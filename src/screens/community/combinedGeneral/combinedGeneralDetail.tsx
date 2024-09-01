@@ -5,7 +5,7 @@ import { RouteProp, useFocusEffect, useRoute } from "@react-navigation/native";
 import { Alert } from "react-native";
 import { ParamList } from "../../../models/route";
 
-export default function combinedGeneralDetail({ navigation }) {
+export default function CombinedGeneralDetail({ navigation }) {
   const [data, setData] = useState<PostDetailType | object>({});
   const route = useRoute<RouteProp<ParamList, "sampleType">>();
   const { postId } = route.params;

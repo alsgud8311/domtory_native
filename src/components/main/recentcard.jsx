@@ -34,8 +34,9 @@ export default function RecentPostCard({ navigation }) {
         const { success, data } = await getLatestPosts("0");
         if (success) {
           setRecentPostData(data);
+          console.log("???", data);
         } else {
-          console.log(data);
+          console.log("?????", data);
         }
       };
       getData();
