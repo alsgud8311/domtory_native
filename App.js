@@ -6,8 +6,7 @@ import icon from "./src/assets/domtory_icon.png";
 import MainTab from "./src/screens/maintab";
 import { AuthProvider, useAuth } from "./src/store/AuthContext";
 import Login from "./src/screens/login/login";
-import Signup from "./src/screens/login/signup";
-import { MaterialIcons } from "@expo/vector-icons";
+import LoginStack from "./src/screens/login/loginStack";
 import { useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
 import analytics from "@react-native-firebase/analytics";
@@ -48,7 +47,7 @@ export const Layout = () => {
         {authState.authenticated ? (
           <Stack.Screen name="홈 탭" component={MainTab} />
         ) : (
-          <Stack.Screen name="로그인" component={Login} />
+          <Stack.Screen name="로그인 스택" component={LoginStack} />
         )}
       </Stack.Navigator>
     </NavigationContainer>

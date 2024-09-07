@@ -1,30 +1,13 @@
 import axios, { Axios } from "axios";
 import { apiBe } from ".";
 import * as Securestore from "expo-secure-store";
-export const signUp = async (
-  email,
-  password,
-  name,
-  phoneNumber,
-  nickname,
-  birthday,
-  dormitoryCode
-) => {
-  const requestData = {
-    email: email,
-    password: password,
-    name: name,
-    phoneNumber: phoneNumber,
-    nickname: nickname,
-    birthday: birthday,
-    dormitoryCode: dormitoryCode,
-  };
-  try {
-    const { data } = await apiBe.post("/member/signup/", requestData);
-    return data;
-  } catch (error) {
-    console.log("signup error: ", error);
-  }
+export const signUp = async (name, phone_number, birthday, dormitory_code) => {
+  await apiBe.post("/member/signup/", {
+    name,
+    phone_number,
+    birthday,
+    dormitory_code,
+  });
 };
 
 export const signin = async (email, password) => {

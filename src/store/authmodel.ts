@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
+import { SignUpReturn } from "./AuthContext";
 
 export type UserInfo = {
   accessToken?: string | null;

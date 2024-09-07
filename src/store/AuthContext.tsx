@@ -7,10 +7,21 @@ import {
 } from "../utils/firebase/firebaseSetting";
 import messaging from "@react-native-firebase/messaging";
 import { Alert } from "react-native";
-import { CustomError, ProviderType, UserInfo } from "./authmodel";
+import {
+  CustomError,
+  DataReturn,
+  ErrorReturn,
+  ProviderType,
+  UserInfo,
+} from "./authmodel";
 
 //AuthContext + SecureStore을 이용한 로그인
 const AuthContext = createContext<ProviderType | undefined>(undefined);
+
+export interface SignUpReturn {
+  success: Boolean;
+  data?: Object;
+}
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [authState, setAuthState] = useState<UserInfo>({
@@ -60,22 +71,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
     loadToken();
   }, []);
-
-  // interface SignUp {
-  //   success: Boolean;
-  //   data?: Object;
-  // }
-  // const signUp = async (formdata: FormData): Promise<SignUp> => {
-  //   try {
-  //     const response = await apiBe.post("/member/signup/", formdata, {
-  //       headers: { "content-type": "multipart/form-data" },
-  //     });
-  //     return { success: true };
-  //   } catch (error) {
-  //     const customErr = error as CustomError;
-  //     return { success: false, data: customErr.response?.data };
-  //   }
-  // };
 
   const signin = async (username: string, password: string) => {
     const signinData = { username: username, password: password };

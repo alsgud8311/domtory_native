@@ -150,6 +150,12 @@ export default function LoginForm({ navigation }) {
               </Text>
             </TouchableOpacity>
           )}
+          <TouchableOpacity
+            style={styles.signupButton}
+            onPress={() => navigation.navigate("회원가입")}
+          >
+            <Text style={{ color: "white" }}>회원가입</Text>
+          </TouchableOpacity>
         </View>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
@@ -218,11 +224,9 @@ const styles = StyleSheet.create({
     width: "60%",
     height: 45,
     marginTop: 30,
-    backgroundColor: "#fff5d3",
+    backgroundColor: "orange",
     alignItems: "center",
     justifyContent: "center",
-    borderColor: "orange",
-    borderWidth: 1,
     borderRadius: 15,
   },
 });
