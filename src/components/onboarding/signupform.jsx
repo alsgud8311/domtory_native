@@ -43,24 +43,22 @@ export default function SignupForm({ navigation }) {
   const onPressSignup = async () => {
     if (validationCheck()) {
       try {
+        setLoading(true);
         const response = await signUp(name, phoneNum, birth, cbhsNum);
-        if (response.success) {
-          console.log("signup success");
-          Alert.alert(
-            "회원가입이 완료되었습니다! 승인까지는 하루에서 이틀정도가 소요됩니다 :)"
-          );
-          navigation.reset({ routes: [{ name: "로그인" }] });
-        } else {
-          //에러시 메세지 띄우기용 state
-          setErrorMsg(response);
-          setLoading(false);
-        }
-      } catch (error) {
-        console.log(error);
         Alert.alert(
-          "회원가입 중에 오류가 발생했습니다.",
-          "다시 시도해 주시겠어요?"
+          "회원가입이 완료되었습니다! 승인까지는 하루에서 이틀정도가 소요됩니다 :)"
         );
+        navigation.reset({ routes: [{ name: "로그인" }] });
+      } catch (error) {
+        if (error.response && error.response.data.dormitory_code) {
+          Alert.alert(error.response.data.dormitory_code[0]);
+        } else {
+          Alert.alert(
+            "회원가입 중에 오류가 발생했습니다.",
+            "다시 시도해 주시겠어요?"
+          );
+        }
+      } finally {
         setLoading(false);
       }
     }

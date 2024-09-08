@@ -2,7 +2,7 @@ import axios, { Axios } from "axios";
 import { apiBe } from ".";
 import * as Securestore from "expo-secure-store";
 export const signUp = async (name, phone_number, birthday, dormitory_code) => {
-  await apiBe.post("/member/signup/", {
+  return await apiBe.post("/member/signup/", {
     name,
     phone_number,
     birthday,
