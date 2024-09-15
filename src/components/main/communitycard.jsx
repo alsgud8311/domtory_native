@@ -31,7 +31,6 @@ export default function CommunityCard({ navigation }) {
           setCommunityData([{ title: "정보를 가져오는데 실패했습니다." }]);
         }
       };
-      console.log(communityData);
       getData();
     }, [])
   );

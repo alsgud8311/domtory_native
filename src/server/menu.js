@@ -8,17 +8,17 @@ export const getAllMenuData = async (date) => {
 };
 
 export const getBreakMenuData = async (date) => {
-  const { data } = await apiBe(`/menu/${date}/breakfast`);
+  const { data } = await apiBe.get(`/menu/${date}/breakfast/`);
   return data;
 };
 
 export const getLunchMenuData = async (date) => {
-  const { data } = await apiBe(`/menu/${date}/lunch`);
+  const { data } = await apiBe.get(`/menu/${date}/lunch/`);
   return data;
 };
 
 export const getDinnerMenuData = async (date) => {
-  const { data } = await apiBe(`/menu/${date}/dinner`);
+  const { data } = await apiBe.get(`/menu/${date}/dinner/`);
   return data;
 };
 

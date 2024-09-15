@@ -1,5 +1,6 @@
 import axios from "axios";
 import { apiBe } from ".";
+import { Alert } from "react-native";
 
 //게시글 작성
 export const writePost = async (boardId, formData) => {
@@ -41,7 +42,8 @@ export const postLike = async (postId) => {
     }
     return { success: false, data: "정보를 가져오는 중에 오류가 발생했습니다" };
   } catch (error) {
-    return { success: false, data: error.response.data };
+    Alert.alert(error.response.data.detail);
+    return;
   }
 };
 
@@ -88,21 +90,22 @@ export const deletePost = async (postId) => {
 export const getPostList = async (boardId, page) => {
   let boardUrl;
   switch (boardId) {
-    case 6:
+    case "bookmark":
       // 북마크
       boardUrl = `/board/post/bookmark/list/?page=${page}`;
       break;
-    case 7:
+    case "hot":
       // 핫도토리 게시판
       boardUrl = `/board/post/paged/list/popular/?page=${page}`;
       break;
-    case 8:
+    case "mypost":
       // 내가 쓴 글 게시판
       boardUrl = `/board/mypage/paged/post/?page=${page}`;
       break;
-    case 9:
+    case "mycomment":
       // 내가 댓글 쓴 글 게시판
       boardUrl = `/board/mypage/paged/comment/?page=${page}`;
+      break;
     default:
       boardUrl = `/board/post/paged/list/${boardId}/?page=${page}`;
       break;

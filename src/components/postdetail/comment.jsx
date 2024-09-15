@@ -207,6 +207,10 @@ export default function CommentBox({
         {
           text: "네",
           onPress: async () => {
+            if (parseInt(authState.id) === comment.member) {
+              Alert.alert("자신의 글이나 댓글에는 좋아요를 남길 수 없습니다.");
+              return;
+            }
             try {
               const { success, data } = await postCommentLike(comment.id);
               if (success) {
@@ -252,6 +256,7 @@ export default function CommentBox({
   // 쪽지방 생성
   const handleCreateMessage = async (userId) => {
     try {
+      console.log(data.id, userId);
       const response = await createMessage(data.id, userId);
       if (response.success) {
         console.log("쪽지방 생성 성공", response.data);
@@ -259,7 +264,7 @@ export default function CommentBox({
           messageId: response.data.message_room_id,
         });
       } else {
-        console.error("쪽지방 생성 실패:", response.data);
+        console.error("쪽지방 생성 실패:", response.message);
       }
     } catch (error) {
       console.error("쪽지방 생성 오류:", error);
@@ -310,13 +315,15 @@ export default function CommentBox({
                     style={styles.commnetReply}
                     onPress={() => promptForReply(comment.id)}
                   />
-                  <Feather
-                    name="send"
-                    style={styles.messageIcon}
-                    onPress={() =>
-                      promptForCreateMessage(comment.anonymous_number)
-                    }
-                  />
+                  {parseInt(authState.id) !== comment.member ? (
+                    <Feather
+                      name="send"
+                      style={styles.messageIcon}
+                      onPress={() =>
+                        promptForCreateMessage(comment.anonymous_number)
+                      }
+                    />
+                  ) : null}
                   <TouchableOpacity
                     onPress={handlePostLike(comment)}
                     style={{
@@ -325,7 +332,14 @@ export default function CommentBox({
                       alignItems: "center",
                     }}
                   >
-                    <Image source={unlike} style={styles.likeIcon} />
+                    <Image
+                      source={comment.is_liked ? like : unlike}
+                      style={
+                        comment.is_liked
+                          ? { ...styles.likeIcon, tintColor: undefined }
+                          : styles.likeIcon
+                      }
+                    />
                   </TouchableOpacity>
 
                   {parseInt(authState.id) === comment.member ? (

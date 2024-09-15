@@ -26,6 +26,7 @@ export default function Searchbox({ route, navigation }) {
       4: "번개모임 게시판",
       5: "분실물 게시판",
       6: "자율회 공지사항",
+      7: "통합 게시판",
     };
 
     const navigateToDetailScreen = () => {
@@ -46,6 +47,12 @@ export default function Searchbox({ route, navigation }) {
         case 5:
           screenName = "분실물게시판";
           break;
+        case 6:
+          screenName = "자율회 공지사항";
+          break;
+        case 7:
+          screenName = "통합 게시판";
+          break;
         default:
           screenName = "일치하는 게시판 없음";
       }
@@ -58,9 +65,14 @@ export default function Searchbox({ route, navigation }) {
     };
 
     return (
-      <TouchableOpacity onPress={navigateToDetailScreen}>
+      <TouchableOpacity
+        onPress={navigateToDetailScreen}
+        style={{ width: "100%" }}
+      >
         <View style={styles.item}>
-          <View style={{ flexDirection: "column", marginBottom: 5 }}>
+          <View
+            style={{ flexDirection: "column", marginBottom: 5, width: "70%" }}
+          >
             <View>
               {board == "전체 게시판" && (
                 <Text style={styles.board}>{Boardname[item.board]}</Text>
@@ -97,6 +109,7 @@ export default function Searchbox({ route, navigation }) {
     "취준생 게시판": 3,
     "번개모임 게시판": 4,
     "분실물 게시판": 5,
+    "통합 게시판": 7,
   };
 
   const [inputText, setInputText] = useState("");
@@ -124,8 +137,9 @@ export default function Searchbox({ route, navigation }) {
     }
 
     try {
+      console.log(inputList, Boardname[board]);
       const searchData = await getSearhedData(inputList, Boardname[board]);
-      setData(searchData);
+      setData(searchData.postList);
       console.log(searchData);
     } catch (error) {
       console.error("Error occurred while fetching data:", error);
@@ -240,6 +254,7 @@ const createStyles = (darkmode) => {
       color: darkmode ? "white" : "black",
     },
     item: {
+      width: "100%",
       backgroundColor: darkmode ? "black" : "#ffffff",
       borderRadius: 5,
       padding: 15,
@@ -253,6 +268,7 @@ const createStyles = (darkmode) => {
       elevation: 2,
       flexDirection: "row",
       justifyContent: "space-between",
+      alignItems: "center",
     },
     board: {
       fontSize: 13,

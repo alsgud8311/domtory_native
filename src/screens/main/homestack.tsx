@@ -27,6 +27,8 @@ import Popular from "../community/popular/popular";
 import { useColorStore } from "../../store/colorstore";
 import Message from "../message/message";
 import MessageDetail from "../message/messageDetail";
+import CombinedGeneral from "../community/combinedGeneral/combinedGeneral";
+import CombinedGeneralDetail from "../community/combinedGeneral/combinedGeneralDetail";
 
 const HomeStack = ({ navigation }) => {
   const Stack = createNativeStackNavigator();
@@ -95,6 +97,24 @@ const HomeStack = ({ navigation }) => {
         }}
       />
       <Stack.Screen
+        name="통합 게시판"
+        component={CombinedGeneral}
+        options={{
+          headerRight: () => {
+            return (
+              <AntDesign
+                name="search1"
+                size={30}
+                color={darkmode ? "white" : "black"}
+                onPress={() =>
+                  navigation.navigate("검색", { board: "통합게시판" })
+                }
+              />
+            );
+          },
+        }}
+      />
+      <Stack.Screen
         name="자유 게시판"
         component={GeneralDetail}
         options={({ navigation }) => ({
@@ -122,6 +142,15 @@ const HomeStack = ({ navigation }) => {
           headerRight: () => <PopupMenu navigation={navigation} />,
         })}
       />
+
+      <Stack.Screen
+        name="통합게시판"
+        component={CombinedGeneralDetail}
+        options={({ navigation }) => ({
+          headerRight: () => <PopupMenu navigation={navigation} />,
+        })}
+      />
+
       <Stack.Screen
         name="분실물게시판"
         component={LostAndFoundDetail}

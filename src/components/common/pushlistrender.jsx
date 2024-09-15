@@ -10,19 +10,21 @@ export const pushRenderItems = ({ item, navigation, darkmode }) => {
     4: "번개모임게시판",
     5: "분실물게시판",
     6: "자율회 공지사항",
+    7: "통합 게시판",
   };
   const styles = createStyles(darkmode);
   const navigateToDetailScreen = async () => {
-    if ((item.boardId && item.postId) || item.message_room_id) {
+    if ((item.boardId && item.postId) || item.messageRoomId) {
+      console.log(item.messageRoomId);
       const { success } = await pushCheckUpdate(item.memberId, item.pushedAt);
-      if (success && postId) {
+      if (item.postId) {
         navigation.navigate(board[item.boardId], {
           postId: item.postId,
           memberId: item.member,
         });
-      } else if (success && message_room_id) {
-        navigation.navigate(board[`쪽지방`], {
-          messageId: message_room_id,
+      } else if (item.messageRoomId) {
+        navigation.navigate("쪽지방", {
+          messageId: item.messageRoomId,
         });
       }
     } else {

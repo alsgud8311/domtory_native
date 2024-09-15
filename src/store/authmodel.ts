@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
+import { SignUpReturn } from "./AuthContext";
 
 export type UserInfo = {
   accessToken?: string | null;
@@ -9,6 +10,7 @@ export type UserInfo = {
   username?: string | null;
   name?: string | null;
   id?: string | null;
+  dorm?: string | null;
   pushTokenActive?: string | null;
 };
 

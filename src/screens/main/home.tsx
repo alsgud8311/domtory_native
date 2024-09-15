@@ -73,17 +73,16 @@ export default function Home({ navigation }) {
         .getInitialNotification()
         .then(async (remoteMessage) => {
           if (remoteMessage && remoteMessage.data) {
-            const { postId, boardId, pushedAt, message_room_id } =
-              remoteMessage.data;
-            if (((postId && boardId) || message_room_id) && pushedAt) {
+            if (remoteMessage.data.hasOwnProperty("postId")) {
+              const { postId, boardId, pushedAt } = remoteMessage.data;
               await pushCheckUpdate(authState.id, pushedAt);
-              if (boardId && postId) {
-                navigation.navigate(board[`${boardId}`], { postId: postId });
-              } else if (message_room_id) {
-                navigation.navigate("쪽지방", { messageId: message_room_id });
-              }
-            } else {
-              console.log("푸시 알림 데이터가 부족합니다.");
+              navigation.navigate(board[`${boardId}`], { postId: postId });
+            }
+            if (remoteMessage.data.hasOwnProperty("messageRoomId")) {
+              const { messageRoomId, pushedAt } = remoteMessage.data;
+              console.log("백그라운드 메세지 있음", messageRoomId);
+              await pushCheckUpdate(authState.id, pushedAt);
+              navigation.navigate("쪽지방", { messageId: messageRoomId });
             }
           } else {
             console.log("푸시 알림 데이터가 없습니다.");
@@ -92,17 +91,16 @@ export default function Home({ navigation }) {
 
       messaging().onNotificationOpenedApp(async (remoteMessage) => {
         if (remoteMessage && remoteMessage.data) {
-          const { postId, boardId, pushedAt, message_room_id } =
-            remoteMessage.data;
-          if (((postId && boardId) || message_room_id) && pushedAt) {
+          if (remoteMessage.data.hasOwnProperty("postId")) {
+            const { postId, boardId, pushedAt } = remoteMessage.data;
             await pushCheckUpdate(authState.id, pushedAt);
-            if (boardId && postId) {
-              navigation.navigate(board[`${boardId}`], { postId: postId });
-            } else if (message_room_id) {
-              navigation.navigate("쪽지방", { messageId: message_room_id });
-            }
-          } else {
-            console.log("푸시 알림 데이터가 부족합니다.");
+            navigation.navigate(board[`${boardId}`], { postId: postId });
+          }
+          if (remoteMessage.data.hasOwnProperty("messageRoomId")) {
+            const { messageRoomId, pushedAt } = remoteMessage.data;
+            console.log("백그라운드 메세지 있음", messageRoomId);
+            await pushCheckUpdate(authState.id, pushedAt);
+            navigation.navigate("쪽지방", { messageId: messageRoomId });
           }
         } else {
           console.log("푸시 알림 데이터가 없습니다.");
@@ -111,16 +109,29 @@ export default function Home({ navigation }) {
 
       messaging().setBackgroundMessageHandler(async (remoteMessage) => {
         console.log("백그라운드 메세지 받기", remoteMessage);
+        if (remoteMessage && remoteMessage.data) {
+          if (remoteMessage.data.hasOwnProperty("postId")) {
+            const { postId, boardId, pushedAt } = remoteMessage.data;
+            await pushCheckUpdate(authState.id, pushedAt);
+            navigation.navigate(board[`${boardId}`], { postId: postId });
+          }
+          if (remoteMessage.data.hasOwnProperty("messageRoomId")) {
+            const { messageRoomId, pushedAt } = remoteMessage.data;
+            console.log("백그라운드 메세지 있음", messageRoomId);
+            await pushCheckUpdate(authState.id, pushedAt);
+            navigation.navigate("쪽지방", { messageId: messageRoomId });
+          }
+        } else {
+          console.log("푸시 알림 데이터가 없습니다.");
+        }
       });
     };
 
     fetchData();
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
-      console.log("포어그라운드", remoteMessage);
       if (remoteMessage && remoteMessage.data) {
-        const { postId, boardId, pushedAt, message_room_id } =
-          remoteMessage.data;
-        if (((postId && boardId) || message_room_id) && pushedAt) {
+        const { postId, boardId, pushedAt, messageRoomId } = remoteMessage.data;
+        if (((postId && boardId) || messageRoomId) && pushedAt) {
           Alert.alert(
             remoteMessage.notification?.title ?? "알림",
             remoteMessage.notification?.body ?? "새로운 알림이 도착했습니다",
@@ -134,9 +145,9 @@ export default function Home({ navigation }) {
                     navigation.navigate(board[`${boardId}`], {
                       postId: postId,
                     });
-                  } else if (message_room_id) {
+                  } else if (messageRoomId) {
                     navigation.navigate("쪽지방", {
-                      messageId: message_room_id,
+                      messageId: messageRoomId,
                     });
                   }
                 },
@@ -156,7 +167,7 @@ export default function Home({ navigation }) {
         );
       }
     });
-
+    console.log("대박쓰", authState);
     return unsubscribe;
   }, []);
 

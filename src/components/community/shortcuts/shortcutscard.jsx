@@ -1,5 +1,5 @@
 import { TouchableOpacity, Text, View, StyleSheet, Image } from "react-native";
-import { Entypo } from "@expo/vector-icons";
+import { Entypo, FontAwesome6 } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Octicons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -7,10 +7,12 @@ import { AntDesign } from "@expo/vector-icons";
 import dotory from "../../../assets/unlike_icon.png";
 import { useColorStore } from "../../../store/colorstore";
 import { useMemo } from "react";
+import { useAuth } from "../../../store/AuthContext";
 
 export default function ShortcutCard({ navigation }) {
   const darkmode = useColorStore((state) => state.darkmode);
   const styles = useMemo(() => createStyles(darkmode));
+  const { authState } = useAuth();
   return (
     <>
       <View style={styles.noticeContainer}>
@@ -51,10 +53,19 @@ export default function ShortcutCard({ navigation }) {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.shortcutButton}
+          onPress={() => navigation.navigate("통합게시판")}
+        >
+          <FontAwesome6 name="people-roof" style={styles.icons} />
+          <Text style={styles.shortcutText}>통합게시판</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.shortcutButton}
           onPress={() => navigation.navigate("자유게시판")}
         >
           <Octicons name="comment-discussion" style={styles.icons} />
-          <Text style={styles.shortcutText}>자유게시판</Text>
+          <Text style={styles.shortcutText}>
+            {authState.dorm === "3" ? "서서울관" : "동서울관"} 자유게시판
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.shortcutButton}

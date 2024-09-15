@@ -7,10 +7,21 @@ import {
 } from "../utils/firebase/firebaseSetting";
 import messaging from "@react-native-firebase/messaging";
 import { Alert } from "react-native";
-import { CustomError, ProviderType, UserInfo } from "./authmodel";
+import {
+  CustomError,
+  DataReturn,
+  ErrorReturn,
+  ProviderType,
+  UserInfo,
+} from "./authmodel";
 
 //AuthContext + SecureStore을 이용한 로그인
 const AuthContext = createContext<ProviderType | undefined>(undefined);
+
+export interface SignUpReturn {
+  success: Boolean;
+  data?: Object;
+}
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [authState, setAuthState] = useState<UserInfo>({
@@ -22,6 +33,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     username: null,
     name: null,
     id: null,
+    dorm: null,
     pushTokenActive: null,
   });
 
@@ -31,6 +43,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const refreshToken = await SecureStore.getItemAsync("REFRESH_TOKEN");
       const pushToken = await SecureStore.getItemAsync("PUSH_TOKEN");
       const username = await SecureStore.getItemAsync("USERNAME");
+      const dorm = await SecureStore.getItemAsync("DORM");
       const name = await SecureStore.getItemAsync("NAME");
       const id = await SecureStore.getItemAsync("ID");
       const isStaff = await SecureStore.getItemAsync("STAFF");
@@ -49,6 +62,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           authenticated: true,
           username: username,
           name: name,
+          dorm: dorm,
           id: id,
           staff: isStaff,
           pushTokenActive: pushTokenActive,
@@ -58,24 +72,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     loadToken();
   }, []);
 
-  // interface SignUp {
-  //   success: Boolean;
-  //   data?: Object;
-  // }
-  // const signUp = async (formdata: FormData): Promise<SignUp> => {
-  //   try {
-  //     const response = await apiBe.post("/member/signup/", formdata, {
-  //       headers: { "content-type": "multipart/form-data" },
-  //     });
-  //     return { success: true };
-  //   } catch (error) {
-  //     const customErr = error as CustomError;
-  //     return { success: false, data: customErr.response?.data };
-  //   }
-  // };
-
-  const signin = async (username: string, password: string) => {
-    const signinData = { username: username, password: password };
+  const signin = async (
+    username: string,
+    password: string,
+    dormitory: boolean
+  ) => {
+    const signinData = {
+      dormitory_code: username,
+      password: password,
+      dorm: dormitory ? "WEST" : "EAST",
+    };
 
     try {
       const { data } = await apiBe.post("/member/signin/", signinData);
@@ -100,6 +106,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           } catch (error) {
             console.log("Sending Push Token error", error);
           }
+          const dormInfo = await refreshInfo();
+          setAuthState((prev) => ({ ...prev, dorm: dormInfo }));
+          await SecureStore.setItemAsync(
+            "PUSHTOKEN_ACTIVE",
+            dormInfo.toString()
+          );
         } else {
           console.log("getToken Failed");
         }
@@ -143,8 +155,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       await SecureStore.setItemAsync("ID", data.member.id.toString());
       return { success: true, data: data };
     } catch (error) {
-      console.log(error);
-      return { success: false, data: error };
+      return { success: false, data: error.response.data };
+    }
+  };
+
+  const refreshInfo = async () => {
+    try {
+      const { data } = await apiBe.get("/member/info/");
+      await SecureStore.setItemAsync("DORM", data.dorm.toString());
+      return data.dorm.toString();
+    } catch (error) {
+      console.log(error.response.data);
+      Alert.alert("유저 정보를 불러오는데 실패했습니다.");
     }
   };
 
@@ -245,6 +267,7 @@ const defaultAuthState = {
     authenticated: false,
     staff: null,
     username: null,
+    dorm: null,
     name: null,
     id: null,
     pushTokenActive: null,

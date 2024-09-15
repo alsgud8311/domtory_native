@@ -4,8 +4,9 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { stackscreenOptions } from "../../constants/screenoptions";
 import Message from "./message";
 import MessageDetail from "./messageDetail";
-import { Feather } from "@expo/vector-icons";
+import { Feather, FontAwesome, Octicons } from "@expo/vector-icons";
 import { useColorStore } from "../../store/colorstore";
+import { MessageHeader } from "../../components/message/messageHeader";
 
 const MessageStack = () => {
   const Stack = createNativeStackNavigator();
@@ -20,20 +21,11 @@ const MessageStack = () => {
       <Stack.Screen
         name="쪽지방"
         component={MessageDetail}
-        options={({ navigation }) => ({
+        options={({ navigation, route }) => ({
           headerBackVisible: true,
-          headerRight: () => (
-            <Feather
-              onPress={() => navigation.setParams({ showModal: true })}
-              name="send"
-              size={24}
-              color={darkmode ? "white" : "black"}
-              style={{
-                paddingTop: 8,
-                paddingRight: 5,
-              }}
-            />
-          ),
+          headerRight: () => {
+            return <MessageHeader navigation={navigation} route={route} />;
+          },
         })}
       />
     </Stack.Navigator>

@@ -46,52 +46,59 @@ export default function PopularPostCard({ navigation }) {
       </View>
       <View style={styles.container}>
         {data ? (
-          data.map((post, key) => (
-            <TouchableOpacity
-              key={key}
-              style={styles.post}
-              onPress={() =>
-                navigation.navigate(boardList[post.board], {
-                  postId: post.id,
-                  memberId: post.member,
-                })
-              }
-            >
-              <Text
-                style={styles.postTitle}
-                ellipsizeMode="tail"
-                numberOfLines={1}
+          !data.length ? (
+            <Text style={styles.noContent}>
+              현재 인기많은 글이 없어요 {"\n"}재밌는 글을 써서 핫도토리 게시판에
+              올라보세요!
+            </Text>
+          ) : (
+            data.map((post, key) => (
+              <TouchableOpacity
+                key={key}
+                style={styles.post}
+                onPress={() =>
+                  navigation.navigate(boardList[post.board], {
+                    postId: post.id,
+                    memberId: post.member,
+                  })
+                }
               >
-                {post.title}
-              </Text>
-              <View style={{ flexDirection: "row", gap: 10 }}>
-                <View style={styles.likedCnt}>
-                  <Image
-                    source={acorn}
-                    style={{ width: 15, height: 15 }}
-                  ></Image>
-                  <Text style={{ color: darkmode ? "#fff" : "black" }}>
-                    {post.likes_cnt}
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: 5,
-                  }}
+                <Text
+                  style={styles.postTitle}
+                  ellipsizeMode="tail"
+                  numberOfLines={1}
                 >
-                  <Octicons
-                    name="comment"
-                    style={{ color: darkmode ? "#ff4d6d" : "crimson" }}
-                  />
-                  <Text style={{ color: darkmode ? "#ff4d6d" : "crimson" }}>
-                    {post.comment_cnt}
-                  </Text>
+                  {post.title}
+                </Text>
+                <View style={{ flexDirection: "row", gap: 10 }}>
+                  <View style={styles.likedCnt}>
+                    <Image
+                      source={acorn}
+                      style={{ width: 15, height: 15 }}
+                    ></Image>
+                    <Text style={{ color: darkmode ? "#fff" : "black" }}>
+                      {post.likes_cnt}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 5,
+                    }}
+                  >
+                    <Octicons
+                      name="comment"
+                      style={{ color: darkmode ? "#ff4d6d" : "crimson" }}
+                    />
+                    <Text style={{ color: darkmode ? "#ff4d6d" : "crimson" }}>
+                      {post.comment_cnt}
+                    </Text>
+                  </View>
                 </View>
-              </View>
-            </TouchableOpacity>
-          ))
+              </TouchableOpacity>
+            ))
+          )
         ) : (
           <Text>정보를 불러올 수 없습니다.</Text>
         )}
@@ -151,6 +158,12 @@ const createStyles = (darkmode) => {
     },
     text: {
       color: darkmode ? "white" : "black",
+    },
+    noContent: {
+      color: darkmode ? "white" : "black",
+      padding: 10,
+      fontSize: 15,
+      fontWeight: "bold",
     },
   });
 };
