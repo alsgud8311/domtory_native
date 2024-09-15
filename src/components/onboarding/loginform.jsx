@@ -12,6 +12,7 @@ import {
   Image,
   TouchableOpacity,
   ActivityIndicator,
+  Switch,
 } from "react-native";
 import { useAuth } from "../../store/AuthContext";
 import logo from "../../assets/domtory_icon.png";
@@ -28,6 +29,7 @@ export default function LoginForm({ navigation }) {
   const [isLoading, setIsLoading] = useState(false);
   const [loginValid, setLoginValid] = useState(false);
   const [checkTerms, SetCheckTerms] = useState(false);
+  const [isWest, setIsWest] = useState(false);
   //다른 스택 컴포넌트로 갔다가 돌아오는 상태를 관찰하는 훅
   useFocusEffect(
     useCallback(() => {
@@ -46,7 +48,7 @@ export default function LoginForm({ navigation }) {
 
   const login = async () => {
     setIsLoading(true);
-    const { success, data } = await onLogin(username, password);
+    const { success, data } = await onLogin(username, password, isWest);
     if (success) {
       console.log("login success");
     } else {
@@ -74,6 +76,16 @@ export default function LoginForm({ navigation }) {
           <Text style={{ fontSize: 15, marginBottom: 20, fontWeight: 700 }}>
             충북학사생 전용 커뮤니티 서비스
           </Text>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+            <Text>동서울관</Text>
+            <Switch
+              trackColor={{ false: "#E8C682", true: "#944733" }}
+              ios_backgroundColor="#E8C682"
+              value={isWest}
+              onValueChange={() => setIsWest(!isWest)}
+            />
+            <Text>서서울관</Text>
+          </View>
           <View style={styles.inputWrapper}>
             <TextInput
               autoCorrect={false}
@@ -156,6 +168,9 @@ export default function LoginForm({ navigation }) {
           >
             <Text style={{ color: "white" }}>회원가입</Text>
           </TouchableOpacity>
+          <Text style={{ padding: 10 }}>
+            동서울관은 회원가입 없이 바로 로그인이 가능해요!
+          </Text>
         </View>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>

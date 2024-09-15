@@ -256,6 +256,7 @@ export default function CommentBox({
   // 쪽지방 생성
   const handleCreateMessage = async (userId) => {
     try {
+      console.log(data.id, userId);
       const response = await createMessage(data.id, userId);
       if (response.success) {
         console.log("쪽지방 생성 성공", response.data);
@@ -263,7 +264,7 @@ export default function CommentBox({
           messageId: response.data.message_room_id,
         });
       } else {
-        console.error("쪽지방 생성 실패:", response.data);
+        console.error("쪽지방 생성 실패:", response.message);
       }
     } catch (error) {
       console.error("쪽지방 생성 오류:", error);

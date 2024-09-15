@@ -120,6 +120,17 @@ export default function SignupForm({ navigation }) {
               돔토리는 충북학사생 전용 커뮤니티 서비스입니다.
             </Text>
             <View style={styles.inputWrapper}>
+              <Text
+                style={{
+                  fontSize: 15,
+                  fontWeight: 700,
+                  textAlign: "center",
+                  color: "crimson",
+                }}
+              >
+                ⚠️동서울관은 별도의 회원가입 없이 바로 로그인이 가능하지만
+                서서울관은 회원가입이 필요합니다.
+              </Text>
               <View
                 style={{
                   justifyContent: "center",

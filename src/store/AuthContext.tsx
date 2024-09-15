@@ -72,8 +72,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     loadToken();
   }, []);
 
-  const signin = async (username: string, password: string) => {
-    const signinData = { username: username, password: password };
+  const signin = async (
+    username: string,
+    password: string,
+    dormitory: boolean
+  ) => {
+    const signinData = {
+      dormitory_code: username,
+      password: password,
+      dorm: dormitory ? "WEST" : "EAST",
+    };
 
     try {
       const { data } = await apiBe.post("/member/signin/", signinData);
